@@ -147,11 +147,14 @@ install_packages() {
 # ------------------------------------------------------------------------------
 log_step "TAHAP 2: Menginstal Hyprland & Ekosistem Wayland"
 
-# Cek ketersediaan hyprland di repositori resmi Ubuntu 26.04
+# Cek ketersediaan hyprland di repositori resmi Ubuntu (Universe sudah aktif)
 if ! apt-cache show hyprland >/dev/null 2>&1; then
-    log_warn "Hyprland belum ditemukan di repo standar, menambahkan PPA fallback..."
-    add-apt-repository -y ppa:cppiber/hyprland 2>/dev/null || true
-    apt-get update -y || true
+    # Hanya tambahkan PPA fallback jika di Ubuntu 24.04 (noble); di 26.10 hyprland ada di repo universe
+    if [ "$UBUNTU_CODENAME" = "noble" ]; then
+        log_warn "Hyprland belum ditemukan di repo standar, menambahkan PPA fallback untuk $UBUNTU_CODENAME..."
+        add-apt-repository -y ppa:cppiber/hyprland 2>/dev/null || true
+        apt-get update -y || true
+    fi
 fi
 
 WAYLAND_PKGS=(
@@ -190,6 +193,7 @@ SHELL_PKGS=(
     waybar
     sway-notification-center
     libnotify-bin
+    polkit-gnome
     policykit-1-gnome
     polkitd
     dbus-x11
@@ -269,6 +273,7 @@ UTILITY_PKGS=(
     pciutils
     psmisc
     procps
+    virtualbox-guest-utils
     plymouth
     plymouth-themes
 )
@@ -618,32 +623,15 @@ EOF
 cp -f /usr/share/wayland-sessions/rinauby.desktop /usr/share/wayland-sessions/hyprland.desktop
 log_ok "Wayland session 'Rinauby (Digital Humanism)' terdaftar di /usr/share/wayland-sessions/"
 
-# 10D. Atur Rinauby sebagai default session untuk GDM3 / AccountsService
-if [ -d /var/lib/AccountsService/users ]; then
-    for user_home in /home/*; do
-        [ -d "$user_home" ] || continue
-        u_name="$(basename "$user_home")"
-        acct_file="/var/lib/AccountsService/users/$u_name"
-        if [ -f "$acct_file" ]; then
-            if grep -q "^Session=" "$acct_file"; then
-                sed -i "s/^Session=.*/Session=rinauby/" "$acct_file"
-            else
-                echo "Session=rinauby" >> "$acct_file"
-            fi
-        else
-            cat << EOF > "$acct_file"
-[User]
-Session=rinauby
-SystemAccount=false
-EOF
-        fi
-    done
-fi
+# 10D. Konfigurasi Sesi Display Manager (GDM3 / Wayland)
+# CATATAN: Sesi default tidak dibajak agar Live CD tetap menjalankan GNOME & Installer Ubuntu resmi.
+# Pengguna/dosen dapat memilih "Rinauby (Digital Humanism)" melalui menu roda gigi (gear) di GDM.
+log_ok "Sesi GNOME bawaan & Installer Ubuntu tetap utuh untuk boot awal."
+log_ok "Sesi 'Rinauby (Digital Humanism)' tersedia sebagai pilihan di Display Manager (GDM3)."
 
-# Pastikan Wayland aktif di GDM3 jika GDM3 terpasang
+# Pastikan opsi Wayland tidak dinonaktifkan di GDM3
 if [ -f /etc/gdm3/custom.conf ]; then
-    sed -i 's/^#WaylandEnable=false/WaylandEnable=true/g' /etc/gdm3/custom.conf || true
-    sed -i 's/^WaylandEnable=false/WaylandEnable=true/g' /etc/gdm3/custom.conf || true
+    sed -i 's/^WaylandEnable=false/#WaylandEnable=false/g' /etc/gdm3/custom.conf || true
 fi
 
 # ------------------------------------------------------------------------------
