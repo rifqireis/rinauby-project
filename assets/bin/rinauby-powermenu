@@ -1,0 +1,14 @@
+#!/usr/bin/env bash
+CANDIDATES=(
+    "$HOME/.config/scripts/powermenu.sh"
+    "/usr/share/rinauby/scripts/powermenu.sh"
+)
+REPO_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." 2>/dev/null && pwd)"
+CANDIDATES+=("$REPO_DIR/dotfiles/scripts/powermenu.sh")
+CANDIDATES+=("/home/rifqi/Workspace/Belajar/SO/Tubes-2604/Rancangan/assets/dotfiles/scripts/powermenu.sh")
+
+for s in "${CANDIDATES[@]}"; do
+    if [ -f "$s" ]; then
+        exec bash "$s" "$@"
+    fi
+done

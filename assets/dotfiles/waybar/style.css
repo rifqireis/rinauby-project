@@ -1,0 +1,195 @@
+/*
+ * =============================================================================
+ * WAYBAR STYLE: RINAUBY (ACADEMIC HUMANIST)
+ * Filosofi: Digital Humanism & Rinauby
+ * Konsep: Nempel ke Atas (margin-top: 0), Garis Emas Bawah, Solid 0.82
+ * =============================================================================
+ */
+
+* {
+    border: none;
+    border-radius: 0;
+    box-shadow: none;
+    text-shadow: none;
+    background-image: none;
+    min-height: 0;
+    margin: 0;
+    padding: 0;
+    font-family: "Inter", "JetBrainsMono Nerd Font", "Iosevka Nerd Font", sans-serif;
+    font-size: 13px;
+    font-weight: 500;
+}
+
+/* -----------------------------------------------------------------------------
+ * 1. FLOATING BAR CONTAINER (Nempel ke Atas dengan Garis Aksen Emas Bawah)
+ * ----------------------------------------------------------------------------- */
+window#waybar {
+    background-color: rgba(28, 33, 37, 0.82);
+    color: #d3c6aa;
+    border-top: none;
+    border-left: 1px solid rgba(184, 134, 78, 0.22);
+    border-right: 1px solid rgba(184, 134, 78, 0.22);
+    border-bottom: 2px solid #db9c5e;
+    border-radius: 0 0 6px 6px;
+    box-shadow: 0 4px 18px rgba(0, 0, 0, 0.40);
+}
+
+window#waybar.hidden {
+    opacity: 0.15;
+}
+
+/* -----------------------------------------------------------------------------
+ * 2. TOOLTIP
+ * ----------------------------------------------------------------------------- */
+tooltip {
+    background-color: rgba(24, 28, 31, 0.95);
+    border: 1px solid rgba(184, 134, 78, 0.45);
+    border-radius: 6px;
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.5);
+}
+
+tooltip label {
+    color: #d3c6aa;
+    padding: 6px 10px;
+    font-size: 12.5px;
+}
+
+/* -----------------------------------------------------------------------------
+ * 3. SISI KIRI (Logo, Workspaces Romawi, Window Title / Wallpaper Title)
+ * ----------------------------------------------------------------------------- */
+#custom-logo {
+    color: #db9c5e;
+    font-size: 15px;
+    margin-left: 12px;
+    margin-right: 8px;
+}
+
+#workspaces {
+    background: transparent;
+    margin: 0 2px;
+}
+
+#workspaces button {
+    padding: 0 9px;
+    margin: 3px 1px;
+    background: transparent;
+    border: none;
+    border-radius: 4px;
+    color: #859289;
+    font-family: "Cinzel", "EB Garamond", "Inter", serif;
+    font-size: 13.5px;
+    font-weight: 600;
+    letter-spacing: 0.8px;
+    transition: all 180ms ease;
+}
+
+#workspaces button:hover {
+    color: #fbf2db;
+    background: rgba(229, 192, 123, 0.10);
+}
+
+#workspaces button.active {
+    color: #e5c07b;
+    font-weight: 700;
+    background: rgba(229, 192, 123, 0.15);
+}
+
+#workspaces button.urgent {
+    color: #e67e80;
+    background: rgba(230, 126, 128, 0.2);
+}
+
+#custom-separator-left,
+#custom-separator-right {
+    color: rgba(184, 134, 78, 0.30);
+    font-size: 13px;
+    margin: 0 10px;
+}
+
+#custom-window-title {
+    font-size: 12.5px;
+    font-weight: 500;
+    letter-spacing: 0.2px;
+    transition: color 150ms ease;
+}
+
+#custom-window-title.active-app {
+    color: #a7c080;
+}
+
+#custom-window-title.active-wallpaper {
+    color: #e5c07b;
+    font-weight: 600;
+    letter-spacing: 0.3px;
+}
+
+/* -----------------------------------------------------------------------------
+ * 4. SISI TENGAH (Semboyan Klasik Renaissance Humanism)
+ * ----------------------------------------------------------------------------- */
+#custom-quote,
+#custom-wallpaper,
+#custom-motto {
+    color: #fbf2db;
+    font-size: 13px;
+    font-weight: 600;
+    letter-spacing: 0.4px;
+    background: transparent;
+    border: none;
+    padding: 0 8px;
+    transition: all 200ms ease;
+}
+
+#custom-quote:hover,
+#custom-wallpaper:hover,
+#custom-motto:hover {
+    color: #db9c5e;
+}
+
+/* -----------------------------------------------------------------------------
+ * 5. SISI KANAN (Esensial: Audio, Baterai, Jam)
+ * ----------------------------------------------------------------------------- */
+#pulseaudio,
+#battery,
+#clock {
+    padding: 0 7px;
+    margin: 0 2px;
+    background: transparent;
+    border: none;
+    box-shadow: none;
+    color: #d3c6aa;
+    font-size: 13px;
+    font-weight: 500;
+    transition: color 150ms ease;
+}
+
+#pulseaudio:hover,
+#battery:hover {
+    color: #fbf2db;
+}
+
+#pulseaudio.muted {
+    color: #e67e80;
+}
+
+#battery.charging,
+#battery.plugged {
+    color: #a7c080;
+}
+
+#battery.warning:not(.charging) {
+    color: #e5c07b;
+}
+
+#battery.critical:not(.charging) {
+    color: #e67e80;
+}
+
+#clock {
+    color: #e5c07b;
+    font-weight: 600;
+    margin-right: 12px;
+}
+
+#clock:hover {
+    color: #fbf2db;
+}

@@ -1,0 +1,23 @@
+#!/usr/bin/env bash
+THEMES=(
+    "$HOME/.config/rofi/renaissance_launcher.rasi"
+    "/etc/skel/.config/rofi/renaissance_launcher.rasi"
+    "/usr/share/rinauby/rofi/renaissance_launcher.rasi"
+)
+REPO_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." 2>/dev/null && pwd)"
+THEMES+=("$REPO_DIR/dotfiles/rofi/renaissance_launcher.rasi")
+THEMES+=("/home/rifqi/Workspace/Belajar/SO/Tubes-2604/Rancangan/assets/dotfiles/rofi/renaissance_launcher.rasi")
+
+THEME_FILE=""
+for t in "${THEMES[@]}"; do
+    if [ -f "$t" ]; then
+        THEME_FILE="$t"
+        break
+    fi
+done
+
+if [ -n "$THEME_FILE" ]; then
+    exec rofi -show drun -theme "$THEME_FILE" "$@"
+else
+    exec rofi -show drun "$@"
+fi

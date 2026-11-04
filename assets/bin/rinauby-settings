@@ -1,0 +1,15 @@
+#!/usr/bin/env bash
+if [ -f "/usr/share/rinauby/settings-gtk/main.py" ]; then
+    exec python3 "/usr/share/rinauby/settings-gtk/main.py" "$@"
+elif [ -f "$HOME/.config/rinauby/settings-gtk/main.py" ]; then
+    exec python3 "$HOME/.config/rinauby/settings-gtk/main.py" "$@"
+else
+    REPO_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." 2>/dev/null && pwd)"
+    if [ -f "$REPO_DIR/dotfiles/settings-gtk/main.py" ]; then
+        exec python3 "$REPO_DIR/dotfiles/settings-gtk/main.py" "$@"
+    elif [ -f "/home/rifqi/Workspace/Belajar/SO/Tubes-2604/Rancangan/assets/dotfiles/settings-gtk/main.py" ]; then
+        exec python3 "/home/rifqi/Workspace/Belajar/SO/Tubes-2604/Rancangan/assets/dotfiles/settings-gtk/main.py" "$@"
+    fi
+fi
+echo "Error: Rinauby settings app not found." >&2
+exit 1

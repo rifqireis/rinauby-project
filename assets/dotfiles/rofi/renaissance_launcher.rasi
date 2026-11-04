@@ -1,0 +1,120 @@
+/**
+ * =============================================================================
+ * RENAISSANCE OS : ROFI APPLICATION LAUNCHER
+ * Filosofi: Digital Humanism & The Renaissance of Open Source
+ * Desain: Bersih, Humanis Modern (Font Inter), Tanpa Outline Nanggung
+ * =============================================================================
+ */
+
+configuration {
+    modi: "drun,run";
+    show-icons: true;
+    display-drun: " ";
+    drun-display-format: "{name}\n<span size='9500' color='#859289'>{generic}</span>";
+    font: "Inter 12";
+}
+
+* {
+    bg-base: rgba(28, 33, 37, 0.95);
+    bg-input: rgba(18, 22, 25, 0.75);
+    bg-selected: rgba(219, 156, 94, 0.18);
+    border-gold: #db9c5e;
+    fg-main: #d3c6aa;
+    fg-bright: #fbf2db;
+    fg-muted: #859289;
+
+    background-color: transparent;
+    text-color: @fg-main;
+    margin: 0px;
+    padding: 0px;
+    spacing: 0px;
+}
+
+window {
+    width: 700px;
+    background-color: @bg-base;
+    border: 1.5px;
+    border-color: @border-gold;
+    border-radius: 16px;
+    padding: 24px;
+    location: center;
+    anchor: center;
+}
+
+mainbox {
+    children: [ inputbar, listview ];
+    spacing: 16px;
+}
+
+inputbar {
+    background-color: @bg-input;
+    border: 0px;
+    border-radius: 10px;
+    padding: 12px 18px;
+    children: [ prompt, entry ];
+    spacing: 12px;
+}
+
+prompt {
+    font: "Inter 13";
+    text-color: @border-gold;
+    vertical-align: 0.5;
+}
+
+entry {
+    placeholder: "Search knowledge, tools, apps...";
+    placeholder-color: @fg-muted;
+    text-color: @fg-bright;
+    font: "Inter 12.5";
+    vertical-align: 0.5;
+    cursor: text;
+}
+
+listview {
+    lines: 6;
+    columns: 1;
+    cycle: true;
+    dynamic: true;
+    fixed-height: false;
+    scrollbar: false;
+    spacing: 6px;
+}
+
+element {
+    padding: 10px 16px;
+    border-radius: 10px;
+    spacing: 16px;
+    border: 0px;
+    children: [ element-icon, element-text ];
+    cursor: pointer;
+}
+
+element normal.normal {
+    background-color: transparent;
+    text-color: @fg-main;
+}
+
+element alternate.normal {
+    background-color: transparent;
+    text-color: @fg-main;
+}
+
+element selected.normal {
+    background-color: @bg-selected;
+    text-color: @fg-bright;
+    border: 0px;
+    border-radius: 10px;
+}
+
+element-icon {
+    size: 42px;
+    vertical-align: 0.5;
+    cursor: inherit;
+}
+
+element-text {
+    vertical-align: 0.5;
+    text-color: inherit;
+    font: "Inter 12";
+    cursor: inherit;
+}

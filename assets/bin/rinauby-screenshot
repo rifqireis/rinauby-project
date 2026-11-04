@@ -1,0 +1,14 @@
+#!/usr/bin/env bash
+CANDIDATES=(
+    "$HOME/.config/scripts/screenshot.sh"
+    "/usr/share/rinauby/scripts/screenshot.sh"
+)
+REPO_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." 2>/dev/null && pwd)"
+CANDIDATES+=("$REPO_DIR/dotfiles/scripts/screenshot.sh")
+CANDIDATES+=("/home/rifqi/Workspace/Belajar/SO/Tubes-2604/Rancangan/assets/dotfiles/scripts/screenshot.sh")
+
+for s in "${CANDIDATES[@]}"; do
+    if [ -f "$s" ]; then
+        exec bash "$s" "$@"
+    fi
+done

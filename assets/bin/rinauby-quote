@@ -1,0 +1,15 @@
+#!/usr/bin/env bash
+CANDIDATES=(
+    "$HOME/.config/waybar/quote_rotator.sh"
+    "/usr/share/rinauby/waybar/quote_rotator.sh"
+)
+REPO_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." 2>/dev/null && pwd)"
+CANDIDATES+=("$REPO_DIR/dotfiles/waybar/quote_rotator.sh")
+CANDIDATES+=("/home/rifqi/Workspace/Belajar/SO/Tubes-2604/Rancangan/assets/dotfiles/waybar/quote_rotator.sh")
+
+for s in "${CANDIDATES[@]}"; do
+    if [ -f "$s" ]; then
+        exec bash "$s" "$@"
+    fi
+done
+echo "La Rinascita"
