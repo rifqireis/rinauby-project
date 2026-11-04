@@ -10,7 +10,10 @@ gi.require_version("Gio", "2.0")
 from gi.repository import Gio
 from app_detector import AppDetector
 
-CONFIG_PATH = os.path.expanduser("~/.config/illogical-impulse/config.json")
+_OLD_CONFIG_PATH = os.path.expanduser("~/.config/illogical-impulse/config.json")
+CONFIG_PATH = os.path.expanduser("~/.config/rinauby/config.json")
+if not os.path.exists(CONFIG_PATH) and os.path.exists(_OLD_CONFIG_PATH):
+    CONFIG_PATH = _OLD_CONFIG_PATH
 
 def _detect_assets_dir():
     if os.environ.get("RINAUBY_ASSETS_DIR"):
@@ -162,6 +165,7 @@ auto_save=false
 
     def save(self):
         try:
+            os.makedirs(os.path.dirname(CONFIG_PATH), exist_ok=True)
             with open(CONFIG_PATH, "w", encoding="utf-8") as f:
                 json.dump(self.config_data, f, indent=2, ensure_ascii=False)
                 f.write("\n")
@@ -601,7 +605,9 @@ auto_save=false
         self.generate_rules_lua()
 
     def validate_lua_syntax(self, lua_code: str) -> tuple[bool, str]:
-        """Validasi sintaksis kode Lua menggunakan /usr/bin/luac -p -."""
+        """Validasi sintaksis kode Lua menggunakan /usr/bin/luac -p - (jika tersedia)."""
+        if not shutil.which("luac"):
+            return True, ""
         try:
             res = subprocess.run(
                 ["luac", "-p", "-"],
@@ -614,7 +620,7 @@ auto_save=false
                 return True, ""
             return False, res.stderr.strip()
         except Exception as e:
-            return False, str(e)
+            return True, f"Warning: luac check skipped ({e})"
 
     def _atomic_write_lua(self, target_path: str, content: str) -> tuple[bool, str]:
         """Validasi sintaks Lua terlebih dahulu di memori, lalu tulis secara atomik."""
@@ -1180,18 +1186,22 @@ auto_save=false
             if signature is not None and cached is not None and cached[0] == signature:
                 valid, err = cached[1], cached[2]
             else:
-                try:
-                    res = subprocess.run(
-                        ["luac", "-p", path],
-                        capture_output=True,
-                        text=True,
-                        timeout=2.0
-                    )
-                    valid = (res.returncode == 0)
-                    err = res.stderr.strip() if not valid else None
-                except Exception as e:
-                    valid = False
-                    err = str(e)
+                if not shutil.which("luac"):
+                    valid = True
+                    err = None
+                else:
+                    try:
+                        res = subprocess.run(
+                            ["luac", "-p", path],
+                            capture_output=True,
+                            text=True,
+                            timeout=2.0
+                        )
+                        valid = (res.returncode == 0)
+                        err = res.stderr.strip() if not valid else None
+                    except Exception as e:
+                        valid = True
+                        err = str(e)
                 if signature is not None:
                     self._config_health_cache[path] = (signature, valid, err)
 

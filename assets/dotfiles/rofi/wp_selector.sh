@@ -61,7 +61,9 @@ for item in "${ITEMS[@]}"; do
 
     # Buat thumbnail jika belum ada
     if [ ! -f "$thumb" ]; then
-        magick "$img" -resize 340x260^ -gravity center -extent 340x260 -quality 95 "$thumb" 2>/dev/null
+        IMG_CMD="convert"
+        command -v magick >/dev/null 2>&1 && IMG_CMD="magick"
+        "$IMG_CMD" "$img" -resize 340x260^ -gravity center -extent 340x260 -quality 95 "$thumb" 2>/dev/null || true
     fi
 
     icon_to_use="$thumb"

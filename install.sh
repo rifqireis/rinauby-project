@@ -162,7 +162,6 @@ WAYLAND_PKGS=(
     hyprlock
     hypridle
     hyprpaper
-    hyprutils
     xdg-desktop-portal-hyprland
     xdg-desktop-portal-gtk
     xdg-desktop-portal
@@ -235,6 +234,7 @@ GTK_PYTHON_PKGS=(
     gir1.2-nm-1.0
     gsettings-desktop-schemas
     dconf-cli
+    libglib2.0-bin
 )
 install_packages "${GTK_PYTHON_PKGS[@]}"
 
@@ -274,6 +274,9 @@ UTILITY_PKGS=(
     psmisc
     procps
     virtualbox-guest-utils
+    virtualbox-guest-x11
+    xdg-utils
+    lua5.4
     plymouth
     plymouth-themes
 )
@@ -418,7 +421,11 @@ mkdir -p /usr/local/bin
 if [ -d "$BIN_DIR" ]; then
     cp -f "$BIN_DIR"/rinauby-* /usr/local/bin/
     chmod 755 /usr/local/bin/rinauby-*
-    log_ok "Seluruh wrapper rinauby-* terpasang di /usr/local/bin/"
+    sed -i \
+        -e "s|$HOST_HARDCODED_PREFIX/wallpapers|$SYS_WALL_DIR|g" \
+        -e "s|$HOST_HARDCODED_PREFIX/dotfiles|$SYS_SHARE_DIR|g" \
+        /usr/local/bin/rinauby-* 2>/dev/null || true
+    log_ok "Seluruh wrapper rinauby-* terpasang di /usr/local/bin/ (path disanitasi)"
 fi
 
 # Pastikan seluruh script eksekusi di /usr/share/rinauby memiliki izin +x
@@ -552,6 +559,7 @@ log_step "TAHAP 10: Mengonfigurasi PAM Lockscreen, Sesi Wayland, & Proteksi Virt
 # 10A. Konfigurasi PAM Ubuntu untuk hyprlock & swaylock (menggunakan common-auth)
 mkdir -p /etc/pam.d
 cat << 'EOF' > /etc/pam.d/hyprlock
+#%PAM-1.0
 # PAM configuration for hyprlock on Ubuntu / Debian (Rinauby)
 auth        include     common-auth
 account     include     common-account
@@ -581,13 +589,17 @@ VIRT_ENV="$(systemd-detect-virt 2>/dev/null || echo "none")"
 DMI_PROD="$(cat /sys/class/dmi/id/product_name 2>/dev/null || echo "")"
 
 if [ "$VIRT_ENV" = "oracle" ] || [[ "$DMI_PROD" == *"VirtualBox"* ]] || [ "$VIRT_ENV" != "none" ]; then
+    # Kompatibilitas kursor software
     export WLR_NO_HARDWARE_CURSORS=1
     export WLR_RENDERER_ALLOW_SOFTWARE=1
+    # Backend Aquamarine (Hyprland v0.50+) pencegah crash DRM Atomic & buffer modifiers di VM
     export AQ_NO_ATOMIC=1
-    # Jika akselerasi 3D VirtualBox mati (hanya llvmpipe/software), gunakan pixman/software fallback
+    export AQ_NO_MODIFIERS=1
+    # Software rendering fallback via Mesa Gallium llvmpipe jika akselerasi 3D mati
     if command -v glxinfo >/dev/null 2>&1; then
         if glxinfo 2>/dev/null | grep -qi "llvmpipe"; then
             export LIBGL_ALWAYS_SOFTWARE=1
+            export GALLIUM_DRIVER=llvmpipe
             export WLR_RENDERER=pixman
         fi
     fi

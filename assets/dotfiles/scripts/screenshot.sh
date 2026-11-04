@@ -88,6 +88,8 @@ case "$1" in
         SCRIPT_PATH="$(readlink -f "$0")"
         if [ -f "$HOME/.config/rofi/screenshot_menu.rasi" ]; then
             ROFI_THEME="$HOME/.config/rofi/screenshot_menu.rasi"
+        elif [ -f "/usr/share/rinauby/rofi/screenshot_menu.rasi" ]; then
+            ROFI_THEME="/usr/share/rinauby/rofi/screenshot_menu.rasi"
         elif [ -f "/home/rifqi/Workspace/Belajar/SO/Tubes-2604/Rancangan/assets/dotfiles/rofi/screenshot_menu.rasi" ]; then
             ROFI_THEME="/home/rifqi/Workspace/Belajar/SO/Tubes-2604/Rancangan/assets/dotfiles/rofi/screenshot_menu.rasi"
         else
@@ -114,7 +116,7 @@ case "$1" in
                 exec "$SCRIPT_PATH" delay 5
                 ;;
             *"Buka Folder"*)
-                xdg-open "$TARGET_DIR" 2>/dev/null || nautilus "$TARGET_DIR" 2>/dev/null &
+                xdg-open "$TARGET_DIR" 2>/dev/null || thunar "$TARGET_DIR" 2>/dev/null &
                 ;;
         esac
         ;;
