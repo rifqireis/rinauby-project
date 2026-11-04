@@ -161,7 +161,6 @@ WAYLAND_PKGS=(
     hyprland
     hyprlock
     hypridle
-    hyprpaper
     xdg-desktop-portal-hyprland
     xdg-desktop-portal-gtk
     xdg-desktop-portal
@@ -645,6 +644,18 @@ log_ok "Sesi 'Rinauby (Digital Humanism)' tersedia sebagai pilihan di Display Ma
 if [ -f /etc/gdm3/custom.conf ]; then
     sed -i 's/^WaylandEnable=false/#WaylandEnable=false/g' /etc/gdm3/custom.conf || true
 fi
+
+# Nonaktifkan autostart systemd user service hyprpaper/hypridle di sesi GNOME agar tidak crash di Live Installer
+rm -f /etc/systemd/user/graphical-session.target.wants/hyprpaper.service 2>/dev/null || true
+rm -f /etc/systemd/user/graphical-session.target.wants/hypridle.service 2>/dev/null || true
+systemctl --global disable hyprpaper.service 2>/dev/null || true
+systemctl --global disable hypridle.service 2>/dev/null || true
+
+# Matikan crash popup Apport pada Live CD agar tidak memunculkan dialog internal error saat demo
+if [ -f /etc/default/apport ]; then
+    sed -i 's/^enabled=.*/enabled=0/' /etc/default/apport || true
+fi
+systemctl disable apport.service 2>/dev/null || true
 
 # ------------------------------------------------------------------------------
 # 11. IDENTITAS DISTRO (/etc/os-release) & PEMBERSIHAN AKHIR
