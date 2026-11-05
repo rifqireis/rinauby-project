@@ -16,18 +16,15 @@ configuration {
     me-accept-entry: "MousePrimary";
 }
 
+@import "theme_colors.rasi"
+
 * {
     font: "Inter 11";
-    bg-card: rgba(26, 32, 38, 0.82);
-    bg-card-hover: rgba(38, 46, 54, 0.92);
-    bg-selected: rgba(48, 58, 68, 0.96);
-    border-card: rgba(255, 255, 255, 0.05);
-    border-selected: rgba(255, 255, 255, 0.20);
-    accent-gold: #db9c5e;
-    accent-gold-bright: #e5c07b;
-    fg-main: #d3c6aa;
-    fg-bright: #fbf2db;
-    fg-muted: #859289;
+    bg-card: @bg-base;
+    bg-card-hover: @bg-input;
+    bg-selected: @bg-selected;
+    border-card: @border-subtle;
+    border-selected: @accent-gold;
 
     background-color: transparent;
     text-color: @fg-main;

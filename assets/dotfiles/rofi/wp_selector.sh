@@ -40,7 +40,7 @@ mkdir -p "$THUMB_DIR"
 CAROUSEL_THUMB_DIR="$WALL_DIR/.thumbs_carousel"
 mkdir -p "$CAROUSEL_THUMB_DIR"
 
-# Definisi 8 karya seni klasik Renaissance persis urutan mockup (Apotheosis sebagai utama)
+# Definisi karya seni klasik Renaissance & modern
 ITEMS=(
     "apotheosis:The Apotheosis"
     "school_of_athens:The School of Athens"
@@ -50,6 +50,8 @@ ITEMS=(
     "primavera:Primavera"
     "tower_of_babel:The Tower of Babel"
     "annunciation:The Annunciation"
+    "modern_cobalt_expressionism:Cobalt Expressionism"
+    "midnight_cyber_warrior:Midnight Cyber Warrior"
 )
 
 ENTRY_LIST=""
@@ -102,45 +104,20 @@ if [ -n "$CHOSEN" ]; then
     SELECTED_PATH="$WALL_DIR/${selected_stem}.jpg"
 
     if [ -f "$SELECTED_PATH" ]; then
-        # Simpan judul wallpaper aktif ke file state
-        echo "$CHOSEN" > /tmp/current_wallpaper_title
+        APPLY_SCRIPT="$HOME/.config/quickshell/scripts/apply_wallpaper.sh"
+        [ -x "$APPLY_SCRIPT" ] || APPLY_SCRIPT="/home/rifqi/Workspace/Belajar/SO/Tubes-2604/Rancangan/assets/dotfiles/quickshell/scripts/apply_wallpaper.sh"
 
-        # Terapkan wallpaper ke Hyprland dengan animasi circular jika swww/awww tersedia
-        if command -v swww &>/dev/null || command -v awww &>/dev/null; then
-            WP_CMD=$(command -v swww 2>/dev/null || command -v awww 2>/dev/null)
-            WP_DAEMON="${WP_CMD}-daemon"
-            WP_NAME="${WP_DAEMON##*/}"
-
-            # Pastikan daemon swww/awww sedang berjalan
-            if ! pgrep -x "$WP_NAME" >/dev/null; then
-                "$WP_DAEMON" &>/dev/null &
-                sleep 0.4
+        if [ -x "$APPLY_SCRIPT" ]; then
+            bash "$APPLY_SCRIPT" "$SELECTED_PATH"
+        else
+            echo "$CHOSEN" > /tmp/current_wallpaper_title
+            if command -v swww &>/dev/null; then
+                swww img "$SELECTED_PATH" --transition-type grow --transition-pos center --transition-duration 1.5 --transition-fps 60 || true
             fi
-
-            # Hentikan swaybg agar layer gambar ditangani mulus oleh swww/awww
-            pkill -x swaybg 2>/dev/null || true
-
-            # Terapkan animasi circular reveal (grow dari center)
-            "$WP_CMD" img "$SELECTED_PATH" \
-                --transition-type grow \
-                --transition-pos center \
-                --transition-duration 1.5 \
-                --transition-fps 60 \
-                --transition-bezier .43,1.19,1,1
-        elif command -v hyprctl &>/dev/null && pgrep -x hyprpaper >/dev/null; then
-            hyprctl hyprpaper preload "$SELECTED_PATH"
-            hyprctl hyprpaper wallpaper ",$SELECTED_PATH"
-            hyprctl hyprpaper unload all >/dev/null 2>&1
-        elif command -v swaybg &>/dev/null; then
-            pkill -x swaybg 2>/dev/null
-            swaybg -i "$SELECTED_PATH" -m fill &
+            [ -x "$QUOTE_ROTATOR" ] && "$QUOTE_ROTATOR" --next >/dev/null 2>&1
+            pkill -RTMIN+8 waybar 2>/dev/null || true
+            pkill -USR1 -f window_title.py 2>/dev/null || true
+            notify-send -a "System" "Wallpaper" "$CHOSEN" -i "$SELECTED_PATH" 2>/dev/null || true
         fi
-
-        # Rotasi semboyan Renaissance secara acak & refresh Waybar
-        [ -x "$QUOTE_ROTATOR" ] && "$QUOTE_ROTATOR" --next >/dev/null 2>&1
-        pkill -RTMIN+8 waybar 2>/dev/null || true
-        pkill -USR1 -f window_title.py 2>/dev/null || true
-
-        notify-send -a "System" "Wallpaper" "$CHOSEN" -i "$SELECTED_PATH" 2>/dev/null || true
     fi
 fi

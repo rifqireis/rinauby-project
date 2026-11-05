@@ -1,10 +1,12 @@
 /*
  * =============================================================================
- * WAYBAR STYLE: RINAUBY (ACADEMIC HUMANIST)
+ * WAYBAR STYLE: RINAUBY (ACADEMIC HUMANIST & DUAL-THEME READY)
  * Filosofi: Digital Humanism & Rinauby
- * Konsep: Nempel ke Atas (margin-top: 0), Garis Emas Bawah, Solid 0.82
+ * Konsep: Nempel ke Atas (margin-top: 0), Garis Aksen Bawah, Solid 0.82
  * =============================================================================
  */
+
+@import "theme.css";
 
 * {
     border: none;
@@ -21,15 +23,15 @@
 }
 
 /* -----------------------------------------------------------------------------
- * 1. FLOATING BAR CONTAINER (Nempel ke Atas dengan Garis Aksen Emas Bawah)
+ * 1. FLOATING BAR CONTAINER (Nempel ke Atas dengan Garis Aksen Bawah)
  * ----------------------------------------------------------------------------- */
 window#waybar {
-    background-color: rgba(28, 33, 37, 0.82);
-    color: #d3c6aa;
+    background-color: @bar_bg;
+    color: @bar_fg;
     border-top: none;
-    border-left: 1px solid rgba(184, 134, 78, 0.22);
-    border-right: 1px solid rgba(184, 134, 78, 0.22);
-    border-bottom: 2px solid #db9c5e;
+    border-left: 1px solid @bar_border_side;
+    border-right: 1px solid @bar_border_side;
+    border-bottom: 2px solid @bar_border_bottom;
     border-radius: 0 0 6px 6px;
     box-shadow: 0 4px 18px rgba(0, 0, 0, 0.40);
 }
@@ -42,14 +44,14 @@ window#waybar.hidden {
  * 2. TOOLTIP
  * ----------------------------------------------------------------------------- */
 tooltip {
-    background-color: rgba(24, 28, 31, 0.95);
-    border: 1px solid rgba(184, 134, 78, 0.45);
+    background-color: @tooltip_bg;
+    border: 1px solid @tooltip_border;
     border-radius: 6px;
     box-shadow: 0 4px 16px rgba(0, 0, 0, 0.5);
 }
 
 tooltip label {
-    color: #d3c6aa;
+    color: @bar_fg;
     padding: 6px 10px;
     font-size: 12.5px;
 }
@@ -58,7 +60,7 @@ tooltip label {
  * 3. SISI KIRI (Logo, Workspaces Romawi, Window Title / Wallpaper Title)
  * ----------------------------------------------------------------------------- */
 #custom-logo {
-    color: #db9c5e;
+    color: @accent;
     font-size: 15px;
     margin-left: 14px;
     margin-right: 8px;
@@ -76,7 +78,7 @@ tooltip label {
     background: transparent;
     border: none;
     border-radius: 4px;
-    color: #859289;
+    color: @ws_inactive;
     font-family: "Cinzel", "EB Garamond", "Inter", serif;
     font-size: 13.5px;
     font-weight: 600;
@@ -85,14 +87,14 @@ tooltip label {
 }
 
 #workspaces button:hover {
-    color: #fbf2db;
-    background: rgba(229, 192, 123, 0.10);
+    color: @bar_fg_bright;
+    background: @ws_hover_bg;
 }
 
 #workspaces button.active {
-    color: #e5c07b;
+    color: @ws_active;
     font-weight: 700;
-    background: rgba(229, 192, 123, 0.15);
+    background: @ws_active_bg;
 }
 
 #workspaces button.urgent {
@@ -102,7 +104,7 @@ tooltip label {
 
 #custom-separator-left,
 #custom-separator-right {
-    color: rgba(184, 134, 78, 0.30);
+    color: @sep_color;
     font-size: 13px;
     margin: 0 12px;
 }
@@ -119,7 +121,7 @@ tooltip label {
 }
 
 #custom-window-title.active-wallpaper {
-    color: #e5c07b;
+    color: @accent_gold;
     font-weight: 600;
     letter-spacing: 0.3px;
 }
@@ -130,7 +132,7 @@ tooltip label {
 #custom-quote,
 #custom-wallpaper,
 #custom-motto {
-    color: #fbf2db;
+    color: @bar_fg_bright;
     font-family: "Cinzel", "EB Garamond", "Inter", serif;
     font-size: 13.5px;
     font-weight: 600;
@@ -145,7 +147,7 @@ tooltip label {
 #custom-quote:hover,
 #custom-wallpaper:hover,
 #custom-motto:hover {
-    color: #db9c5e;
+    color: @accent;
 }
 
 /* -----------------------------------------------------------------------------
@@ -159,7 +161,7 @@ tooltip label {
     background: transparent;
     border: none;
     box-shadow: none;
-    color: #d3c6aa;
+    color: @bar_fg;
     font-size: 13px;
     font-weight: 500;
     transition: color 150ms ease;
@@ -167,7 +169,7 @@ tooltip label {
 
 #pulseaudio:hover,
 #battery:hover {
-    color: #fbf2db;
+    color: @bar_fg_bright;
 }
 
 #pulseaudio.muted {
@@ -180,7 +182,7 @@ tooltip label {
 }
 
 #battery.warning:not(.charging) {
-    color: #e5c07b;
+    color: @accent_gold;
 }
 
 #battery.critical:not(.charging) {
@@ -188,11 +190,11 @@ tooltip label {
 }
 
 #clock {
-    color: #e5c07b;
+    color: @accent_gold;
     font-weight: 600;
     margin-right: 14px;
 }
 
 #clock:hover {
-    color: #fbf2db;
+    color: @bar_fg_bright;
 }

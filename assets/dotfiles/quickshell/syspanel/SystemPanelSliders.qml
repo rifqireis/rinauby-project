@@ -102,9 +102,9 @@ Rectangle {
                 value: panel.sysVolume
                 backgroundColor: ThemeBackend.mantle
                 accentColor: panel.sysMuted ? ThemeBackend.surface2 : ThemeBackend.blue
-                gradColor1: panel.sysMuted ? ThemeBackend.surface2 : "#c87d46"
-                gradColor2: panel.sysMuted ? ThemeBackend.surface2 : "#db9c5e"
-                gradColor3: panel.sysMuted ? ThemeBackend.surface2 : "#e5c07b"
+                gradColor1: panel.sysMuted ? ThemeBackend.surface2 : ThemeBackend.blue
+                gradColor2: panel.sysMuted ? ThemeBackend.surface2 : ThemeBackend.sapphire
+                gradColor3: panel.sysMuted ? ThemeBackend.surface2 : ThemeBackend.pink
                 cornerRadius: panel.s(6)
                 handleSize: panel.s(20)
 
@@ -186,9 +186,9 @@ Rectangle {
                 value: panel.sysBrightness
                 backgroundColor: ThemeBackend.mantle
                 accentColor: ThemeBackend.sapphire
-                gradColor1: "#c87d46"
-                gradColor2: "#db9c5e"
-                gradColor3: "#e5c07b"
+                gradColor1: ThemeBackend.blue
+                gradColor2: ThemeBackend.sapphire
+                gradColor3: ThemeBackend.pink
                 cornerRadius: panel.s(6)
                 handleSize: panel.s(20)
 

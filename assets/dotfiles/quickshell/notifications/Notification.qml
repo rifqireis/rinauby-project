@@ -428,7 +428,7 @@ Rectangle {
         clip: true
         implicitHeight: cardContent.implicitHeight + s(20)
 
-        property color baseColor: typeRoot.isPopup ? "#1b1f24" : (typeRoot.readState === false ? "#272c33" : "#252930")
+        property color baseColor: typeRoot.isPopup ? ThemeBackend.surface0 : (typeRoot.readState === false ? ThemeBackend.surface1 : ThemeBackend.mantle)
         color: ThemeBackend.faded((cardHover.pressed && !cardHover.draggingH && !cardHover.draggingV) ? Qt.darker(baseColor, 1.08) : (cardHover.containsMouse && !cardHover.draggingH && !cardHover.draggingV ? Qt.lighter(baseColor, 1.06) : baseColor))
         border.width: 1
         border.color: typeRoot.urgency === 2 ? Qt.rgba(0.902, 0.494, 0.502, 0.45) : (typeRoot.isPopup ? Qt.rgba(1, 1, 1, 0.07) : Qt.rgba(1, 1, 1, 0.055))

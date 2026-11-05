@@ -1,0 +1,13 @@
+/* Rofi Theme: Modern Renaissance (Cobalt Blue & Cyber Mocha) */
+* {
+    bg-base: rgba(24, 24, 37, 0.96);
+    bg-input: rgba(17, 17, 27, 0.85);
+    bg-selected: rgba(137, 180, 250, 0.18);
+    border-subtle: rgba(137, 180, 250, 0.18);
+    border-hairline: rgba(137, 180, 250, 0.08);
+    accent-gold: #89b4fa;
+    accent-gold-bright: #74c7ec;
+    fg-main: #cdd6f4;
+    fg-bright: #ffffff;
+    fg-muted: #6c7086;
+}

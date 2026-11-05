@@ -427,7 +427,7 @@ Item {
         anchors.rightMargin: root.s(10)
         anchors.topMargin: root.s(6)
         anchors.bottomMargin: root.s(12)
-        color: Qt.rgba(0.09, 0.102, 0.114, 0.96)
+        color: Qt.rgba(ThemeBackend.base.r, ThemeBackend.base.g, ThemeBackend.base.b, 0.96)
         radius: root.s(16)
         topLeftRadius: radius
         bottomLeftRadius: radius
