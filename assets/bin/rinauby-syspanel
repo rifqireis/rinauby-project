@@ -1,0 +1,16 @@
+#!/usr/bin/env bash
+# ==============================================================================
+# RINAUBY : RIGHT-SIDE CONTROL CENTER & SYSTEM PANEL
+# Quickshell Masterpiece Component (Replaces SwayNC)
+# ==============================================================================
+
+QS_CFG="$HOME/.config/quickshell/shell.qml"
+[ -f "$QS_CFG" ] || QS_CFG="$(cd "$(dirname "${BASH_SOURCE[0]}")/../dotfiles/quickshell" 2>/dev/null && pwd)/shell.qml"
+
+if ! pgrep -x quickshell >/dev/null && ! pgrep -x qs >/dev/null; then
+    quickshell -p "$QS_CFG" >/dev/null 2>&1 &
+    sleep 0.4
+fi
+
+quickshell -p "$QS_CFG" ipc call main handleCommand "system" "" "" 2>/dev/null || \
+quickshell ipc call main handleCommand "system" "" "" 2>/dev/null

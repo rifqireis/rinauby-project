@@ -1,14 +1,16 @@
 #!/usr/bin/env bash
-CANDIDATES=(
-    "$HOME/.config/rofi/wp_selector.sh"
-    "/usr/share/rinauby/rofi/wp_selector.sh"
-)
-REPO_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." 2>/dev/null && pwd)"
-CANDIDATES+=("$REPO_DIR/dotfiles/rofi/wp_selector.sh")
-CANDIDATES+=("/home/rifqi/Workspace/Belajar/SO/Tubes-2604/Rancangan/assets/dotfiles/rofi/wp_selector.sh")
+# ==============================================================================
+# RINAUBY : 3D SKEWED COVERFLOW WALLPAPER SELECTOR
+# Quickshell Masterpiece Component
+# ==============================================================================
 
-for s in "${CANDIDATES[@]}"; do
-    if [ -f "$s" ]; then
-        exec bash "$s" "$@"
-    fi
-done
+QS_CFG="$HOME/.config/quickshell/shell.qml"
+[ -f "$QS_CFG" ] || QS_CFG="$(cd "$(dirname "${BASH_SOURCE[0]}")/../dotfiles/quickshell" 2>/dev/null && pwd)/shell.qml"
+
+if ! pgrep -x quickshell >/dev/null && ! pgrep -x qs >/dev/null; then
+    quickshell -p "$QS_CFG" >/dev/null 2>&1 &
+    sleep 0.4
+fi
+
+quickshell -p "$QS_CFG" ipc call main handleCommand "wallpaper" "" "" 2>/dev/null || \
+quickshell ipc call main handleCommand "wallpaper" "" "" 2>/dev/null
