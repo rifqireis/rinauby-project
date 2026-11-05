@@ -1,7 +1,6 @@
 // =============================================================================
-// WAYBAR CONFIGURATION: RINAUBY (ACADEMIC HUMANIST)
-// Filosofi: Digital Humanism & School of Athens
-// Estetika: Top Docked (margin-top: 0), Garis Emas Bawah, Dynamic Wallpaper Title
+// WAYBAR CONFIGURATION: MODERN RENAISSANCE
+// Filosofi: Digital Humanism (Modern Flat, Minimalist GNOME standard)
 // =============================================================================
 
 {
@@ -36,7 +35,7 @@
     ],
 
     // -------------------------------------------------------------------------
-    // 1. SISI KIRI (Logo, Workspaces Romawi, Window Title / Wallpaper Title)
+    // 1. SISI KIRI (Ikon Universal 9-Titik, Workspaces Angka Modern, Judul)
     // -------------------------------------------------------------------------
     "custom/logo": {
         "format": "󰀻",
@@ -81,7 +80,7 @@
     },
 
     // -------------------------------------------------------------------------
-    // 2. SISI TENGAH (Semboyan Klasik Renaissance Humanism)
+    // 2. SISI TENGAH (Motto Filosofis Modern)
     // -------------------------------------------------------------------------
     "custom/quote": {
         "format": "{}",

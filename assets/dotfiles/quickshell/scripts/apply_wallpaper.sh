@@ -114,9 +114,12 @@ else
     kitty +kitten themes --reload-in=all "Everforest Dark Hard" 2>/dev/null || true
 fi
 
-# 5. Sinkronisasi Palet Warna Waybar
+# 5. Sinkronisasi Waybar (Config, Style, & Theme Palette)
 mkdir -p "$HOME/.config/waybar"
 WAYBAR_THEME_TARGET="$HOME/.config/waybar/theme.css"
+WAYBAR_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/../../waybar" 2>/dev/null && pwd)"
+[ -d "$WAYBAR_DIR" ] || WAYBAR_DIR="$HOME/.config/waybar"
+
 if [ "$THEME_MODE" = "modern" ]; then
     cat << 'EOF' > "$WAYBAR_THEME_TARGET"
 /* Waybar Theme: Modern Renaissance (Cobalt Blue & Cyber Mocha) */
@@ -135,6 +138,12 @@ if [ "$THEME_MODE" = "modern" ]; then
 @define-color tooltip_bg rgba(17, 17, 27, 0.95);
 @define-color tooltip_border rgba(137, 180, 250, 0.30);
 EOF
+    if [ -f "$WAYBAR_DIR/config-modern.jsonc" ]; then
+        cp -f "$WAYBAR_DIR/config-modern.jsonc" "$HOME/.config/waybar/config.jsonc"
+    fi
+    if [ -f "$WAYBAR_DIR/style-modern.css" ]; then
+        cp -f "$WAYBAR_DIR/style-modern.css" "$HOME/.config/waybar/style.css"
+    fi
 else
     cat << 'EOF' > "$WAYBAR_THEME_TARGET"
 /* Waybar Theme: Classic Renaissance (Ochre Gold & Parchment) */
@@ -153,8 +162,15 @@ else
 @define-color tooltip_bg rgba(24, 28, 31, 0.95);
 @define-color tooltip_border rgba(184, 134, 78, 0.45);
 EOF
+    if [ -f "$WAYBAR_DIR/config-classic.jsonc" ]; then
+        cp -f "$WAYBAR_DIR/config-classic.jsonc" "$HOME/.config/waybar/config.jsonc"
+    fi
+    if [ -f "$WAYBAR_DIR/style-classic.css" ]; then
+        cp -f "$WAYBAR_DIR/style-classic.css" "$HOME/.config/waybar/style.css"
+    fi
 fi
-pkill -SIGUSR2 waybar 2>/dev/null || true
+pkill -x waybar 2>/dev/null || true
+waybar -c "$HOME/.config/waybar/config.jsonc" -s "$HOME/.config/waybar/style.css" >/dev/null 2>&1 &
 
 # 6. Sinkronisasi Palet Warna Rofi
 mkdir -p "$HOME/.config/rofi"
