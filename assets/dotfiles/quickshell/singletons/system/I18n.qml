@@ -7,10 +7,7 @@ import "../../"
 Item {
     id: root
 
-    readonly property string i18nDir: {
-        let p = (Quickshell.env("HOME") || "/home/rifqi") + "/.config/quickshell/assets/languages";
-        return p;
-    }
+    readonly property string i18nDir: "/home/rifqi/Workspace/Belajar/SO/Tubes-2604/Rancangan/assets/dotfiles/quickshell/assets/languages"
     property string currentLang: systemLanguage()
     // Locale for dates: "ua" is not an ISO language code, Qt knows Ukrainian as uk_UA.
     readonly property string qtLocaleName: currentLang === "ua" ? "uk_UA" : currentLang

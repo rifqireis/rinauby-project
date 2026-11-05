@@ -115,12 +115,7 @@ Item {
 
     property bool canHibernate: false
 
-    readonly property color batColorFlat: {
-        if (!UPower.displayDevice.ready) return ThemeBackend.blue;
-        if (isCharging) return ThemeBackend.green;
-        if (batCapacity <= 20) return ThemeBackend.red;
-        return ThemeBackend.blue;
-    }
+    readonly property color batColorFlat: ThemeBackend.blue
 
     property real animCapacity: 0
     Behavior on animCapacity {
@@ -387,7 +382,7 @@ Item {
                     font.family: ThemeBackend.fontFamily
                     font.weight: Font.Bold
                     font.pixelSize: root.s(10)
-                    color: bRoot.glass ? Qt.alpha(bRoot.contentTextColor, 0.75) : (bRoot.contentTextColor === ThemeBackend.crust ? Qt.alpha(ThemeBackend.crust, 0.85) : (root.isCharging ? ThemeBackend.green : ThemeBackend.subtext0))
+                    color: bRoot.glass ? Qt.alpha(bRoot.contentTextColor, 0.75) : (bRoot.contentTextColor === ThemeBackend.crust ? Qt.alpha(ThemeBackend.crust, 0.85) : ThemeBackend.subtext0)
                     text: timeString
                     elide: Text.ElideRight
                     Layout.fillWidth: true
@@ -412,9 +407,9 @@ Item {
         anchors.fill: sidebarPanel
         source: sidebarShadowSource
         shadowEnabled: true
-        shadowColor: "#c8000000"
-        shadowBlur: 0.85
-        shadowVerticalOffset: root.s(5)
+        shadowColor: "#40000000"
+        shadowBlur: 0.6
+        shadowVerticalOffset: root.s(4)
         shadowHorizontalOffset: 0
         opacity: root.introContent
         transform: Translate { x: (root.isLeftAnchored ? -root.slideDistance : root.slideDistance) * (1.0 - root.introContent) }
@@ -489,14 +484,14 @@ Item {
                             cornerRadius: root.s(10)
                             imageRadius: root.s(10)
                             source: SystemInfo.avatarPath !== "" ? "file://" + SystemInfo.avatarPath : ""
-                            backgroundColor: SystemInfo.avatarPath === "" ? Qt.rgba(0.859, 0.612, 0.369, 0.14) : "transparent"
+                            backgroundColor: SystemInfo.avatarPath === "" ? Qt.rgba(ThemeBackend.blue.r, ThemeBackend.blue.g, ThemeBackend.blue.b, 0.14) : "transparent"
 
                             Text {
                                 anchors.centerIn: parent
                                 text: ""
                                 font.family: ThemeBackend.iconFont
                                 font.pixelSize: root.s(17)
-                                color: ThemeBackend.sapphire
+                                color: ThemeBackend.blue
                                 visible: SystemInfo.avatarPath === ""
                             }
                         }
@@ -528,12 +523,13 @@ Item {
                         IconButton {
                             id: settingsQuickBtn
                             Layout.alignment: Qt.AlignVCenter
-                            size: root.s(34)
-                            cornerRadius: root.s(10)
+                            size: root.s(32)
+                            cornerRadius: root.s(8)
                             buttonIcon: "󰒓"
                             iconFontSize: root.s(16)
-                            accentColor: Qt.rgba(0.859, 0.612, 0.369, 0.12)
-                            textColor: isHoveredOrHighlighted ? ThemeBackend.text : ThemeBackend.sapphire
+                            accentColor: isHoveredOrHighlighted ? Qt.rgba(1, 1, 1, 0.08) : "transparent"
+                            bgOpacity: isHoveredOrHighlighted ? 1.0 : 0.0
+                            textColor: isHoveredOrHighlighted ? ThemeBackend.text : ThemeBackend.blue
                             onClicked: {
                                 closeSequence.start();
                                 Quickshell.execDetached(["bash", "-c", "rinauby-settings --toggle"]);
@@ -543,16 +539,17 @@ Item {
                         ClickButton {
                             id: logoutBtn
                             Layout.alignment: Qt.AlignVCenter | Qt.AlignRight
-                            Layout.preferredWidth: root.s(88)
-                            Layout.preferredHeight: root.s(34)
-                            horizontalPadding: root.s(10)
-                            cornerRadius: root.s(10)
+                            Layout.preferredWidth: root.s(80)
+                            Layout.preferredHeight: root.s(32)
+                            horizontalPadding: root.s(8)
+                            cornerRadius: root.s(8)
                             buttonText: I18n.t("syspanel.user.logout")
                             textFontSize: root.s(11)
                             buttonIcon: "󰍃"
                             iconFontSize: root.s(14)
-                            accentColor: Qt.rgba(0.859, 0.612, 0.369, 0.14)
-                            textColor: ThemeBackend.sapphire
+                            accentColor: isHoveredOrHighlighted ? Qt.rgba(1, 1, 1, 0.08) : "transparent"
+                            bgOpacity: isHoveredOrHighlighted ? 1.0 : 0.0
+                            textColor: isHoveredOrHighlighted ? ThemeBackend.text : ThemeBackend.blue
 
                             Timer {
                                 id: logoutOpenTimer
@@ -619,7 +616,7 @@ Item {
                         clip: true
 
                         property real fillLevel: root.animCapacity / 100
-                        property real maxWaveAmp: root.isCharging ? root.s(8) : root.s(5)
+                        property real maxWaveAmp: root.s(2)
                         property real waveAmp: (fillLevel < 0.99 && fillLevel > 0.01) ? maxWaveAmp * Math.sin(fillLevel * Math.PI) : 0
 
                         GlassFill {

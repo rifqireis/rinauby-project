@@ -43,16 +43,17 @@ RowLayout {
                 Translate { x: (panel.isLeftAnchored ? -panel.rowSlideDistance : panel.rowSlideDistance) * (1.0 - panel.introActions) }
             ]
 
-            color: capsuleGlass.active ? "transparent" : ((actionMa.containsMouse && !isDisabled) ? ThemeBackend.surface1 : ThemeBackend.surface0)
+            color: (actionMa.containsMouse && !isDisabled) ? Qt.rgba(1, 1, 1, 0.08) : Qt.rgba(1, 1, 1, 0.03)
             border.width: 1
-            border.color: Qt.rgba(1, 1, 1, 0.05)
+            border.color: (actionMa.containsMouse && !isDisabled) ? Qt.rgba(1, 1, 1, 0.08) : Qt.rgba(1, 1, 1, 0.03)
 
             GlassFill {
                 id: capsuleGlass
                 anchors.fill: parent
                 radius: parent.radius
                 tintColor: (actionMa.containsMouse && !isDisabled) ? ThemeBackend.surface1 : ThemeBackend.surface0
-                tintAmount: 0.3
+                tintAmount: 0.2
+                shadow: 0
                 press: (actionMa.pressed && !isDisabled) ? 0.6 + 0.4 * actionCapsule.fillLevel : ((actionMa.containsMouse && !isDisabled) ? 0.25 : 0)
                 pulse: Math.min(1, actionCapsule.flashOpacity * 2.5)
                 Behavior on press { NumberAnimation { duration: 250; easing.type: Easing.OutCubic } }
@@ -120,7 +121,7 @@ RowLayout {
                 waveAmp: actionCapsule.fillLevel < 0.99 ? (panel.s(10) * Math.sin(actionCapsule.fillLevel * Math.PI)) : 0
                 phase: wavePhase
                 vertical: 1.0
-                color1: (cmd === "poweroff" || cmd === "hibernate" ? ThemeBackend.red : ThemeBackend.blue)
+                color1: ThemeBackend.blue
                 color2: color1
             }
 

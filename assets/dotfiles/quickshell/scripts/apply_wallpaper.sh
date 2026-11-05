@@ -252,7 +252,9 @@ else
 EOF
 fi
 
-quickshell -p "$HOME/.config/quickshell/shell.qml" ipc call theme reloadColors 2>/dev/null || quickshell ipc call theme reloadColors 2>/dev/null || true
+QS_QML="/home/rifqi/Workspace/Belajar/SO/Tubes-2604/Rancangan/assets/dotfiles/quickshell/shell.qml"
+[ -f "$QS_QML" ] || QS_QML="$HOME/.config/quickshell/shell.qml"
+quickshell -p "$QS_QML" ipc call theme reloadColors 2>/dev/null || quickshell ipc call theme reloadColors 2>/dev/null || true
 
 # 8. Rotasi Kutipan & Update Title Waybar
 if [ -f "$HOME/.config/waybar/quote_rotator.sh" ]; then

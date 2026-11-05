@@ -36,7 +36,7 @@ Notification {
                 text: "󰂚"
                 font.family: ThemeBackend.iconFont
                 font.pixelSize: s(20)
-                color: ThemeBackend.sapphire
+                color: ThemeBackend.blue
             }
         }
     ]

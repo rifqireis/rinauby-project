@@ -375,7 +375,7 @@ Rectangle {
         anchors.bottomMargin: -(s(3) + Math.max(0, typeRoot.dragY * 0.4))
         radius: visualItem.radius
         color: Qt.rgba(0, 0, 0, (typeRoot.isPopup ? 0.36 : 0.18) + Math.min(0.08, Math.max(0, typeRoot.dragY / s(3.5)) * 0.08))
-        visible: !ThemeBackend.glassActive
+        visible: typeRoot.isPopup && !ThemeBackend.glassActive
         scale: visualItem.scale
         opacity: visualItem.opacity
         transform: Translate {
@@ -588,13 +588,13 @@ Rectangle {
                         anchors.bottomMargin: -s(1.5)
                         radius: parent.boxRadius
                         color: Qt.rgba(0, 0, 0, 0.12)
-                        visible: !ThemeBackend.glassActive
+                        visible: false
                     }
 
                     Rectangle {
                         anchors.fill: parent
                         radius: parent.boxRadius
-                        color: iconBoxGlass.active ? "transparent" : (typeRoot.urgency === 2 ? Qt.rgba(0.902, 0.494, 0.502, 0.18) : Qt.rgba(0.859, 0.612, 0.369, 0.14))
+                        color: iconBoxGlass.active ? "transparent" : (typeRoot.urgency === 2 ? Qt.rgba(0.902, 0.494, 0.502, 0.18) : Qt.rgba(ThemeBackend.blue.r, ThemeBackend.blue.g, ThemeBackend.blue.b, 0.12))
 
                         Behavior on color { ColorAnimation { duration: 250 } }
 
@@ -602,8 +602,8 @@ Rectangle {
                             id: iconBoxGlass
                             anchors.fill: parent
                             radius: parent.radius
-                            tintColor: typeRoot.urgency === 2 ? ThemeBackend.red : ThemeBackend.surface2
-                            tintAmount: typeRoot.urgency === 2 ? 0.3 : 0.35
+                            tintColor: typeRoot.urgency === 2 ? ThemeBackend.red : ThemeBackend.blue
+                            tintAmount: typeRoot.urgency === 2 ? 0.3 : 0.25
                             tintStrength: 1.0
                             pulse: typeRoot.arrive
                         }

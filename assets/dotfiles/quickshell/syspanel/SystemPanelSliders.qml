@@ -59,11 +59,12 @@ Rectangle {
             IconButton {
                 Layout.alignment: Qt.AlignVCenter
                 size: panel.s(28)
-                cornerRadius: panel.s(8)
+                cornerRadius: panel.s(6)
                 buttonIcon: panel.sysMuted || panel.sysVolume === 0 ? "󰖁" : (panel.sysVolume > 50 ? "󰕾" : "󰖀")
-                iconFontSize: panel.s(15)
-                accentColor: Qt.rgba(0.859, 0.612, 0.369, 0.14)
-                textColor: isHoveredOrHighlighted ? ThemeBackend.text : (panel.sysMuted ? ThemeBackend.overlay0 : ThemeBackend.sapphire)
+                iconFontSize: panel.s(16)
+                accentColor: isHoveredOrHighlighted ? Qt.rgba(1, 1, 1, 0.08) : "transparent"
+                bgOpacity: isHoveredOrHighlighted ? 1.0 : 0.0
+                textColor: isHoveredOrHighlighted ? ThemeBackend.text : (panel.sysMuted ? ThemeBackend.overlay0 : ThemeBackend.blue)
                 onClicked: {
                     if (Audio.defaultSink) {
                         Audio.toggleMute(Audio.defaultSink);
@@ -103,15 +104,15 @@ Rectangle {
                 backgroundColor: ThemeBackend.mantle
                 accentColor: panel.sysMuted ? ThemeBackend.surface2 : ThemeBackend.blue
                 gradColor1: panel.sysMuted ? ThemeBackend.surface2 : ThemeBackend.blue
-                gradColor2: panel.sysMuted ? ThemeBackend.surface2 : ThemeBackend.sapphire
-                gradColor3: panel.sysMuted ? ThemeBackend.surface2 : ThemeBackend.pink
+                gradColor2: panel.sysMuted ? ThemeBackend.surface2 : ThemeBackend.blue
+                gradColor3: panel.sysMuted ? ThemeBackend.surface2 : ThemeBackend.blue
                 cornerRadius: panel.s(6)
-                handleSize: panel.s(20)
+                handleSize: panel.s(18)
 
-                handleColor: panel.sysMuted ? ThemeBackend.overlay0 : "#fbf2db"
+                handleColor: panel.sysMuted ? ThemeBackend.overlay0 : ThemeBackend.text
                 handleHoverColor: panel.sysMuted ? ThemeBackend.subtext0 : "#ffffff"
-                handleDragColor: panel.sysMuted ? ThemeBackend.text : "#e5c07b"
-                handleBorderColor: Qt.rgba(0, 0, 0, 0.35)
+                handleDragColor: panel.sysMuted ? ThemeBackend.text : ThemeBackend.blue
+                handleBorderColor: Qt.rgba(0, 0, 0, 0.25)
 
                 onDragStarted: {
                     volSyncDelay.stop();
@@ -148,11 +149,12 @@ Rectangle {
             IconButton {
                 Layout.alignment: Qt.AlignVCenter
                 size: panel.s(28)
-                cornerRadius: panel.s(8)
+                cornerRadius: panel.s(6)
                 buttonIcon: panel.sysBrightness > 66 ? "󰃠" : (panel.sysBrightness > 33 ? "󰃟" : "󰃞")
-                iconFontSize: panel.s(15)
-                accentColor: Qt.rgba(0.859, 0.612, 0.369, 0.14)
-                textColor: isHoveredOrHighlighted ? ThemeBackend.text : ThemeBackend.sapphire
+                iconFontSize: panel.s(16)
+                accentColor: isHoveredOrHighlighted ? Qt.rgba(1, 1, 1, 0.08) : "transparent"
+                bgOpacity: isHoveredOrHighlighted ? 1.0 : 0.0
+                textColor: isHoveredOrHighlighted ? ThemeBackend.text : ThemeBackend.blue
                 onClicked: {
                     briCmdThrottle.stop();
                     briCmdThrottle.targetPct = -1;
@@ -185,17 +187,17 @@ Rectangle {
                 valueFormatter: function(v) { return Math.round(v) }
                 value: panel.sysBrightness
                 backgroundColor: ThemeBackend.mantle
-                accentColor: ThemeBackend.sapphire
+                accentColor: ThemeBackend.blue
                 gradColor1: ThemeBackend.blue
-                gradColor2: ThemeBackend.sapphire
-                gradColor3: ThemeBackend.pink
+                gradColor2: ThemeBackend.blue
+                gradColor3: ThemeBackend.blue
                 cornerRadius: panel.s(6)
-                handleSize: panel.s(20)
+                handleSize: panel.s(18)
 
-                handleColor: "#fbf2db"
+                handleColor: ThemeBackend.text
                 handleHoverColor: "#ffffff"
-                handleDragColor: "#e5c07b"
-                handleBorderColor: Qt.rgba(0, 0, 0, 0.35)
+                handleDragColor: ThemeBackend.blue
+                handleBorderColor: Qt.rgba(0, 0, 0, 0.25)
 
                 onDragStarted: {
                     briSyncDelay.stop();

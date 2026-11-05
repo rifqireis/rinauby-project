@@ -185,23 +185,24 @@ Item {
                 font.capitalization: Font.AllUppercase
                 font.letterSpacing: 0.6
                 font.pixelSize: root.s(13)
-                color: ThemeBackend.sapphire
+                color: ThemeBackend.blue
             }
 
             Item { Layout.fillWidth: true }
 
             ClickButton {
                 id: clearBtn
-                Layout.preferredWidth: root.s(78)
-                Layout.preferredHeight: root.s(30)
-                horizontalPadding: root.s(10)
-                cornerRadius: root.s(9)
+                Layout.preferredWidth: root.s(74)
+                Layout.preferredHeight: root.s(28)
+                horizontalPadding: root.s(8)
+                cornerRadius: root.s(6)
                 buttonText: I18n.t("syspanel.notifications.clear")
                 textFontSize: root.s(11)
                 buttonIcon: "󰅖"
                 iconFontSize: root.s(13)
-                accentColor: Qt.rgba(0.859, 0.612, 0.369, 0.14)
-                textColor: ThemeBackend.sapphire
+                accentColor: isHoveredOrHighlighted ? Qt.rgba(1, 1, 1, 0.08) : "transparent"
+                bgOpacity: isHoveredOrHighlighted ? 1.0 : 0.0
+                textColor: isHoveredOrHighlighted ? ThemeBackend.text : ThemeBackend.blue
                 visible: NotificationManager.groupedHistory && NotificationManager.groupedHistory.count > 0
                 enabled: !root.isClearingNotifs
 
@@ -212,16 +213,17 @@ Item {
 
             ClickButton {
                 id: dndBtn
-                Layout.preferredWidth: root.s(84)
-                Layout.preferredHeight: root.s(30)
-                horizontalPadding: root.s(10)
-                cornerRadius: root.s(9)
+                Layout.preferredWidth: root.s(78)
+                Layout.preferredHeight: root.s(28)
+                horizontalPadding: root.s(8)
+                cornerRadius: root.s(6)
                 buttonText: root.dndEnabled ? I18n.t("syspanel.notifications.silent") : I18n.t("syspanel.notifications.mute")
                 textFontSize: root.s(11)
                 buttonIcon: root.dndEnabled ? "󰂛" : "󰂚"
                 iconFontSize: root.s(13)
-                accentColor: root.dndEnabled ? ThemeBackend.blue : Qt.rgba(0.859, 0.612, 0.369, 0.12)
-                textColor: root.dndEnabled ? ThemeBackend.crust : ThemeBackend.subtext0
+                accentColor: root.dndEnabled ? ThemeBackend.blue : (isHoveredOrHighlighted ? Qt.rgba(1, 1, 1, 0.08) : "transparent")
+                bgOpacity: root.dndEnabled || isHoveredOrHighlighted ? 1.0 : 0.0
+                textColor: root.dndEnabled ? ThemeBackend.crust : (isHoveredOrHighlighted ? ThemeBackend.text : ThemeBackend.subtext0)
 
                 onTriggered: {
                     root.dndEnabled = !root.dndEnabled;
@@ -882,7 +884,7 @@ Item {
                                                     width: root.s(8)
                                                     height: root.s(8)
                                                     radius: root.s(4)
-                                                    color: ThemeBackend.red
+                                                    color: ThemeBackend.blue
                                                     anchors.top: parent.top
                                                     anchors.right: parent.right
                                                     anchors.topMargin: -root.s(2)

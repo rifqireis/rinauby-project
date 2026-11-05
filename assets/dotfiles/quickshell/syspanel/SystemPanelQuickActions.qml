@@ -41,17 +41,17 @@ Item {
         signal leftClicked()
         signal rightClicked()
 
-        color: qaGlass.active ? "transparent" : (isActive ? activeColor : (qaMa.containsMouse ? ThemeBackend.surface1 : ThemeBackend.surface0))
+        color: isActive ? activeColor : (qaMa.containsMouse ? Qt.rgba(1, 1, 1, 0.08) : Qt.rgba(1, 1, 1, 0.03))
         border.width: 1
-        border.color: isActive ? Qt.rgba(1, 1, 1, 0.15) : Qt.rgba(1, 1, 1, 0.05)
+        border.color: isActive ? activeColor : (qaMa.containsMouse ? Qt.rgba(1, 1, 1, 0.08) : Qt.rgba(1, 1, 1, 0.04))
 
         GlassFill {
             id: qaGlass
             anchors.fill: parent
             radius: parent.radius
             tintColor: qaBtn.isActive ? qaBtn.activeColor : (qaMa.containsMouse ? ThemeBackend.surface1 : ThemeBackend.surface0)
-            tintAmount: qaBtn.isActive ? 0.6 : 0.3
-            shadow: 1
+            tintAmount: qaBtn.isActive ? 0.6 : 0.2
+            shadow: 0
             press: qaMa.pressed ? 1 : (qaMa.containsMouse ? 0.25 : 0)
             pulse: qaBtn.togglePulse
             Behavior on press { NumberAnimation { duration: 250; easing.type: Easing.OutCubic } }
@@ -62,7 +62,7 @@ Item {
             ColorAnimation { duration: 150 }
         }
 
-        scale: qaMa.pressed ? 0.95 : (qaMa.containsMouse ? 1.01 : 1.0)
+        scale: qaMa.pressed ? 0.97 : (qaMa.containsMouse ? 1.01 : 1.0)
         Behavior on scale {
             enabled: view.panel.visible
             NumberAnimation { duration: 250; easing.type: Easing.OutQuart }
@@ -73,7 +73,7 @@ Item {
             font.family: qaBtn.customFontFamily !== "" ? qaBtn.customFontFamily : ThemeBackend.iconFont
             font.pixelSize: qaBtn.customFontSize > 0 ? qaBtn.customFontSize : view.panel.s(18)
             font.weight: qaBtn.customFontSize > 0 ? Font.Bold : Font.Normal
-            color: (qaBtn.isActive && !qaGlass.active) ? ThemeBackend.crust : ((qaBtn.isActive || qaMa.containsMouse) ? ThemeBackend.text : ThemeBackend.subtext0)
+            color: qaBtn.isActive ? ThemeBackend.crust : (qaMa.containsMouse ? ThemeBackend.text : ThemeBackend.subtext0)
             text: qaBtn.iconText
             Behavior on color {
                 enabled: view.panel.visible
@@ -109,7 +109,7 @@ Item {
         QuickActionBtn {
             id: nightLightBtn
             iconText: "󰖔"
-            activeColor: ThemeBackend.peach
+            activeColor: ThemeBackend.blue
 
             function updateState() {
                 let anyEnabled = false;
@@ -188,7 +188,7 @@ Item {
 
         QuickActionBtn {
             id: coffeeBtn
-            activeColor: Qt.tint(ThemeBackend.peach, "#5c3016")
+            activeColor: ThemeBackend.blue
 
             property double coffeeStartTime: 0
             property double coffeeEndTime: 0
@@ -335,7 +335,7 @@ Item {
 
         QuickActionBtn {
             iconText: isActive ? "󰂯" : "󰂲"
-            activeColor: ThemeBackend.mauve
+            activeColor: ThemeBackend.blue
             isActive: view.panel.btRadioEnabled
             onLeftClicked: {
                 Sounds.playSfx("system/quick_click.wav");
@@ -351,7 +351,7 @@ Item {
 
         QuickActionBtn {
             iconText: "󰀝"
-            activeColor: ThemeBackend.red
+            activeColor: ThemeBackend.blue
             isActive: !view.panel.wifiRadioEnabled && !view.panel.btRadioEnabled
             onLeftClicked: {
                 Sounds.playSfx("system/quick_click.wav");
