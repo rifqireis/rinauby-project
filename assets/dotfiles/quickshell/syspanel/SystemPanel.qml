@@ -340,13 +340,13 @@ Item {
 
         RowLayout {
             anchors.fill: parent
-            anchors.leftMargin: root.s(20)
-            anchors.rightMargin: root.s(20)
-            spacing: root.s(16)
+            anchors.leftMargin: root.s(12)
+            anchors.rightMargin: root.s(10)
+            spacing: root.s(10)
 
             Text {
                 font.family: ThemeBackend.iconFont
-                font.pixelSize: root.s(32)
+                font.pixelSize: root.s(24)
                 color: bRoot.iconColor
                 text: root.isCharging ? "󰂄" : (root.batCapacity > 20 ? "󰁹" : "󰂃")
                 Behavior on color {
@@ -357,14 +357,14 @@ Item {
             }
 
             ColumnLayout {
-                spacing: root.s(2)
+                spacing: 0
                 Layout.fillWidth: true
                 Layout.alignment: Qt.AlignVCenter
 
                 Text {
                     font.family: ThemeBackend.fontFamily
                     font.weight: Font.Black
-                    font.pixelSize: root.s(20)
+                    font.pixelSize: root.s(16)
                     color: bRoot.contentTextColor
                     text: Math.round(root.animCapacity) + "%"
                     Behavior on color {
@@ -389,14 +389,14 @@ Item {
                     font.pixelSize: root.s(10)
                     color: bRoot.glass ? Qt.alpha(bRoot.contentTextColor, 0.75) : (bRoot.contentTextColor === ThemeBackend.crust ? Qt.alpha(ThemeBackend.crust, 0.85) : (root.isCharging ? ThemeBackend.green : ThemeBackend.subtext0))
                     text: timeString
+                    elide: Text.ElideRight
+                    Layout.fillWidth: true
                     Behavior on color {
                         enabled: root.visible
                         ColorAnimation { duration: 250 }
                     }
                 }
             }
-
-            Item { Layout.fillWidth: true }
         }
     }
 
@@ -598,121 +598,122 @@ Item {
                     panel: root
                 }
 
-                Rectangle {
-                    id: batteryBox
+                RowLayout {
+                    id: batteryAndProfileRow
                     Layout.fillWidth: true
-                    Layout.preferredHeight: root.isDesktop ? root.s(50) : root.s(68)
+                    Layout.preferredHeight: root.isDesktop ? root.s(50) : root.s(58)
                     Layout.maximumHeight: Layout.preferredHeight
-                    radius: root.isDesktop ? root.s(14) : root.boxRadius
-                    color: (root.isDesktop || batteryGlass.active) ? "transparent" : ThemeBackend.surface0
-                    border.width: 1
-                    border.color: Qt.rgba(1, 1, 1, 0.05)
-                    clip: true
+                    spacing: root.s(8)
                     opacity: root.introCore
                     transform: Translate { x: (root.isLeftAnchored ? -root.rowSlideDistance : root.rowSlideDistance) * (1.0 - root.introCore) }
 
-                    property real fillLevel: root.animCapacity / 100
-                    property real maxWaveAmp: root.isCharging ? root.s(10) : root.s(6.5)
-                    property real waveAmp: (fillLevel < 0.99 && fillLevel > 0.01) ? maxWaveAmp * Math.sin(fillLevel * Math.PI) : 0
-
-                    GlassFill {
-                        id: batteryGlass
-                        anchors.fill: parent
-                        allowed: !root.isDesktop
-                        radius: parent.radius
-                        tintColor: ThemeBackend.surface0
-                        tintAmount: 0.3
-                    }
-
-                    FluidWave {
-                        id: waveCanvas
-                        anchors.fill: parent
-                        visible: !batteryGlass.active && root.visible && !root.isDesktop && batteryBox.fillLevel > 0.001
-
-                        property real wavePhase: 0.0
-                        NumberAnimation on wavePhase {
-                            running: root.visible && !root.isDesktop && batteryBox.fillLevel > 0.0 && batteryBox.fillLevel < 1.0
-                            loops: Animation.Infinite
-                            from: 0; to: Math.PI * 2; duration: root.isCharging ? 1200 : 2200
-                        }
-
-                        radius: batteryBox.radius
-                        fillLevel: batteryBox.fillLevel
-                        waveAmp: (batteryBox.fillLevel < 0.99 && batteryBox.waveAmp > 0) ? Math.min(batteryBox.waveAmp, Math.min(width * batteryBox.fillLevel, width * (1.0 - batteryBox.fillLevel))) : 0
-                        phase: wavePhase
-                        vertical: 0.0
-                        color1: root.batColorFlat
-                        color2: root.batColorFlat
-                    }
-
-                    LiquidFill {
-                        anchors.fill: parent
-                        visible: batteryGlass.active && root.visible && !root.isDesktop && batteryBox.fillLevel > 0.001
-                        radius: batteryBox.radius
-                        fillLevel: batteryBox.fillLevel
-                        waveAmp: waveCanvas.waveAmp
-                        phase: waveCanvas.wavePhase
-                        color1: Qt.alpha(Qt.lighter(root.batColorFlat, 1.1), 0.6)
-                        color2: Qt.alpha(root.batColorFlat, 0.6)
-                        bodyAlpha: 0.18
-                    }
-
-                    BatteryContent {
-                        anchors.fill: parent
-                        contentTextColor: ThemeBackend.text
-                        iconColor: root.batColorFlat
-                        glass: batteryGlass.active
+                    // 1. KARTU STATUS BATERAI (Terisolasi mandiri, wave tidak akan menabrak profile)
+                    Rectangle {
+                        id: batteryCard
                         visible: !root.isDesktop
-                    }
-
-                    Item {
-                        anchors.left: parent.left
-                        anchors.top: parent.top
-                        anchors.bottom: parent.bottom
-                        visible: !root.isDesktop
-
-                        property real phaseOffset: Math.sin(waveCanvas.wavePhase) - Math.cos(waveCanvas.wavePhase)
-                        property real centerOffset: batteryBox.fillLevel > 0.01 && batteryBox.fillLevel < 0.99 ? 0.375 * batteryBox.waveAmp * phaseOffset : 0
-
-                        width: Math.max(0, Math.min(parent.width, (parent.width * batteryBox.fillLevel) + centerOffset))
+                        Layout.fillWidth: true
+                        Layout.fillHeight: true
+                        radius: root.boxRadius
+                        color: (root.isDesktop || batteryGlass.active) ? "transparent" : ThemeBackend.surface0
+                        border.width: 1
+                        border.color: Qt.rgba(1, 1, 1, 0.05)
                         clip: true
 
+                        property real fillLevel: root.animCapacity / 100
+                        property real maxWaveAmp: root.isCharging ? root.s(8) : root.s(5)
+                        property real waveAmp: (fillLevel < 0.99 && fillLevel > 0.01) ? maxWaveAmp * Math.sin(fillLevel * Math.PI) : 0
+
+                        GlassFill {
+                            id: batteryGlass
+                            anchors.fill: parent
+                            allowed: !root.isDesktop
+                            radius: parent.radius
+                            tintColor: ThemeBackend.surface0
+                            tintAmount: 0.3
+                        }
+
+                        FluidWave {
+                            id: waveCanvas
+                            anchors.fill: parent
+                            visible: !batteryGlass.active && root.visible && !root.isDesktop && batteryCard.fillLevel > 0.001
+
+                            property real wavePhase: 0.0
+                            NumberAnimation on wavePhase {
+                                running: root.visible && !root.isDesktop && batteryCard.fillLevel > 0.0 && batteryCard.fillLevel < 1.0
+                                loops: Animation.Infinite
+                                from: 0; to: Math.PI * 2; duration: root.isCharging ? 1200 : 2200
+                            }
+
+                            radius: batteryCard.radius
+                            fillLevel: batteryCard.fillLevel
+                            waveAmp: (batteryCard.fillLevel < 0.99 && batteryCard.waveAmp > 0) ? Math.min(batteryCard.waveAmp, Math.min(width * batteryCard.fillLevel, width * (1.0 - batteryCard.fillLevel))) : 0
+                            phase: wavePhase
+                            vertical: 0.0
+                            color1: root.batColorFlat
+                            color2: root.batColorFlat
+                        }
+
+                        LiquidFill {
+                            anchors.fill: parent
+                            visible: batteryGlass.active && root.visible && !root.isDesktop && batteryCard.fillLevel > 0.001
+                            radius: batteryCard.radius
+                            fillLevel: batteryCard.fillLevel
+                            waveAmp: waveCanvas.waveAmp
+                            phase: waveCanvas.wavePhase
+                            color1: Qt.alpha(Qt.lighter(root.batColorFlat, 1.1), 0.6)
+                            color2: Qt.alpha(root.batColorFlat, 0.6)
+                            bodyAlpha: 0.18
+                        }
+
                         BatteryContent {
-                            width: batteryBox.width
-                            height: batteryBox.height
-                            contentTextColor: batteryGlass.active ? ThemeBackend.text : ThemeBackend.crust
-                            iconColor: batteryGlass.active ? ThemeBackend.text : ThemeBackend.crust
+                            anchors.fill: parent
+                            contentTextColor: ThemeBackend.text
+                            iconColor: root.batColorFlat
                             glass: batteryGlass.active
+                            visible: !root.isDesktop
+                        }
+
+                        Item {
+                            anchors.left: parent.left
+                            anchors.top: parent.top
+                            anchors.bottom: parent.bottom
+                            visible: !root.isDesktop
+
+                            property real phaseOffset: Math.sin(waveCanvas.wavePhase) - Math.cos(waveCanvas.wavePhase)
+                            property real centerOffset: batteryCard.fillLevel > 0.01 && batteryCard.fillLevel < 0.99 ? 0.375 * batteryCard.waveAmp * phaseOffset : 0
+
+                            width: Math.max(0, Math.min(parent.width, (parent.width * batteryCard.fillLevel) + centerOffset))
+                            clip: true
+
+                            BatteryContent {
+                                width: batteryCard.width
+                                height: batteryCard.height
+                                contentTextColor: batteryGlass.active ? ThemeBackend.text : ThemeBackend.crust
+                                iconColor: batteryGlass.active ? ThemeBackend.text : ThemeBackend.crust
+                                glass: batteryGlass.active
+                            }
                         }
                     }
 
-                    Item {
-                        id: profileSwitchWrapper
-                        anchors.fill: root.isDesktop ? parent : undefined
-                        anchors.right: root.isDesktop ? undefined : parent.right
-                        anchors.verticalCenter: root.isDesktop ? undefined : parent.verticalCenter
-                        anchors.rightMargin: root.isDesktop ? 0 : root.s(12)
-                        implicitWidth: root.isDesktop ? parent.width : profileSwitch.implicitWidth
-                        implicitHeight: profileSwitch.implicitHeight
-
-                        Rectangle {
-                            id: profileSwitchShadow
-                            visible: !root.isDesktop && !profileSwitch.glassActive
-                            anchors.fill: parent
-                            anchors.topMargin: root.s(1.5)
-                            anchors.bottomMargin: -root.s(1.5)
-                            radius: profileSwitch.cornerRadius
-                            color: Qt.rgba(0, 0, 0, 0.25)
-                        }
+                    // 2. KARTU POWER PROFILE (Terpisah rapi di sebelah kanan)
+                    Rectangle {
+                        id: profileCard
+                        Layout.preferredWidth: root.isDesktop ? -1 : root.s(160)
+                        Layout.fillWidth: root.isDesktop
+                        Layout.fillHeight: true
+                        radius: root.boxRadius
+                        color: ThemeBackend.surface0
+                        border.width: 1
+                        border.color: Qt.rgba(1, 1, 1, 0.05)
+                        clip: true
 
                         Switch {
                             id: profileSwitch
                             anchors.fill: parent
-                            implicitWidth: root.isDesktop ? parent.width : (PowerProfiles.hasPerformanceProfile ? root.s(220) : root.s(154))
-                            implicitHeight: root.isDesktop ? root.s(46) : root.s(48)
-                            cornerRadius: root.s(12)
+                            anchors.margins: root.s(4)
+                            cornerRadius: root.boxRadius - root.s(2)
                             fontFamily: root.isDesktop ? ThemeBackend.fontFamily : ThemeBackend.iconFont
-                            fontPixelSize: root.isDesktop ? root.s(13) : root.s(20)
+                            fontPixelSize: root.isDesktop ? root.s(13) : root.s(18)
                             options: {
                                 if (root.isDesktop) {
                                     return PowerProfiles.hasPerformanceProfile
