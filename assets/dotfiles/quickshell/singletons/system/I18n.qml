@@ -42,6 +42,7 @@ Item {
     FileView {
         id: fallbackFileView
         path: root.i18nDir + "/en.json"
+        blockLoading: true
         watchChanges: true
         onFileChanged: reload()
         onLoaded: {
@@ -58,6 +59,7 @@ Item {
     FileView {
         id: langFileView
         path: root.currentLang !== "en" ? (root.i18nDir + "/" + root.currentLang + ".json") : ""
+        blockLoading: true
         watchChanges: true
         onFileChanged: reload()
         onLoaded: {

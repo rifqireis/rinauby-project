@@ -35,12 +35,12 @@ Item {
 
     readonly property bool isDesktop: UPower.displayDevice.ready ? !UPower.displayDevice.isLaptopBattery : SystemInfo.isDesktop
 
-    readonly property real boxRadius: Math.min(ThemeBackend.borderRadius, root.s(20))
-    readonly property real cardRadius: Math.min(ThemeBackend.borderRadius, root.s(14))
+    readonly property real boxRadius: Math.min(ThemeBackend.borderRadius, root.s(14))
+    readonly property real cardRadius: Math.min(ThemeBackend.borderRadius, root.s(12))
 
-    readonly property color briColor: Qt.lighter(ThemeBackend.mauve, 1.1)
-    readonly property color volColor: Qt.lighter(ThemeBackend.sapphire, 1.5)
-    readonly property color profileColor: Qt.lighter(ThemeBackend.blue, 1.55)
+    readonly property color briColor: ThemeBackend.sapphire
+    readonly property color volColor: ThemeBackend.blue
+    readonly property color profileColor: ThemeBackend.blue
     readonly property int batCapacity: UPower.displayDevice.ready ? Math.round(UPower.displayDevice.percentage * 100) : 0
 
     readonly property bool isCharging: UPower.displayDevice.ready && (UPower.displayDevice.state === UPowerDeviceState.Charging || UPower.displayDevice.state === UPowerDeviceState.FullyCharged)
@@ -240,7 +240,7 @@ Item {
 
     Process {
         id: briBackend
-        command: ["bash", Caching.qsDir + "/../scripts/brightness.sh", "backend"]
+        command: ["bash", Caching.serpantinumDir + "/scripts/brightness.sh", "backend"]
         running: true
         stdout: StdioCollector {
             onStreamFinished: root.usesDdcBrightness = this.text.trim() === "ddc"
@@ -249,7 +249,7 @@ Item {
 
     Process {
         id: briPoller
-        command: ["bash", Caching.qsDir + "/../scripts/brightness.sh", "get"]
+        command: ["bash", Caching.serpantinumDir + "/scripts/brightness.sh", "get"]
         running: false
         stdout: StdioCollector {
             onStreamFinished: {
@@ -401,14 +401,40 @@ Item {
     }
 
     Rectangle {
+        id: sidebarShadowSource
+        anchors.fill: sidebarPanel
+        radius: sidebarPanel.radius
+        color: "#000000"
+        visible: false
+    }
+
+    MultiEffect {
+        anchors.fill: sidebarPanel
+        source: sidebarShadowSource
+        shadowEnabled: true
+        shadowColor: "#c8000000"
+        shadowBlur: 0.85
+        shadowVerticalOffset: root.s(5)
+        shadowHorizontalOffset: 0
+        opacity: root.introContent
+        transform: Translate { x: (root.isLeftAnchored ? -root.slideDistance : root.slideDistance) * (1.0 - root.introContent) }
+    }
+
+    Rectangle {
         id: sidebarPanel
         anchors.fill: parent
-        color: Qt.alpha(ThemeBackend.base, ThemeBackend.elementOpacity)
-        radius: Math.min(ThemeBackend.borderRadius, root.s(28))
-        topLeftRadius: root.isLeftAnchored ? 0 : radius
-        bottomLeftRadius: root.isLeftAnchored ? 0 : radius
-        topRightRadius: root.isLeftAnchored ? radius : 0
-        bottomRightRadius: root.isLeftAnchored ? radius : 0
+        anchors.leftMargin: root.s(14)
+        anchors.rightMargin: root.s(10)
+        anchors.topMargin: root.s(6)
+        anchors.bottomMargin: root.s(12)
+        color: Qt.rgba(0.09, 0.102, 0.114, 0.96)
+        radius: root.s(16)
+        topLeftRadius: radius
+        bottomLeftRadius: radius
+        topRightRadius: radius
+        bottomRightRadius: radius
+        border.width: 1
+        border.color: Qt.rgba(1, 1, 1, 0.06)
         clip: true
         opacity: root.introContent
 
@@ -427,16 +453,18 @@ Item {
 
             ColumnLayout {
                 anchors.fill: parent
-                anchors.margins: root.s(8)
-                spacing: root.s(5)
+                anchors.margins: root.s(12)
+                spacing: root.s(8)
 
                 Rectangle {
                     id: userBox
                     Layout.fillWidth: true
-                    Layout.preferredHeight: root.s(54)
-                    Layout.maximumHeight: root.s(54)
+                    Layout.preferredHeight: root.s(58)
+                    Layout.maximumHeight: root.s(58)
                     radius: root.boxRadius
-                    color: userGlass.active ? "transparent" : ThemeBackend.faded(Qt.darker(ThemeBackend.surface0, 1.04))
+                    color: userGlass.active ? "transparent" : ThemeBackend.surface0
+                    border.width: 1
+                    border.color: Qt.rgba(1, 1, 1, 0.05)
                     opacity: root.introTop
                     transform: Translate { x: (root.isLeftAnchored ? -root.rowSlideDistance : root.rowSlideDistance) * (1.0 - root.introTop) }
 
@@ -454,61 +482,78 @@ Item {
                         spacing: root.s(10)
 
                         ImageBox {
-                            Layout.alignment: Qt.AlignTop
-                            Layout.preferredWidth: root.s(34)
-                            Layout.preferredHeight: root.s(34)
-                            size: root.s(34)
-                            cornerRadius: root.s(8)
-                            imageRadius: root.s(8)
+                            Layout.alignment: Qt.AlignVCenter
+                            Layout.preferredWidth: root.s(36)
+                            Layout.preferredHeight: root.s(36)
+                            size: root.s(36)
+                            cornerRadius: root.s(10)
+                            imageRadius: root.s(10)
                             source: SystemInfo.avatarPath !== "" ? "file://" + SystemInfo.avatarPath : ""
-                            backgroundColor: SystemInfo.avatarPath === "" ? ThemeBackend.surface1 : "transparent"
+                            backgroundColor: SystemInfo.avatarPath === "" ? Qt.rgba(0.859, 0.612, 0.369, 0.14) : "transparent"
 
                             Text {
                                 anchors.centerIn: parent
                                 text: ""
                                 font.family: ThemeBackend.iconFont
-                                font.pixelSize: root.s(18)
-                                color: ThemeBackend.text
+                                font.pixelSize: root.s(17)
+                                color: ThemeBackend.sapphire
                                 visible: SystemInfo.avatarPath === ""
                             }
                         }
 
                         ColumnLayout {
-                            Layout.alignment: Qt.AlignTop
-                            spacing: 0
+                            Layout.alignment: Qt.AlignVCenter
+                            spacing: root.s(1)
 
                             Text {
                                 text: SystemInfo.username !== "" ? SystemInfo.username : I18n.t("syspanel.user.default_name")
-                                font.family: ThemeBackend.fontFamily
-                                font.weight: Font.Black
-                                font.pixelSize: root.s(15)
+                                font.family: ThemeBackend.serifFont
+                                font.weight: Font.Bold
+                                font.capitalization: Font.AllUppercase
+                                font.letterSpacing: 0.6
+                                font.pixelSize: root.s(14)
                                 color: ThemeBackend.text
                             }
 
                             Text {
-                                text: SystemInfo.osName !== "" ? SystemInfo.osName : I18n.t("syspanel.user.default_os")
-                                font.family: ThemeBackend.fontFamily
-                                font.weight: Font.Medium
-                                font.pixelSize: root.s(10)
-                                color: ThemeBackend.subtext0
+                                text: (SystemInfo.osName !== "" ? SystemInfo.osName : I18n.t("syspanel.user.default_os")) + " · Digital Humanism"
+                                font.family: ThemeBackend.editorialFont
+                                font.italic: true
+                                font.pixelSize: root.s(12)
+                                color: ThemeBackend.blue
                             }
                         }
 
                         Item { Layout.fillWidth: true }
 
+                        IconButton {
+                            id: settingsQuickBtn
+                            Layout.alignment: Qt.AlignVCenter
+                            size: root.s(34)
+                            cornerRadius: root.s(10)
+                            buttonIcon: "󰒓"
+                            iconFontSize: root.s(16)
+                            accentColor: Qt.rgba(0.859, 0.612, 0.369, 0.12)
+                            textColor: isHoveredOrHighlighted ? ThemeBackend.text : ThemeBackend.sapphire
+                            onClicked: {
+                                closeSequence.start();
+                                Quickshell.execDetached(["bash", "-c", "rinauby-settings --toggle"]);
+                            }
+                        }
+
                         ClickButton {
                             id: logoutBtn
-                            Layout.alignment: Qt.AlignTop | Qt.AlignRight
-                            Layout.preferredWidth: root.s(92)
+                            Layout.alignment: Qt.AlignVCenter | Qt.AlignRight
+                            Layout.preferredWidth: root.s(88)
                             Layout.preferredHeight: root.s(34)
                             horizontalPadding: root.s(10)
-                            cornerRadius: root.s(12)
+                            cornerRadius: root.s(10)
                             buttonText: I18n.t("syspanel.user.logout")
                             textFontSize: root.s(11)
                             buttonIcon: "󰍃"
                             iconFontSize: root.s(14)
-                            accentColor: ThemeBackend.surface2
-                            textColor: ThemeBackend.text
+                            accentColor: Qt.rgba(0.859, 0.612, 0.369, 0.14)
+                            textColor: ThemeBackend.sapphire
 
                             Timer {
                                 id: logoutOpenTimer
@@ -543,7 +588,7 @@ Item {
                     Layout.minimumHeight: root.s(68)
                     cornerRadius: root.boxRadius
                     cardRadius: root.cardRadius
-                    baseColor: ThemeBackend.faded(Qt.darker(ThemeBackend.surface0, 1.04))
+                    baseColor: ThemeBackend.surface0
                     rootContext: root
                     opacity: root.introNotifs
                     transform: Translate { x: (root.isLeftAnchored ? -root.rowSlideDistance : root.rowSlideDistance) * (1.0 - root.introNotifs) }
@@ -556,10 +601,12 @@ Item {
                 Rectangle {
                     id: batteryBox
                     Layout.fillWidth: true
-                    Layout.preferredHeight: root.isDesktop ? root.s(52) : root.s(72)
+                    Layout.preferredHeight: root.isDesktop ? root.s(50) : root.s(68)
                     Layout.maximumHeight: Layout.preferredHeight
-                    radius: root.isDesktop ? root.s(15) : root.boxRadius
-                    color: (root.isDesktop || batteryGlass.active) ? "transparent" : ThemeBackend.faded(Qt.darker(ThemeBackend.surface0, 1.04))
+                    radius: root.isDesktop ? root.s(14) : root.boxRadius
+                    color: (root.isDesktop || batteryGlass.active) ? "transparent" : ThemeBackend.surface0
+                    border.width: 1
+                    border.color: Qt.rgba(1, 1, 1, 0.05)
                     clip: true
                     opacity: root.introCore
                     transform: Translate { x: (root.isLeftAnchored ? -root.rowSlideDistance : root.rowSlideDistance) * (1.0 - root.introCore) }
@@ -661,10 +708,11 @@ Item {
                         Switch {
                             id: profileSwitch
                             anchors.fill: parent
-                            implicitWidth: root.isDesktop ? parent.width : (PowerProfiles.hasPerformanceProfile ? root.s(240) : root.s(162))
-                            implicitHeight: root.isDesktop ? root.s(48) : root.s(52)
-                            cornerRadius: root.s(15)
-                            fontPixelSize: root.isDesktop ? root.s(14) : root.s(22)
+                            implicitWidth: root.isDesktop ? parent.width : (PowerProfiles.hasPerformanceProfile ? root.s(220) : root.s(154))
+                            implicitHeight: root.isDesktop ? root.s(46) : root.s(48)
+                            cornerRadius: root.s(12)
+                            fontFamily: root.isDesktop ? ThemeBackend.fontFamily : ThemeBackend.iconFont
+                            fontPixelSize: root.isDesktop ? root.s(13) : root.s(20)
                             options: {
                                 if (root.isDesktop) {
                                     return PowerProfiles.hasPerformanceProfile
@@ -677,8 +725,8 @@ Item {
                                 }
                             }
                             accentColor: root.profileColor
-                            baseColor: ThemeBackend.surface1
-                            textColor: ThemeBackend.text
+                            baseColor: ThemeBackend.mantle
+                            textColor: ThemeBackend.subtext0
                             activeTextColor: ThemeBackend.crust
                             currentIndex: {
                                 if (PowerProfiles.hasPerformanceProfile) {

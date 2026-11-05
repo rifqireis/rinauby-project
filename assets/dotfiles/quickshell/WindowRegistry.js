@@ -132,12 +132,12 @@ function getLayout(name, mx, my, mw, mh, userScale, barPosition) {
             } 
         },
         "system": { 
-            w: 500, h: "fill", comp: "syspanel/SystemPanel.qml", 
+            w: 444, h: "fill", comp: "syspanel/SystemPanel.qml", 
             pos: { 
-                "top": { anchor: "right" }, 
-                "bottom": { anchor: "right" }, 
-                "left": { anchor: "right" }, 
-                "right": { anchor: "left" } 
+                "top": { anchor: "top-right", mt: 38, mr: 0 }, 
+                "bottom": { anchor: "bottom-right", mb: 38, mr: 0 }, 
+                "left": { anchor: "right", mr: 0 }, 
+                "right": { anchor: "left", ml: 0 } 
             } 
         },
         "hidden": { 
@@ -156,7 +156,7 @@ function getLayout(name, mx, my, mw, mh, userScale, barPosition) {
     let p = t.pos[barPosition] || t.pos["top"];
 
     let finalW = t.w === "fill" ? mw : s(t.w, scale);
-    let finalH = t.h === "fill" ? mh : s(t.h, scale);
+    let finalH = t.h === "fill" ? (name === "system" ? (mh - s(40, scale)) : mh) : s(t.h, scale);
 
     let rx = 0;
     let ry = 0;
@@ -222,7 +222,7 @@ function getLayout(name, mx, my, mw, mh, userScale, barPosition) {
 function getPopupLayout(mw, mh, userScale) {
     let scale = (userScale !== undefined && userScale !== null) ? userScale : 1.0;
     return {
-        w: s(350, scale), marginTop: s(52, scale), marginRight: s(20, scale),
-        spacing: s(12, scale), radius: s(14, scale), padding: s(12, scale)
+        w: s(370, scale), marginTop: s(44, scale), marginRight: s(14, scale),
+        spacing: s(10, scale), radius: s(14, scale), padding: s(12, scale)
     };
 }

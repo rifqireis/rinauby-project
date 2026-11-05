@@ -7,7 +7,10 @@ import "../../"
 Item {
     id: root
 
-    property string fontFamily: "JetBrainsMono Nerd Font"
+    property string fontFamily: "Inter"
+    property string serifFont: "Cinzel"
+    property string editorialFont: "EB Garamond"
+    property string monoFont: "JetBrainsMono Nerd Font"
     property int borderRadius: 12
     property int clampedBorderRadius: {
         const r = borderRadius;
@@ -26,30 +29,30 @@ Item {
     readonly property bool liquidGlass: blurBackground && blurStyle === "liquid"
 
     property color base: "#171a1d"
-    property color mantle: "#141719"
+    property color mantle: "#131518"
     property color crust: "#0e1012"
-    property color _text: "#f4f0ea"
+    property color _text: "#fbf2db"
     property color _subtext0: "#d3c6aa"
-    property color _subtext1: "#a89984"
+    property color _subtext1: "#959c9e"
     readonly property color text: liquidGlass ? "#ffffff" : _text
     readonly property color subtext0: liquidGlass ? "#ffffff" : _subtext0
     readonly property color subtext1: liquidGlass ? "#ffffff" : _subtext1
-    property color surface0: "#22272b"
-    property color surface1: "#2c3237"
-    property color surface2: "#383f46"
-    property color overlay0: "#4a525a"
-    property color overlay1: "#5c656e"
-    property color overlay2: "#727d88"
+    property color surface0: "#202429"
+    property color surface1: "#262a30"
+    property color surface2: "#30363d"
+    property color overlay0: "#424a53"
+    property color overlay1: "#58626e"
+    property color overlay2: "#6e7a88"
     property color blue: "#db9c5e"
     readonly property color primary: blue
     property color sapphire: "#e5c07b"
     property color peach: "#db9c5e"
-    property color green: "#879a39"
-    property color red: "#e05f65"
-    property color mauve: "#d97706"
+    property color green: "#a7c080"
+    property color red: "#e67e80"
+    property color mauve: "#c87d46"
     property color pink: "#e5c07b"
     property color yellow: "#e5c07b"
-    property color maroon: "#c2410c"
+    property color maroon: "#c85552"
     property color teal: "#879a39"
 
     property string configPath: Quickshell.env("QS_COLORS_JSON") ?? "~/.local/state/serpantinum/qs_colors.json"
@@ -81,19 +84,7 @@ Item {
     }
 
     function isMatugenTheme() {
-        if (typeof Matugen !== "undefined" && typeof Matugen.isMatugenTheme === "function") {
-            return Matugen.isMatugenTheme();
-        }
-        let themeConfig = Config.getSetting("theme", { "matugen": true, "activePreset": "Matugen" });
-        if (themeConfig.matugen !== undefined) {
-            return themeConfig.matugen === true;
-        }
-        return themeConfig.theme === "matugen"
-            || themeConfig.name === "matugen"
-            || themeConfig.currentTheme === "matugen"
-            || themeConfig.current === "matugen"
-            || themeConfig.activePreset === "Matugen"
-            || themeConfig.activePreset === undefined;
+        return false;
     }
 
     function updateActiveFontLoader() {

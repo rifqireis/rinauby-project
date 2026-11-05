@@ -32,7 +32,7 @@ Item {
     property string titleText: I18n.t("syspanel.notifications.title")
 
     property bool dndEnabled: Boolean(Config.rawSettings && Config.rawSettings.notifications && Config.rawSettings.notifications.dnd)
-    readonly property bool showEmptyGraphic: (Config.rawSettings && Config.rawSettings.notifications && Config.rawSettings.notifications.showEmptyGraphic !== undefined) ? Boolean(Config.rawSettings.notifications.showEmptyGraphic) : true
+    readonly property bool showEmptyGraphic: (Config.rawSettings && Config.rawSettings.notifications && Config.rawSettings.notifications.showEmptyGraphic !== undefined) ? Boolean(Config.rawSettings.notifications.showEmptyGraphic) : false
 
     property bool isClearingNotifs: false
 
@@ -134,6 +134,8 @@ Item {
         anchors.fill: parent
         radius: root.cornerRadius
         color: bgGlass.active ? "transparent" : root.baseColor
+        border.width: 1
+        border.color: Qt.rgba(1, 1, 1, 0.05)
         clip: true
 
         GlassFill {
@@ -178,26 +180,28 @@ Item {
                 Layout.rightMargin: I18n.rtl ? root.s(4) : 0
                 horizontalAlignment: I18n.textAlignment
                 text: root.titleText
-                font.family: ThemeBackend.fontFamily
+                font.family: ThemeBackend.serifFont
                 font.weight: Font.Bold
-                font.pixelSize: root.s(12)
-                color: ThemeBackend.liquidGlass ? ThemeBackend.text : ThemeBackend.subtext0
+                font.capitalization: Font.AllUppercase
+                font.letterSpacing: 0.6
+                font.pixelSize: root.s(13)
+                color: ThemeBackend.sapphire
             }
 
             Item { Layout.fillWidth: true }
 
             ClickButton {
                 id: clearBtn
-                Layout.preferredWidth: root.s(80)
-                Layout.preferredHeight: root.s(32)
+                Layout.preferredWidth: root.s(78)
+                Layout.preferredHeight: root.s(30)
                 horizontalPadding: root.s(10)
-                cornerRadius: root.s(10)
+                cornerRadius: root.s(9)
                 buttonText: I18n.t("syspanel.notifications.clear")
                 textFontSize: root.s(11)
                 buttonIcon: "󰅖"
-                iconFontSize: root.s(14)
-                accentColor: ThemeBackend.surface1
-                textColor: ThemeBackend.text
+                iconFontSize: root.s(13)
+                accentColor: Qt.rgba(0.859, 0.612, 0.369, 0.14)
+                textColor: ThemeBackend.sapphire
                 visible: NotificationManager.groupedHistory && NotificationManager.groupedHistory.count > 0
                 enabled: !root.isClearingNotifs
 
@@ -208,16 +212,16 @@ Item {
 
             ClickButton {
                 id: dndBtn
-                Layout.preferredWidth: root.s(86)
-                Layout.preferredHeight: root.s(32)
+                Layout.preferredWidth: root.s(84)
+                Layout.preferredHeight: root.s(30)
                 horizontalPadding: root.s(10)
-                cornerRadius: root.s(10)
+                cornerRadius: root.s(9)
                 buttonText: root.dndEnabled ? I18n.t("syspanel.notifications.silent") : I18n.t("syspanel.notifications.mute")
                 textFontSize: root.s(11)
                 buttonIcon: root.dndEnabled ? "󰂛" : "󰂚"
-                iconFontSize: root.s(14)
-                accentColor: root.dndEnabled ? ThemeBackend.blue : ThemeBackend.surface1
-                textColor: root.dndEnabled ? ThemeBackend.crust : ThemeBackend.text
+                iconFontSize: root.s(13)
+                accentColor: root.dndEnabled ? ThemeBackend.blue : Qt.rgba(0.859, 0.612, 0.369, 0.12)
+                textColor: root.dndEnabled ? ThemeBackend.crust : ThemeBackend.subtext0
 
                 onTriggered: {
                     root.dndEnabled = !root.dndEnabled;
@@ -264,18 +268,18 @@ Item {
                         visible: !root.showEmptyGraphic
                         text: "󰂚"
                         font.family: ThemeBackend.iconFont
-                        font.pixelSize: root.s(40)
-                        color: ThemeBackend.surface2
+                        font.pixelSize: root.s(38)
+                        color: Qt.rgba(0.859, 0.612, 0.369, 0.32)
                     }
                 }
 
                 Text {
                     Layout.alignment: Qt.AlignHCenter
                     text: I18n.t("syspanel.notifications.empty")
-                    font.family: ThemeBackend.fontFamily
-                    font.weight: Font.Medium
-                    font.pixelSize: root.s(12)
-                    color: ThemeBackend.liquidGlass ? ThemeBackend.text : ThemeBackend.overlay0
+                    font.family: ThemeBackend.editorialFont
+                    font.italic: true
+                    font.pixelSize: root.s(14)
+                    color: ThemeBackend.subtext1
                 }
             }
 
@@ -727,7 +731,7 @@ Item {
                                                     anchors.centerIn: parent
                                                     visible: groupWrapper.customType === "update"
                                                     text: "󰚰"
-                                                    font.family: ThemeBackend.fontFamily
+                                                    font.family: ThemeBackend.iconFont
                                                     font.pixelSize: root.s(22)
                                                     color: ThemeBackend.green
                                                 }
@@ -759,13 +763,11 @@ Item {
 
                                                 Text {
                                                     anchors.centerIn: parent
-                                                    anchors.horizontalCenterOffset: 1
-                                                    anchors.verticalCenterOffset: -1
                                                     visible: groupWrapper.customType === "default" && !groupHeaderIcon.visible
-                                                    text: "󰋽"
-                                                    font.family: ThemeBackend.fontFamily
-                                                    font.pixelSize: root.s(22)
-                                                    color: ThemeBackend.liquidGlass ? ThemeBackend.text : ThemeBackend.subtext0
+                                                    text: "󰂚"
+                                                    font.family: ThemeBackend.iconFont
+                                                    font.pixelSize: root.s(20)
+                                                    color: ThemeBackend.sapphire
                                                 }
                                             }
                                         }

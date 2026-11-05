@@ -31,14 +31,12 @@ Notification {
             }
 
             Text {
-		anchors.centerIn: parent
-		anchors.horizontalCenterOffset: 1
-		anchors.verticalCenterOffset: -1
+                anchors.centerIn: parent
                 visible: !notifIcon.visible
-                text: "󰋽"
-                font.family: ThemeBackend.fontFamily
-                font.pixelSize: s(22)
-                color: faceRoot.bodyText
+                text: "󰂚"
+                font.family: ThemeBackend.iconFont
+                font.pixelSize: s(20)
+                color: ThemeBackend.sapphire
             }
         }
     ]

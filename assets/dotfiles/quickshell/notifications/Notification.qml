@@ -132,6 +132,12 @@ Rectangle {
         function onSettingsLoaded() { updateTimeText(); }
     }
 
+    Connections {
+        target: I18n
+        function onLanguageChanged() { updateTimeText(); }
+        function onIsReadyChanged() { updateTimeText(); }
+    }
+
     Timer {
         interval: 10000
         running: typeRoot.visible && (!typeRoot.Window.window || typeRoot.Window.window.visible)
@@ -365,10 +371,10 @@ Rectangle {
     Rectangle {
         id: cardShadow
         anchors.fill: parent
-        anchors.topMargin: s(1.5) + Math.max(0, typeRoot.dragY * 0.4)
-        anchors.bottomMargin: -(s(1.5) + Math.max(0, typeRoot.dragY * 0.4))
+        anchors.topMargin: s(3) + Math.max(0, typeRoot.dragY * 0.4)
+        anchors.bottomMargin: -(s(3) + Math.max(0, typeRoot.dragY * 0.4))
         radius: visualItem.radius
-        color: Qt.rgba(0, 0, 0, 0.12 + Math.min(0.06, Math.max(0, typeRoot.dragY / s(3.5)) * 0.06))
+        color: Qt.rgba(0, 0, 0, (typeRoot.isPopup ? 0.36 : 0.18) + Math.min(0.08, Math.max(0, typeRoot.dragY / s(3.5)) * 0.08))
         visible: !ThemeBackend.glassActive
         scale: visualItem.scale
         opacity: visualItem.opacity
@@ -422,8 +428,10 @@ Rectangle {
         clip: true
         implicitHeight: cardContent.implicitHeight + s(20)
 
-        property color baseColor: typeRoot.readState === false ? Qt.lighter(ThemeBackend.surface1, 1.05) : ThemeBackend.surface1
-        color: ThemeBackend.faded((cardHover.pressed && !cardHover.draggingH && !cardHover.draggingV) ? Qt.darker(baseColor, 1.1) : (cardHover.containsMouse && !cardHover.draggingH && !cardHover.draggingV ? Qt.lighter(baseColor, 1.05) : baseColor))
+        property color baseColor: typeRoot.isPopup ? "#1b1f24" : (typeRoot.readState === false ? "#272c33" : "#252930")
+        color: ThemeBackend.faded((cardHover.pressed && !cardHover.draggingH && !cardHover.draggingV) ? Qt.darker(baseColor, 1.08) : (cardHover.containsMouse && !cardHover.draggingH && !cardHover.draggingV ? Qt.lighter(baseColor, 1.06) : baseColor))
+        border.width: 1
+        border.color: typeRoot.urgency === 2 ? Qt.rgba(0.902, 0.494, 0.502, 0.45) : (typeRoot.isPopup ? Qt.rgba(1, 1, 1, 0.07) : Qt.rgba(1, 1, 1, 0.055))
 
         scale: (cardHover.pressed && !cardHover.draggingH && !cardHover.draggingV) ? 0.98 : 1.0
 
@@ -586,7 +594,7 @@ Rectangle {
                     Rectangle {
                         anchors.fill: parent
                         radius: parent.boxRadius
-                        color: iconBoxGlass.active ? "transparent" : ThemeBackend.faded(typeRoot.urgency === 2 ? Qt.tint(ThemeBackend.surface2, Qt.rgba(urgencyGlow.deepRed.r, urgencyGlow.deepRed.g, urgencyGlow.deepRed.b, 0.12)) : ThemeBackend.surface2)
+                        color: iconBoxGlass.active ? "transparent" : (typeRoot.urgency === 2 ? Qt.rgba(0.902, 0.494, 0.502, 0.18) : Qt.rgba(0.859, 0.612, 0.369, 0.14))
 
                         Behavior on color { ColorAnimation { duration: 250 } }
 
@@ -649,7 +657,7 @@ Rectangle {
                             font.family: ThemeBackend.fontFamily
                             font.weight: Font.Bold
                             font.pixelSize: typeRoot.isPopup ? s(13) : s(12)
-                            color: ThemeBackend.text
+                            color: ThemeBackend.sapphire
                             elide: Text.ElideRight
                             maximumLineCount: 1
                             opacity: (!typeRoot.timeOnNextRowCollapsed) ? Math.max(0.0, 1.0 - typeRoot.expandProgress * 3.0) : 0.0
@@ -700,7 +708,7 @@ Rectangle {
                                 font.family: ThemeBackend.fontFamily
                                 font.weight: Font.Bold
                                 font.pixelSize: typeRoot.isPopup ? s(13) : s(12)
-                                color: ThemeBackend.text
+                                color: ThemeBackend.sapphire
                                 elide: Text.ElideRight
                                 maximumLineCount: 1
                             }
@@ -715,7 +723,7 @@ Rectangle {
                                     font.family: ThemeBackend.fontFamily
                                     font.weight: Font.Bold
                                     font.pixelSize: typeRoot.isPopup ? s(13) : s(12)
-                                    color: ThemeBackend.text
+                                    color: ThemeBackend.sapphire
                                     visible: typeRoot.summaryLastWord !== ""
                                 }
 
@@ -773,7 +781,7 @@ Rectangle {
                             font.family: ThemeBackend.fontFamily
                             font.weight: Font.Bold
                             font.pixelSize: typeRoot.isPopup ? s(13) : s(12)
-                            color: ThemeBackend.text
+                            color: ThemeBackend.sapphire
                             wrapMode: Text.Wrap
                         }
                     }

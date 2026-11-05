@@ -32,7 +32,9 @@ Rectangle {
     Layout.preferredHeight: slidersCol.implicitHeight + panel.s(20)
     Layout.maximumHeight: slidersCol.implicitHeight + panel.s(20)
     radius: panel.boxRadius
-    color: slidersGlass.active ? "transparent" : ThemeBackend.faded(Qt.darker(ThemeBackend.surface0, 1.04))
+    color: slidersGlass.active ? "transparent" : ThemeBackend.surface0
+    border.width: 1
+    border.color: Qt.rgba(1, 1, 1, 0.05)
     opacity: panel.introSliders
     transform: Translate { x: (panel.isLeftAnchored ? -panel.rowSlideDistance : panel.rowSlideDistance) * (1.0 - panel.introSliders) }
 
@@ -56,12 +58,12 @@ Rectangle {
 
             IconButton {
                 Layout.alignment: Qt.AlignVCenter
-                size: panel.s(26)
+                size: panel.s(28)
                 cornerRadius: panel.s(8)
                 buttonIcon: panel.sysMuted || panel.sysVolume === 0 ? "󰖁" : (panel.sysVolume > 50 ? "󰕾" : "󰖀")
                 iconFontSize: panel.s(15)
-                accentColor: ThemeBackend.surface1
-                textColor: isHoveredOrHighlighted ? ThemeBackend.text : (panel.sysMuted ? ThemeBackend.overlay0 : panel.volColor)
+                accentColor: Qt.rgba(0.859, 0.612, 0.369, 0.14)
+                textColor: isHoveredOrHighlighted ? ThemeBackend.text : (panel.sysMuted ? ThemeBackend.overlay0 : ThemeBackend.sapphire)
                 onClicked: {
                     if (Audio.defaultSink) {
                         Audio.toggleMute(Audio.defaultSink);
@@ -91,25 +93,25 @@ Rectangle {
             Draggable {
                 id: volSlider
                 Layout.fillWidth: true
-                implicitHeight: panel.s(18)
+                implicitHeight: panel.s(16)
                 from: 0.0
                 to: 100.0
                 stepSize: 1.0
                 showValueBubble: true
                 valueFormatter: function(v) { return Math.round(v) }
                 value: panel.sysVolume
-                backgroundColor: ThemeBackend.surface1
-                accentColor: panel.sysMuted ? ThemeBackend.surface2 : panel.volColor
-                gradColor1: panel.sysMuted ? ThemeBackend.surface2 : panel.volColor
-                gradColor2: panel.sysMuted ? ThemeBackend.surface2 : Qt.lighter(panel.volColor, 1.05)
-                gradColor3: panel.sysMuted ? ThemeBackend.surface2 : Qt.lighter(panel.volColor, 1.10)
+                backgroundColor: ThemeBackend.mantle
+                accentColor: panel.sysMuted ? ThemeBackend.surface2 : ThemeBackend.blue
+                gradColor1: panel.sysMuted ? ThemeBackend.surface2 : "#c87d46"
+                gradColor2: panel.sysMuted ? ThemeBackend.surface2 : "#db9c5e"
+                gradColor3: panel.sysMuted ? ThemeBackend.surface2 : "#e5c07b"
                 cornerRadius: panel.s(6)
-                handleSize: panel.s(22)
+                handleSize: panel.s(20)
 
-                handleColor: panel.sysMuted ? ThemeBackend.overlay0 : Qt.lighter(panel.volColor, 1.15)
-                handleHoverColor: panel.sysMuted ? ThemeBackend.subtext0 : Qt.lighter(panel.volColor, 1.5)
-                handleDragColor: panel.sysMuted ? ThemeBackend.text : Qt.lighter(panel.volColor, 1.45)
-                handleBorderColor: Qt.rgba(0, 0, 0, 0.2)
+                handleColor: panel.sysMuted ? ThemeBackend.overlay0 : "#fbf2db"
+                handleHoverColor: panel.sysMuted ? ThemeBackend.subtext0 : "#ffffff"
+                handleDragColor: panel.sysMuted ? ThemeBackend.text : "#e5c07b"
+                handleBorderColor: Qt.rgba(0, 0, 0, 0.35)
 
                 onDragStarted: {
                     volSyncDelay.stop();
@@ -145,18 +147,18 @@ Rectangle {
 
             IconButton {
                 Layout.alignment: Qt.AlignVCenter
-                size: panel.s(26)
+                size: panel.s(28)
                 cornerRadius: panel.s(8)
                 buttonIcon: panel.sysBrightness > 66 ? "󰃠" : (panel.sysBrightness > 33 ? "󰃟" : "󰃞")
                 iconFontSize: panel.s(15)
-                accentColor: ThemeBackend.surface1
-                textColor: isHoveredOrHighlighted ? ThemeBackend.text : panel.briColor
+                accentColor: Qt.rgba(0.859, 0.612, 0.369, 0.14)
+                textColor: isHoveredOrHighlighted ? ThemeBackend.text : ThemeBackend.sapphire
                 onClicked: {
                     briCmdThrottle.stop();
                     briCmdThrottle.targetPct = -1;
                     let target = panel.sysBrightness > 0 ? 0 : 100;
                     panel.sysBrightness = target;
-                    Quickshell.execDetached(["bash", Caching.qsDir + "/../scripts/brightness.sh", "set", target.toString()]);
+                    Quickshell.execDetached(["bash", Caching.serpantinumDir + "/scripts/brightness.sh", "set", target.toString()]);
                 }
             }
 
@@ -166,7 +168,7 @@ Rectangle {
                 property int targetPct: -1
                 onTriggered: {
                     if (targetPct >= 0) {
-                        Quickshell.execDetached(["bash", Caching.qsDir + "/../scripts/brightness.sh", "set", targetPct.toString()]);
+                        Quickshell.execDetached(["bash", Caching.serpantinumDir + "/scripts/brightness.sh", "set", targetPct.toString()]);
                         targetPct = -1;
                     }
                 }
@@ -175,25 +177,25 @@ Rectangle {
             Draggable {
                 id: briSlider
                 Layout.fillWidth: true
-                implicitHeight: panel.s(18)
+                implicitHeight: panel.s(16)
                 from: 0.0
                 to: 100.0
                 stepSize: 1.0
                 showValueBubble: true
                 valueFormatter: function(v) { return Math.round(v) }
                 value: panel.sysBrightness
-                backgroundColor: ThemeBackend.surface1
-                accentColor: panel.briColor
-                gradColor1: panel.briColor
-                gradColor2: Qt.lighter(panel.briColor, 1.05)
-                gradColor3: Qt.lighter(panel.briColor, 1.10)
+                backgroundColor: ThemeBackend.mantle
+                accentColor: ThemeBackend.sapphire
+                gradColor1: "#c87d46"
+                gradColor2: "#db9c5e"
+                gradColor3: "#e5c07b"
                 cornerRadius: panel.s(6)
-                handleSize: panel.s(22)
+                handleSize: panel.s(20)
 
-                handleColor: Qt.lighter(panel.briColor, 1.15)
-                handleHoverColor: Qt.lighter(panel.briColor, 1.3)
-                handleDragColor: Qt.lighter(panel.briColor, 1.45)
-                handleBorderColor: Qt.rgba(0, 0, 0, 0.2)
+                handleColor: "#fbf2db"
+                handleHoverColor: "#ffffff"
+                handleDragColor: "#e5c07b"
+                handleBorderColor: Qt.rgba(0, 0, 0, 0.35)
 
                 onDragStarted: {
                     briSyncDelay.stop();
@@ -202,7 +204,7 @@ Rectangle {
                 onDragFinished: {
                     if (briCmdThrottle.targetPct >= 0) {
                         briCmdThrottle.stop();
-                        Quickshell.execDetached(["bash", Caching.qsDir + "/../scripts/brightness.sh", "set", briCmdThrottle.targetPct.toString()]);
+                        Quickshell.execDetached(["bash", Caching.serpantinumDir + "/scripts/brightness.sh", "set", briCmdThrottle.targetPct.toString()]);
                         briCmdThrottle.targetPct = -1;
                     }
                     briSyncDelay.restart();

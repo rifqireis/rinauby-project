@@ -41,7 +41,9 @@ Item {
         signal leftClicked()
         signal rightClicked()
 
-        color: qaGlass.active ? "transparent" : (isActive ? activeColor : ThemeBackend.faded(qaMa.containsMouse ? ThemeBackend.surface1 : Qt.darker(ThemeBackend.surface0, 1.04)))
+        color: qaGlass.active ? "transparent" : (isActive ? activeColor : (qaMa.containsMouse ? ThemeBackend.surface1 : ThemeBackend.surface0))
+        border.width: 1
+        border.color: isActive ? Qt.rgba(1, 1, 1, 0.15) : Qt.rgba(1, 1, 1, 0.05)
 
         GlassFill {
             id: qaGlass
@@ -95,8 +97,8 @@ Item {
     id: view
     z: 5
     Layout.fillWidth: true
-    Layout.preferredHeight: view.panel.s(73)
-    Layout.maximumHeight: view.panel.s(73)
+    Layout.preferredHeight: view.panel.s(64)
+    Layout.maximumHeight: view.panel.s(64)
     opacity: view.panel.introQuickActions
     transform: Translate { x: (view.panel.isLeftAnchored ? -view.panel.rowSlideDistance : view.panel.rowSlideDistance) * (1.0 - view.panel.introQuickActions) }
 

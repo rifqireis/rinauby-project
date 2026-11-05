@@ -14,3 +14,4 @@ fi
 
 quickshell -p "$QS_CFG" ipc call main handleCommand "system" "" "" 2>/dev/null || \
 quickshell ipc call main handleCommand "system" "" "" 2>/dev/null
+

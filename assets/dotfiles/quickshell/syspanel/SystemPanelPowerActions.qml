@@ -12,14 +12,14 @@ RowLayout {
     required property var panel
 
     Layout.fillWidth: true
-    Layout.preferredHeight: panel.s(73)
-    Layout.maximumHeight: panel.s(73)
+    Layout.preferredHeight: panel.s(64)
+    Layout.maximumHeight: panel.s(64)
     spacing: panel.s(6)
 
     Repeater {
         model: ListModel {
             ListElement { cmd: "lock"; icon: ""; weight: 1.0 }
-            ListElement { cmd: "sleep"; icon: "ᶻ 𝗓 𝗓"; weight: 1.0 }
+            ListElement { cmd: "sleep"; icon: "󰒲"; weight: 1.0 }
             ListElement { cmd: "hibernate"; icon: "󰤄"; weight: 1.5 }
             ListElement { cmd: "reboot"; icon: "󰑓"; weight: 2.5 }
             ListElement { cmd: "poweroff"; icon: ""; weight: 3.5 }
@@ -43,7 +43,9 @@ RowLayout {
                 Translate { x: (panel.isLeftAnchored ? -panel.rowSlideDistance : panel.rowSlideDistance) * (1.0 - panel.introActions) }
             ]
 
-            color: capsuleGlass.active ? "transparent" : ThemeBackend.faded((actionMa.containsMouse && !isDisabled) ? ThemeBackend.surface1 : Qt.darker(ThemeBackend.surface0, 1.04))
+            color: capsuleGlass.active ? "transparent" : ((actionMa.containsMouse && !isDisabled) ? ThemeBackend.surface1 : ThemeBackend.surface0)
+            border.width: 1
+            border.color: Qt.rgba(1, 1, 1, 0.05)
 
             GlassFill {
                 id: capsuleGlass

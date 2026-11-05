@@ -65,7 +65,7 @@ PanelWindow {
         return "modular";
     }
     property bool isBarFill: barStyle === "fill"
-    property int barThickness: s(40) + (isBarFill || isBarEffectivelyHidden ? 0 : s(4))
+    property int barThickness: s(34)
 
     property var notifSettings: Config.getSetting("notifications", { "dnd": false, "position": "top right", "horizontalPosition": 95, "verticalPosition": 5 })
     property string position: notifSettings.position !== undefined ? notifSettings.position : "top right"
@@ -91,17 +91,17 @@ PanelWindow {
     }
 
     margins {
-        top: isPreset ? ((popupWindow.barPosition === "top" && !popupWindow.isBarEffectivelyHidden ? popupWindow.barThickness : 0) + popupWindow.s(12)) : 0
+        top: isPreset ? ((popupWindow.barPosition === "top" && !popupWindow.isBarEffectivelyHidden ? popupWindow.barThickness : 0) + popupWindow.s(10)) : 0
         bottom: isPreset ? ((popupWindow.barPosition === "bottom" && !popupWindow.isBarEffectivelyHidden ? popupWindow.barThickness : 0) + popupWindow.s(12)) : 0
-        left: isPreset ? ((popupWindow.barPosition === "left" && popupWindow.isLeft && !popupWindow.isBarEffectivelyHidden ? popupWindow.barThickness : 0) + (popupWindow.isLeft ? popupWindow.s(16) : 0)) : 0
-        right: isPreset ? ((popupWindow.barPosition === "right" && popupWindow.isRight && !popupWindow.isBarEffectivelyHidden ? popupWindow.barThickness : 0) + (popupWindow.isRight ? popupWindow.s(16) : 0)) : 0
+        left: isPreset ? ((popupWindow.barPosition === "left" && popupWindow.isLeft && !popupWindow.isBarEffectivelyHidden ? popupWindow.barThickness : 0) + (popupWindow.isLeft ? popupWindow.s(14) : 0)) : 0
+        right: isPreset ? ((popupWindow.barPosition === "right" && popupWindow.isRight && !popupWindow.isBarEffectivelyHidden ? popupWindow.barThickness : 0) + (popupWindow.isRight ? popupWindow.s(14) : 0)) : 0
     }
 
     exclusionMode: ExclusionMode.Ignore
     focusable: false
     color: "transparent"
 
-    implicitWidth: s(350)
+    implicitWidth: s(380)
 
     mask: Region {
         item: popupContainer
@@ -136,10 +136,10 @@ PanelWindow {
 
         Item {
             id: popupContainer
-            width: popupWindow.s(350)
-            height: popupList.height
+            width: popupWindow.s(364)
+            height: popupList.height + popupWindow.s(16)
 
-            x: popupWindow.isPreset ? (popupWindow.isCenter ? (popupWindow.width - width) / 2 : (popupWindow.isLeft ? 0 : (popupWindow.width - width))) : ((popupWindow.width - width) * (popupWindow.horizontalPosition / 100.0))
+            x: popupWindow.isPreset ? (popupWindow.isCenter ? (popupWindow.width - width) / 2 : (popupWindow.isLeft ? popupWindow.s(8) : (popupWindow.width - width - popupWindow.s(4)))) : ((popupWindow.width - width) * (popupWindow.horizontalPosition / 100.0))
             y: popupWindow.isPreset ? (popupWindow.isTop ? 0 : (popupWindow.height - height)) : ((popupWindow.height - height) * (popupWindow.verticalPosition / 100.0))
 
             ListView {

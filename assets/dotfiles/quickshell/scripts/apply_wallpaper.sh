@@ -63,3 +63,4 @@ pkill -RTMIN+8 waybar 2>/dev/null || true
 pkill -USR1 -f window_title.py 2>/dev/null || true
 
 notify-send "Renaissance Masterpiece" "Telah dipasang: $CHOSEN" -i "$SELECTED_PATH" 2>/dev/null || true
+
