@@ -176,10 +176,10 @@ tooltip label {
     color: #e67e80;
 }
 
-#battery.charging,
+/* #battery.charging,
 #battery.plugged {
     color: #a7c080;
-}
+} */
 
 #battery.warning:not(.charging) {
     color: @accent_gold;

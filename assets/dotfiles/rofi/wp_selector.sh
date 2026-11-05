@@ -50,7 +50,8 @@ ITEMS=(
     "primavera:Primavera"
     "tower_of_babel:The Tower of Babel"
     "annunciation:The Annunciation"
-    "modern_cobalt_expressionism:Cobalt Expressionism"
+    "neo_renaissance_nocturne:The Nocturne Citadel"
+    "starry_night_over_the_rhone:Starry Night Over the Rhône"
     "midnight_cyber_warrior:Midnight Cyber Warrior"
 )
 

@@ -5,7 +5,7 @@
 # Digital Humanism Edition: Classic Renaissance vs Modern Renaissance
 # ==============================================================================
 
-SELECTED_PATH="$1"
+SELECTED_PATH="$(readlink -f "$1")"
 [ -f "$SELECTED_PATH" ] || exit 1
 
 FILENAME="$(basename "$SELECTED_PATH")"
@@ -13,12 +13,16 @@ STEM="${FILENAME%.*}"
 
 # 1. Klasifikasi Wallpaper & Judul Karya Seni
 case "$STEM" in
-    modern_cobalt_expressionism)
-        CHOSEN="Cobalt Expressionism"
+    neo_renaissance_nocturne)
+        CHOSEN="The Nocturne Citadel"
         THEME_MODE="modern"
         ;;
     midnight_cyber_warrior)
         CHOSEN="Midnight Cyber Warrior"
+        THEME_MODE="modern"
+        ;;
+    starry_night_over_the_rhone|starry_night)
+        CHOSEN="Starry Night Over the Rhône"
         THEME_MODE="modern"
         ;;
     apotheosis)
