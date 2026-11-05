@@ -1,0 +1,57 @@
+# ==============================================================================
+# RINAUBY (DIGITAL HUMANISM EDITION) — .gitignore
+# ==============================================================================
+
+# --- AI Planning, Prompts & Conversation Dumps (Not needed for OS build) ---
+agy1.md
+agy2.md
+thread_zed.md
+plan.md
+konteks_ringkas.md
+SKILL.md
+skills/
+assets/skills/
+
+# --- Course Documentation, Assignment Guides & Office Files ---
+docs/
+*.docx
+*.doc
+*.pptx
+*.xlsx
+*.pdf
+.~lock.*
+
+# --- Python Compiled Bytecode & Caches ---
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+env/
+venv/
+.venv/
+
+# --- Testing / Verification Screenshots in assets/ ---
+# (Over 40MB of debug screenshots; install.sh does not use them)
+assets/*.png
+
+# --- Wallpaper Candidates & Raw Backups ---
+# (Keep only the 8 production wallpapers + .thumbs in assets/wallpapers/)
+assets/wallpapers/candidates/
+assets/wallpapers_original_backup/
+
+# --- Host-Specific Testing & Cleanup Scripts ---
+clean_arch_host.sh
+assets/toggle_renaissance.sh
+
+# --- OS / Editor Caches & Temporary Files ---
+.DS_Store
+Thumbs.db
+*.swp
+*.swo
+*~
+.idea/
+.vscode/
+*.log
+*.tmp
+/tmp/
