@@ -65,11 +65,13 @@ PanelWindow {
         return "modular";
     }
     property bool isBarFill: barStyle === "fill"
+    property int waybarHeight: s(34)
+    property int waybarMargin: s(16)
     property int barThickness: s(34)
 
-    property var notifSettings: Config.getSetting("notifications", { "dnd": false, "position": "top right", "horizontalPosition": 95, "verticalPosition": 5 })
-    property string position: notifSettings.position !== undefined ? notifSettings.position : "top right"
-    property real horizontalPosition: notifSettings.horizontalPosition !== undefined ? notifSettings.horizontalPosition : 95
+    property var notifSettings: Config.getSetting("notifications", { "dnd": false, "position": "top center", "horizontalPosition": 50, "verticalPosition": 5 })
+    property string position: notifSettings.position !== undefined ? notifSettings.position : "top center"
+    property real horizontalPosition: notifSettings.horizontalPosition !== undefined ? notifSettings.horizontalPosition : 50
     property real verticalPosition: notifSettings.verticalPosition !== undefined ? notifSettings.verticalPosition : 5
 
     property bool isPreset: position !== "custom"
@@ -91,10 +93,10 @@ PanelWindow {
     }
 
     margins {
-        top: isPreset ? ((popupWindow.barPosition === "top" && !popupWindow.isBarEffectivelyHidden ? popupWindow.barThickness : 0) + popupWindow.s(10)) : 0
-        bottom: isPreset ? ((popupWindow.barPosition === "bottom" && !popupWindow.isBarEffectivelyHidden ? popupWindow.barThickness : 0) + popupWindow.s(12)) : 0
-        left: isPreset ? ((popupWindow.barPosition === "left" && popupWindow.isLeft && !popupWindow.isBarEffectivelyHidden ? popupWindow.barThickness : 0) + (popupWindow.isLeft ? popupWindow.s(14) : 0)) : 0
-        right: isPreset ? ((popupWindow.barPosition === "right" && popupWindow.isRight && !popupWindow.isBarEffectivelyHidden ? popupWindow.barThickness : 0) + (popupWindow.isRight ? popupWindow.s(14) : 0)) : 0
+        top: isPreset ? ((popupWindow.barPosition === "top" && !popupWindow.isBarEffectivelyHidden ? (popupWindow.waybarHeight + popupWindow.waybarMargin) : popupWindow.s(16))) : 0
+        bottom: isPreset ? ((popupWindow.barPosition === "bottom" && !popupWindow.isBarEffectivelyHidden ? popupWindow.barThickness : 0) + popupWindow.s(16)) : 0
+        left: isPreset ? ((popupWindow.barPosition === "left" && popupWindow.isLeft && !popupWindow.isBarEffectivelyHidden ? popupWindow.barThickness : 0) + (popupWindow.isLeft ? popupWindow.s(16) : 0)) : 0
+        right: isPreset ? ((popupWindow.barPosition === "right" && popupWindow.isRight && !popupWindow.isBarEffectivelyHidden ? popupWindow.barThickness : 0) + (popupWindow.isRight ? popupWindow.s(16) : 0)) : 0
     }
 
     exclusionMode: ExclusionMode.Ignore
@@ -108,17 +110,17 @@ PanelWindow {
     }
 
     property bool dndEnabled: {
-        let n = Config.getSetting("notifications", { "dnd": false, "position": "top right" });
+        let n = Config.getSetting("notifications", { "dnd": false, "position": "top center" });
         return Boolean(n && n.dnd);
     }
 
     Connections {
         target: Config
         function onSettingsLoaded() {
-            let n = Config.getSetting("notifications", { "dnd": false, "position": "top right" });
+            let n = Config.getSetting("notifications", { "dnd": false, "position": "top center" });
             popupWindow.dndEnabled = Boolean(n && n.dnd);
-            popupWindow.position = (n && n.position !== undefined) ? n.position : "top right";
-            popupWindow.horizontalPosition = (n && n.horizontalPosition !== undefined) ? n.horizontalPosition : 95;
+            popupWindow.position = (n && n.position !== undefined) ? n.position : "top center";
+            popupWindow.horizontalPosition = (n && n.horizontalPosition !== undefined) ? n.horizontalPosition : 50;
             popupWindow.verticalPosition = (n && n.verticalPosition !== undefined) ? n.verticalPosition : 5;
             popupWindow.rawBarSettings = Config.getSetting("bar", {});
             popupWindow.barPosition = (popupWindow.rawBarSettings && popupWindow.rawBarSettings.position !== undefined) ? popupWindow.rawBarSettings.position : "top";
@@ -136,10 +138,10 @@ PanelWindow {
 
         Item {
             id: popupContainer
-            width: popupWindow.s(364)
+            width: popupWindow.s(380)
             height: popupList.height + popupWindow.s(16)
 
-            x: popupWindow.isPreset ? (popupWindow.isCenter ? (popupWindow.width - width) / 2 : (popupWindow.isLeft ? popupWindow.s(8) : (popupWindow.width - width - popupWindow.s(4)))) : ((popupWindow.width - width) * (popupWindow.horizontalPosition / 100.0))
+            x: popupWindow.isPreset ? (popupWindow.isCenter ? (popupWindow.width - width) / 2 : (popupWindow.isLeft ? popupWindow.s(8) : (popupWindow.width - width - popupWindow.s(8)))) : ((popupWindow.width - width) * (popupWindow.horizontalPosition / 100.0))
             y: popupWindow.isPreset ? (popupWindow.isTop ? 0 : (popupWindow.height - height)) : ((popupWindow.height - height) * (popupWindow.verticalPosition / 100.0))
 
             ListView {
@@ -165,7 +167,7 @@ PanelWindow {
                         }
                         NumberAnimation {
                             property: "y"
-                            from: (popupWindow.isPreset ? (popupWindow.isCenter ? (popupWindow.isBottom ? popupWindow.s(24) : -popupWindow.s(24)) : 0) : ((popupWindow.verticalPosition > 50) ? popupWindow.s(24) : -popupWindow.s(24)))
+                            from: (popupWindow.isPreset ? (popupWindow.isCenter ? (popupWindow.isBottom ? popupWindow.s(14) : -popupWindow.s(10)) : 0) : ((popupWindow.verticalPosition > 50) ? popupWindow.s(14) : -popupWindow.s(10)))
                             to: 0
                             duration: 250
                             easing.type: Easing.OutCubic
@@ -184,7 +186,7 @@ PanelWindow {
                         }
                         NumberAnimation {
                             property: "y"
-                            to: (popupWindow.isPreset ? (popupWindow.isCenter ? (popupWindow.isBottom ? popupWindow.s(24) : -popupWindow.s(24)) : 0) : ((popupWindow.verticalPosition > 50) ? popupWindow.s(24) : -popupWindow.s(24)))
+                            to: (popupWindow.isPreset ? (popupWindow.isCenter ? (popupWindow.isBottom ? popupWindow.s(14) : -popupWindow.s(10)) : 0) : ((popupWindow.verticalPosition > 50) ? popupWindow.s(14) : -popupWindow.s(10)))
                             duration: 250
                             easing.type: Easing.OutCubic
                         }

@@ -52,8 +52,8 @@ GuideTab {
 
     property var defaultNotificationSettings: ({
         "dnd": false,
-        "position": "top right",
-        "horizontalPosition": presetRightH,
+        "position": "top center",
+        "horizontalPosition": presetCenterH,
         "verticalPosition": presetTopV,
         "sound": true,
         "soundFile": "",

@@ -12,3 +12,4 @@ if [ ! -f "$PYTHON_SCRIPT" ]; then
 fi
 
 exec python3 "$PYTHON_SCRIPT" "$@"
+
