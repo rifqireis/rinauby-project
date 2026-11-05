@@ -49,7 +49,7 @@ PAGE_SPECS = {
     "audio": ("pages.audio_page", "AudioPage", "Sound"),
     "power": ("pages.power_page", "PowerPage", "Power & Battery"),
     "shortcuts": ("pages.shortcuts_page", "ShortcutsPage", "Keyboard Shortcuts"),
-    "about": ("pages.about_page", "AboutPage", "About Rinauby"),
+    "about": ("pages.about_page", "AboutPage", "About System"),
 }
 
 PRELOAD_PRIORITY = [
@@ -62,7 +62,7 @@ PRELOAD_PRIORITY = [
 class SettingsMainWindow(Adw.ApplicationWindow):
     def __init__(self, initial_page="wifi", **kwargs):
         super().__init__(**kwargs)
-        self.set_title("Rinauby — Settings")
+        self.set_title("Settings")
         self.set_default_size(880, 600)
         self.add_css_class("rinauby-settings")
 
@@ -313,8 +313,8 @@ class SettingsApp(Adw.Application):
         self.win.present()
 
 def main():
-    GLib.set_prgname("org.rinauby.settings")
-    GLib.set_application_name("Rinauby — Settings")
+    GLib.set_prgname("org.system.settings")
+    GLib.set_application_name("Settings")
     app = SettingsApp()
     return app.run(sys.argv)
 

@@ -4,14 +4,14 @@ gi.require_version("Adw", "1")
 from gi.repository import Gtk, Adw
 
 SHORTCUTS = [
-    ("Super + Space / Super + D", "Application Launcher", "Rofi modal with Greek pillar logo and smooth blur"),
-    ("Super + K / Ctrl + Super + T", "Wallpaper Selector", "Interactive gallery to choose classical Renaissance artworks"),
+    ("Super + Space / Super + D", "Application Launcher", "Quick launcher with clean centered blur"),
+    ("Super + K / Ctrl + Super + T", "Wallpaper Selector", "Interactive 3D gallery to choose desktop wallpapers"),
     ("Super + Backspace / Super + Esc", "Session Controls", "Power menu for Lock, Suspend, Logout, Reboot, and Shutdown"),
-    ("Super + L", "Classical Lock Screen", "Hyprlock with golden aesthetics and Raphael backdrop"),
-    ("Super + A", "Control Center", "SwayNC panel with media player, volume sliders, and notifications"),
-    ("Super + Shift + S", "Area Screenshot", "Snip region to clipboard with golden notification toast"),
+    ("Super + L", "Lock Screen", "Hyprlock screen locker"),
+    ("Super + A / Super + N", "Control Center", "System panel with quick settings, volume sliders, and notifications"),
+    ("Super + Shift + S", "Area Screenshot", "Snip region to clipboard and pictures folder"),
     ("Super + Print", "Screenshot Menu", "Quick menu for full screen, window, or snipping tool"),
-    ("Media Keys (Vol / Bri)", "Wayland OSD Indicator", "Sleek bottom-centered pill capsules with Cairo rendering"),
+    ("Media Keys (Vol / Bri)", "Wayland OSD Indicator", "Sleek bottom-centered pill capsules with smooth rendering"),
 ]
 
 class ShortcutsPage(Gtk.Box):

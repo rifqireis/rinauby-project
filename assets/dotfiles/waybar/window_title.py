@@ -24,7 +24,7 @@ def get_wallpaper_title():
                     return val
     except Exception:
         pass
-    return "The School of Athens"
+    return "Desktop"
 
 def get_window_info():
     try:
@@ -55,7 +55,7 @@ def emit_status():
     else:
         wp = get_wallpaper_title()
         display_text = wp
-        tooltip = f"Active Artwork: {wp}\n(Rinauby Masterpiece)"
+        tooltip = f"Wallpaper: {wp}"
 
     payload = json.dumps({
         "text": display_text,

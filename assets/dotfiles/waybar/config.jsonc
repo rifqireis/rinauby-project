@@ -41,7 +41,7 @@
     "custom/logo": {
         "format": "",
         "tooltip": true,
-        "tooltip-format": "Rinauby · Digital Humanism (Click to Launch)",
+        "tooltip-format": "Menu (Click to Launch)",
         "on-click": "sh -c 'if command -v rinauby-launcher >/dev/null 2>&1; then exec rinauby-launcher; else exec rofi -show drun -theme /home/rifqi/Workspace/Belajar/SO/Tubes-2604/Rancangan/assets/dotfiles/rofi/renaissance_launcher.rasi; fi'"
     },
 
@@ -89,7 +89,7 @@
         "interval": 180,
         "signal": 8,
         "tooltip": true,
-        "tooltip-format": "Renaissance Humanism Motto\n(Click to rotate quote)",
+        "tooltip-format": "Philosophy & Quotes\n(Click to rotate)",
         "on-click": "sh -c 'if command -v rinauby-quote >/dev/null 2>&1; then rinauby-quote --next; elif [ -f \"$HOME/.config/waybar/quote_rotator.sh\" ]; then bash \"$HOME/.config/waybar/quote_rotator.sh\" --next; else /home/rifqi/Workspace/Belajar/SO/Tubes-2604/Rancangan/assets/dotfiles/waybar/quote_rotator.sh --next; fi; pkill -RTMIN+8 waybar'"
     },
 

@@ -23,10 +23,10 @@ class AboutPage(Gtk.Box):
 
         # Hero Row
         hero_row = Adw.ActionRow(
-            title="Rinauby",
-            subtitle="Operating Systems Project 2604 — Digital Humanism Desktop Experience"
+            title="Desktop Environment",
+            subtitle="Clean, Elegant & Cohesive Desktop Experience"
         )
-        badge_hero = Gtk.Label(label="v1.0 Masterpiece")
+        badge_hero = Gtk.Label(label="v1.0")
         badge_hero.add_css_class("pill-dropdown-button")
         badge_hero.set_valign(Gtk.Align.CENTER)
         hero_row.add_suffix(badge_hero)

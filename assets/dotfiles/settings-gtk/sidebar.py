@@ -118,7 +118,7 @@ SIDEBAR_GROUPS = [
             },
             {
                 "id": "about",
-                "title": "About Rinauby",
+                "title": "About System",
                 "icon": "help-about-symbolic",
                 "keywords": ["about", "system", "kernel", "hyprland", "ubuntu", "distribution", "specs"]
             }

@@ -21,7 +21,7 @@ notify_success() {
     local title="$2"
     local desc="$3"
     if command -v notify-send >/dev/null 2>&1; then
-        notify-send -a "School of Athens" \
+        notify-send -a "System" \
             -i "$file" \
             "$title" \
             "$desc" \
@@ -35,14 +35,14 @@ case "$1" in
         [ -z "$GEOM" ] && exit 0
         grim -g "$GEOM" "$FILEPATH"
         wl-copy --type image/png < "$FILEPATH"
-        notify_success "$FILEPATH" "🏛 Tangkapan Layar Area" "Tersimpan: $FILENAME\nDisalin ke papan klip."
+        notify_success "$FILEPATH" "Tangkapan Layar Area" "Tersimpan: $FILENAME\nDisalin ke papan klip."
         ;;
 
     "full"|"fullscreen"|"screen")
         sleep 0.15
         grim "$FILEPATH"
         wl-copy --type image/png < "$FILEPATH"
-        notify_success "$FILEPATH" "🏛 Tangkapan Layar Penuh" "Tersimpan: $FILENAME\nDisalin ke papan klip."
+        notify_success "$FILEPATH" "Tangkapan Layar Penuh" "Tersimpan: $FILENAME\nDisalin ke papan klip."
         ;;
 
     "window")
@@ -51,13 +51,13 @@ case "$1" in
             GEOM=$(echo "$ACTIVE_WINDOW" | jq -r '"\(.at[0]),\(.at[1]) \(.size[0])x\(.size[1])"')
             grim -g "$GEOM" "$FILEPATH"
             wl-copy --type image/png < "$FILEPATH"
-            notify_success "$FILEPATH" "🏛 Tangkapan Jendela Aktif" "Tersimpan: $FILENAME\nDisalin ke papan klip."
+            notify_success "$FILEPATH" "Tangkapan Jendela Aktif" "Tersimpan: $FILENAME\nDisalin ke papan klip."
         else
             GEOM=$(slurp "${SLURP_ARGS[@]}")
             [ -z "$GEOM" ] && exit 0
             grim -g "$GEOM" "$FILEPATH"
             wl-copy --type image/png < "$FILEPATH"
-            notify_success "$FILEPATH" "🏛 Tangkapan Layar Area" "Tersimpan: $FILENAME\nDisalin ke papan klip."
+            notify_success "$FILEPATH" "Tangkapan Layar Area" "Tersimpan: $FILENAME\nDisalin ke papan klip."
         fi
         ;;
 
@@ -69,19 +69,19 @@ case "$1" in
         else
             grim -g "$GEOM" "$FILEPATH"
             wl-copy --type image/png < "$FILEPATH"
-            notify_success "$FILEPATH" "🏛 Tangkapan Layar Area" "Tersimpan: $FILENAME\nDisalin ke papan klip."
+            notify_success "$FILEPATH" "Tangkapan Layar Area" "Tersimpan: $FILENAME\nDisalin ke papan klip."
         fi
         ;;
 
     "delay")
         SEC="${2:-5}"
         if command -v notify-send >/dev/null 2>&1; then
-            notify-send -a "School of Athens" "🏛 Tangkapan Layar Tunda" "Mengambil tangkapan layar dalam $SEC detik..." 2>/dev/null || true
+            notify-send -a "System" "Tangkapan Layar Tunda" "Mengambil tangkapan layar dalam $SEC detik..." 2>/dev/null || true
         fi
         sleep "$SEC"
         grim "$FILEPATH"
         wl-copy --type image/png < "$FILEPATH"
-        notify_success "$FILEPATH" "🏛 Tangkapan Layar Tunda" "Tersimpan: $FILENAME\nDisalin ke papan klip."
+        notify_success "$FILEPATH" "Tangkapan Layar Tunda" "Tersimpan: $FILENAME\nDisalin ke papan klip."
         ;;
 
     "menu"|*)

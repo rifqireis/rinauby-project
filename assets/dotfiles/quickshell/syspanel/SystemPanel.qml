@@ -516,11 +516,10 @@ Item {
                             }
 
                             Text {
-                                text: (SystemInfo.osName !== "" ? SystemInfo.osName : I18n.t("syspanel.user.default_os")) + " · Digital Humanism"
-                                font.family: ThemeBackend.editorialFont
-                                font.italic: true
-                                font.pixelSize: root.s(12)
-                                color: ThemeBackend.blue
+                                text: SystemInfo.osName !== "" ? SystemInfo.osName : I18n.t("syspanel.user.default_os")
+                                font.family: ThemeBackend.fontFamily
+                                font.pixelSize: root.s(11)
+                                color: ThemeBackend.subtext0
                             }
                         }
 
