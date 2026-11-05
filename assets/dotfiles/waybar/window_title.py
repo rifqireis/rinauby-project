@@ -50,11 +50,11 @@ def emit_status():
     title, app_class = get_window_info()
 
     if title:
-        display_text = truncate(title, 38)
+        display_text = truncate(title, 36)
         tooltip = f"{app_class}: {title}" if app_class else title
     else:
         wp = get_wallpaper_title()
-        display_text = f"  {wp}"
+        display_text = wp
         tooltip = f"Active Artwork: {wp}\n(Rinauby Masterpiece)"
 
     payload = json.dumps({
