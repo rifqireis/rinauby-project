@@ -120,20 +120,20 @@ WAYBAR_THEME_TARGET="$HOME/.config/waybar/theme.css"
 if [ "$THEME_MODE" = "modern" ]; then
     cat << 'EOF' > "$WAYBAR_THEME_TARGET"
 /* Waybar Theme: Modern Renaissance (Cobalt Blue & Cyber Mocha) */
-@define-color bar_bg rgba(24, 24, 37, 0.85);
+@define-color bar_bg rgba(17, 17, 27, 0.85);
 @define-color bar_fg #cdd6f4;
 @define-color bar_fg_bright #ffffff;
-@define-color bar_border_side rgba(137, 180, 250, 0.22);
-@define-color bar_border_bottom #89b4fa;
+@define-color bar_border_side transparent;
+@define-color bar_border_bottom transparent;
 @define-color accent #89b4fa;
-@define-color accent_gold #f5c2e7;
-@define-color ws_active #89b4fa;
+@define-color accent_gold #89b4fa;
+@define-color ws_active #11111b;
 @define-color ws_inactive #6c7086;
-@define-color ws_hover_bg rgba(137, 180, 250, 0.12);
-@define-color ws_active_bg rgba(137, 180, 250, 0.18);
-@define-color sep_color rgba(137, 180, 250, 0.30);
+@define-color ws_hover_bg rgba(137, 180, 250, 0.14);
+@define-color ws_active_bg #89b4fa;
+@define-color sep_color rgba(255, 255, 255, 0.12);
 @define-color tooltip_bg rgba(17, 17, 27, 0.95);
-@define-color tooltip_border rgba(137, 180, 250, 0.45);
+@define-color tooltip_border rgba(137, 180, 250, 0.30);
 EOF
 else
     cat << 'EOF' > "$WAYBAR_THEME_TARGET"
