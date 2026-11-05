@@ -145,7 +145,6 @@ Item {
     property real introTop: 0.0
     property real introQuickActions: 0.0
     property real introNotifs: 0.0
-    property real introActions: 0.0
     property real introCore: 0.0
 
     function resetAndPlayIntro() {
@@ -153,7 +152,6 @@ Item {
         introTop = 0.0;
         introQuickActions = 0.0;
         introNotifs = 0.0;
-        introActions = 0.0;
         introCore = 0.0;
         closeSequence.stop();
         startupSequence.restart();
@@ -206,10 +204,6 @@ Item {
         }
         SequentialAnimation {
             PauseAnimation { duration: 90 }
-            NumberAnimation { target: root; property: "introActions"; from: 0; to: 1.0; duration: 330; easing.type: Easing.OutCubic }
-        }
-        SequentialAnimation {
-            PauseAnimation { duration: 120 }
             NumberAnimation { target: root; property: "introCore"; from: 0; to: 1.0; duration: 340; easing.type: Easing.OutCubic }
         }
     }
@@ -231,7 +225,6 @@ Item {
             NumberAnimation { target: root; property: "introTop"; to: 0.0; duration: 250; easing.type: Easing.InCubic }
             NumberAnimation { target: root; property: "introQuickActions"; to: 0.0; duration: 250; easing.type: Easing.InCubic }
             NumberAnimation { target: root; property: "introNotifs"; to: 0.0; duration: 250; easing.type: Easing.InCubic }
-            NumberAnimation { target: root; property: "introActions"; to: 0.0; duration: 250; easing.type: Easing.InCubic }
             NumberAnimation { target: root; property: "introCore"; to: 0.0; duration: 250; easing.type: Easing.InCubic }
         }
         ScriptAction {
@@ -264,13 +257,13 @@ Item {
 
         RowLayout {
             anchors.fill: parent
-            anchors.leftMargin: root.s(12)
-            anchors.rightMargin: root.s(10)
-            spacing: root.s(10)
+            anchors.leftMargin: root.s(14)
+            anchors.rightMargin: root.s(12)
+            spacing: root.s(8)
 
             Text {
                 font.family: ThemeBackend.iconFont
-                font.pixelSize: root.s(24)
+                font.pixelSize: root.s(18)
                 color: bRoot.iconColor
                 text: root.isCharging ? "󰂄" : (root.batCapacity > 20 ? "󰁹" : "󰂃")
                 Behavior on color {
@@ -280,15 +273,15 @@ Item {
                 Layout.alignment: Qt.AlignVCenter
             }
 
-            ColumnLayout {
-                spacing: 0
+            RowLayout {
+                spacing: root.s(4)
                 Layout.fillWidth: true
                 Layout.alignment: Qt.AlignVCenter
 
                 Text {
                     font.family: ThemeBackend.fontFamily
-                    font.weight: Font.Black
-                    font.pixelSize: root.s(16)
+                    font.weight: Font.Bold
+                    font.pixelSize: root.s(13)
                     color: bRoot.contentTextColor
                     text: Math.round(root.animCapacity) + "%"
                     Behavior on color {
@@ -309,10 +302,10 @@ Item {
                     }
 
                     font.family: ThemeBackend.fontFamily
-                    font.weight: Font.Bold
+                    font.weight: Font.Normal
                     font.pixelSize: root.s(10)
-                    color: bRoot.glass ? Qt.alpha(bRoot.contentTextColor, 0.75) : (bRoot.contentTextColor === ThemeBackend.crust ? Qt.alpha(ThemeBackend.crust, 0.85) : ThemeBackend.subtext0)
-                    text: timeString
+                    color: ThemeBackend.subtext0
+                    text: "• " + timeString
                     elide: Text.ElideRight
                     Layout.fillWidth: true
                     Behavior on color {
@@ -380,38 +373,27 @@ Item {
                 anchors.margins: root.s(12)
                 spacing: root.s(8)
 
-                Rectangle {
+                Item {
                     id: userBox
                     Layout.fillWidth: true
-                    Layout.preferredHeight: root.s(58)
-                    Layout.maximumHeight: root.s(58)
-                    radius: root.boxRadius
-                    color: userGlass.active ? "transparent" : ThemeBackend.surface0
-                    border.width: 1
-                    border.color: Qt.rgba(1, 1, 1, 0.05)
+                    Layout.preferredHeight: root.s(40)
+                    Layout.maximumHeight: root.s(40)
                     opacity: root.introTop
                     transform: Translate { x: (root.isLeftAnchored ? -root.rowSlideDistance : root.rowSlideDistance) * (1.0 - root.introTop) }
 
-                    GlassFill {
-                        id: userGlass
-                        anchors.fill: parent
-                        radius: parent.radius
-                        tintColor: ThemeBackend.surface0
-                        tintAmount: 0.3
-                    }
-
                     RowLayout {
                         anchors.fill: parent
-                        anchors.margins: root.s(10)
+                        anchors.leftMargin: root.s(4)
+                        anchors.rightMargin: root.s(4)
                         spacing: root.s(10)
 
                         ImageBox {
                             Layout.alignment: Qt.AlignVCenter
-                            Layout.preferredWidth: root.s(36)
-                            Layout.preferredHeight: root.s(36)
-                            size: root.s(36)
-                            cornerRadius: root.s(10)
-                            imageRadius: root.s(10)
+                            Layout.preferredWidth: root.s(32)
+                            Layout.preferredHeight: root.s(32)
+                            size: root.s(32)
+                            cornerRadius: root.s(16)
+                            imageRadius: root.s(16)
                             source: SystemInfo.avatarPath !== "" ? "file://" + SystemInfo.avatarPath : ""
                             backgroundColor: SystemInfo.avatarPath === "" ? Qt.rgba(ThemeBackend.blue.r, ThemeBackend.blue.g, ThemeBackend.blue.b, 0.14) : "transparent"
 
@@ -419,7 +401,7 @@ Item {
                                 anchors.centerIn: parent
                                 text: ""
                                 font.family: ThemeBackend.iconFont
-                                font.pixelSize: root.s(17)
+                                font.pixelSize: root.s(16)
                                 color: ThemeBackend.blue
                                 visible: SystemInfo.avatarPath === ""
                             }
@@ -427,75 +409,76 @@ Item {
 
                         ColumnLayout {
                             Layout.alignment: Qt.AlignVCenter
-                            spacing: root.s(1)
+                            spacing: 0
 
                             Text {
                                 text: SystemInfo.username !== "" ? SystemInfo.username : I18n.t("syspanel.user.default_name")
-                                font.family: ThemeBackend.serifFont
+                                font.family: ThemeBackend.fontFamily
                                 font.weight: Font.Bold
-                                font.capitalization: Font.AllUppercase
-                                font.letterSpacing: 0.6
-                                font.pixelSize: root.s(14)
+                                font.pixelSize: root.s(13)
                                 color: ThemeBackend.text
                             }
 
                             Text {
                                 text: SystemInfo.osName !== "" ? SystemInfo.osName : I18n.t("syspanel.user.default_os")
                                 font.family: ThemeBackend.fontFamily
-                                font.pixelSize: root.s(11)
+                                font.pixelSize: root.s(10)
                                 color: ThemeBackend.subtext0
                             }
                         }
 
                         Item { Layout.fillWidth: true }
 
+                        // GNOME-Style Header Actions: Lock, Settings, Power
+                        IconButton {
+                            id: lockQuickBtn
+                            Layout.alignment: Qt.AlignVCenter
+                            size: root.s(32)
+                            cornerRadius: root.s(16)
+                            buttonIcon: ""
+                            iconFontSize: root.s(14)
+                            accentColor: isHoveredOrHighlighted ? Qt.rgba(1, 1, 1, 0.12) : Qt.rgba(1, 1, 1, 0.05)
+                            bgOpacity: 1.0
+                            textColor: isHoveredOrHighlighted ? ThemeBackend.text : ThemeBackend.subtext0
+                            onClicked: {
+                                closeSequence.start();
+                                Quickshell.execDetached(["bash", "-c", "loginctl lock-session || hyprlock"]);
+                            }
+                        }
+
                         IconButton {
                             id: settingsQuickBtn
                             Layout.alignment: Qt.AlignVCenter
                             size: root.s(32)
-                            cornerRadius: root.s(8)
+                            cornerRadius: root.s(16)
                             buttonIcon: "󰒓"
-                            iconFontSize: root.s(16)
-                            accentColor: isHoveredOrHighlighted ? Qt.rgba(1, 1, 1, 0.08) : "transparent"
-                            bgOpacity: isHoveredOrHighlighted ? 1.0 : 0.0
-                            textColor: isHoveredOrHighlighted ? ThemeBackend.text : ThemeBackend.blue
+                            iconFontSize: root.s(15)
+                            accentColor: isHoveredOrHighlighted ? Qt.rgba(1, 1, 1, 0.12) : Qt.rgba(1, 1, 1, 0.05)
+                            bgOpacity: 1.0
+                            textColor: isHoveredOrHighlighted ? ThemeBackend.text : ThemeBackend.subtext0
                             onClicked: {
                                 closeSequence.start();
                                 Quickshell.execDetached(["bash", "-c", "rinauby-settings --toggle"]);
                             }
                         }
 
-                        ClickButton {
-                            id: logoutBtn
-                            Layout.alignment: Qt.AlignVCenter | Qt.AlignRight
-                            Layout.preferredWidth: root.s(80)
-                            Layout.preferredHeight: root.s(32)
-                            horizontalPadding: root.s(8)
-                            cornerRadius: root.s(8)
-                            buttonText: I18n.t("syspanel.user.logout")
-                            textFontSize: root.s(11)
-                            buttonIcon: "󰍃"
-                            iconFontSize: root.s(14)
-                            accentColor: isHoveredOrHighlighted ? Qt.rgba(1, 1, 1, 0.08) : "transparent"
-                            bgOpacity: isHoveredOrHighlighted ? 1.0 : 0.0
-                            textColor: isHoveredOrHighlighted ? ThemeBackend.text : ThemeBackend.blue
-
-                            Timer {
-                                id: logoutOpenTimer
-                                interval: 150
-                                onTriggered: {
-                                    closeSequence.start();
-                                    Quickshell.execDetached(["bash", Caching.serpantinumDir + "/scripts/system/exit.sh"]);
-                                }
-                            }
-
-                            onTriggered: {
-                                logoutOpenTimer.start();
+                        IconButton {
+                            id: powerQuickBtn
+                            Layout.alignment: Qt.AlignVCenter
+                            size: root.s(32)
+                            cornerRadius: root.s(16)
+                            buttonIcon: ""
+                            iconFontSize: root.s(15)
+                            accentColor: isHoveredOrHighlighted ? Qt.rgba(1, 1, 1, 0.12) : Qt.rgba(1, 1, 1, 0.05)
+                            bgOpacity: 1.0
+                            textColor: isHoveredOrHighlighted ? ThemeBackend.text : ThemeBackend.subtext0
+                            onClicked: {
+                                closeSequence.start();
+                                Quickshell.execDetached(["bash", Caching.serpantinumDir + "/scripts/system/exit.sh"]);
                             }
                         }
                     }
                 }
-
 
                 SystemPanelQuickActions {
                     id: quickActionsBox
@@ -509,132 +492,60 @@ Item {
                     Layout.minimumHeight: root.s(68)
                     cornerRadius: root.boxRadius
                     cardRadius: root.cardRadius
-                    baseColor: ThemeBackend.surface0
+                    baseColor: "transparent"
                     rootContext: root
                     opacity: root.introNotifs
                     transform: Translate { x: (root.isLeftAnchored ? -root.rowSlideDistance : root.rowSlideDistance) * (1.0 - root.introNotifs) }
                 }
 
-                SystemPanelPowerActions {
-                    panel: root
-                }
-
                 RowLayout {
                     id: batteryAndProfileRow
                     Layout.fillWidth: true
-                    Layout.preferredHeight: root.isDesktop ? root.s(50) : root.s(58)
-                    Layout.maximumHeight: Layout.preferredHeight
+                    Layout.preferredHeight: root.s(40)
+                    Layout.maximumHeight: root.s(40)
                     spacing: root.s(8)
                     opacity: root.introCore
                     transform: Translate { x: (root.isLeftAnchored ? -root.rowSlideDistance : root.rowSlideDistance) * (1.0 - root.introCore) }
 
-                    // 1. KARTU STATUS BATERAI (Terisolasi mandiri, wave tidak akan menabrak profile)
+                    // 1. KARTU STATUS BATERAI (Minimalis, Flat GNOME Style)
                     Rectangle {
                         id: batteryCard
                         visible: !root.isDesktop
                         Layout.fillWidth: true
                         Layout.fillHeight: true
-                        radius: root.boxRadius
-                        color: (root.isDesktop || batteryGlass.active) ? "transparent" : ThemeBackend.surface0
+                        radius: height / 2
+                        color: ThemeBackend.surface0
                         border.width: 1
-                        border.color: Qt.rgba(1, 1, 1, 0.05)
+                        border.color: Qt.rgba(1, 1, 1, 0.04)
                         clip: true
-
-                        property real fillLevel: root.animCapacity / 100
-                        property real maxWaveAmp: root.s(2)
-                        property real waveAmp: (fillLevel < 0.99 && fillLevel > 0.01) ? maxWaveAmp * Math.sin(fillLevel * Math.PI) : 0
-
-                        GlassFill {
-                            id: batteryGlass
-                            anchors.fill: parent
-                            allowed: !root.isDesktop
-                            radius: parent.radius
-                            tintColor: ThemeBackend.surface0
-                            tintAmount: 0.3
-                        }
-
-                        FluidWave {
-                            id: waveCanvas
-                            anchors.fill: parent
-                            visible: !batteryGlass.active && root.visible && !root.isDesktop && batteryCard.fillLevel > 0.001
-
-                            property real wavePhase: 0.0
-                            NumberAnimation on wavePhase {
-                                running: root.visible && !root.isDesktop && batteryCard.fillLevel > 0.0 && batteryCard.fillLevel < 1.0
-                                loops: Animation.Infinite
-                                from: 0; to: Math.PI * 2; duration: root.isCharging ? 1200 : 2200
-                            }
-
-                            radius: batteryCard.radius
-                            fillLevel: batteryCard.fillLevel
-                            waveAmp: (batteryCard.fillLevel < 0.99 && batteryCard.waveAmp > 0) ? Math.min(batteryCard.waveAmp, Math.min(width * batteryCard.fillLevel, width * (1.0 - batteryCard.fillLevel))) : 0
-                            phase: wavePhase
-                            vertical: 0.0
-                            color1: root.batColorFlat
-                            color2: root.batColorFlat
-                        }
-
-                        LiquidFill {
-                            anchors.fill: parent
-                            visible: batteryGlass.active && root.visible && !root.isDesktop && batteryCard.fillLevel > 0.001
-                            radius: batteryCard.radius
-                            fillLevel: batteryCard.fillLevel
-                            waveAmp: waveCanvas.waveAmp
-                            phase: waveCanvas.wavePhase
-                            color1: Qt.alpha(Qt.lighter(root.batColorFlat, 1.1), 0.6)
-                            color2: Qt.alpha(root.batColorFlat, 0.6)
-                            bodyAlpha: 0.18
-                        }
 
                         BatteryContent {
                             anchors.fill: parent
                             contentTextColor: ThemeBackend.text
                             iconColor: root.batColorFlat
-                            glass: batteryGlass.active
-                            visible: !root.isDesktop
-                        }
-
-                        Item {
-                            anchors.left: parent.left
-                            anchors.top: parent.top
-                            anchors.bottom: parent.bottom
-                            visible: !root.isDesktop
-
-                            property real phaseOffset: Math.sin(waveCanvas.wavePhase) - Math.cos(waveCanvas.wavePhase)
-                            property real centerOffset: batteryCard.fillLevel > 0.01 && batteryCard.fillLevel < 0.99 ? 0.375 * batteryCard.waveAmp * phaseOffset : 0
-
-                            width: Math.max(0, Math.min(parent.width, (parent.width * batteryCard.fillLevel) + centerOffset))
-                            clip: true
-
-                            BatteryContent {
-                                width: batteryCard.width
-                                height: batteryCard.height
-                                contentTextColor: batteryGlass.active ? ThemeBackend.text : ThemeBackend.crust
-                                iconColor: batteryGlass.active ? ThemeBackend.text : ThemeBackend.crust
-                                glass: batteryGlass.active
-                            }
+                            glass: false
                         }
                     }
 
                     // 2. KARTU POWER PROFILE (Terpisah rapi di sebelah kanan)
                     Rectangle {
                         id: profileCard
-                        Layout.preferredWidth: root.isDesktop ? -1 : root.s(160)
+                        Layout.preferredWidth: root.isDesktop ? -1 : root.s(136)
                         Layout.fillWidth: root.isDesktop
                         Layout.fillHeight: true
-                        radius: root.boxRadius
+                        radius: height / 2
                         color: ThemeBackend.surface0
                         border.width: 1
-                        border.color: Qt.rgba(1, 1, 1, 0.05)
+                        border.color: Qt.rgba(1, 1, 1, 0.04)
                         clip: true
 
                         Switch {
                             id: profileSwitch
                             anchors.fill: parent
-                            anchors.margins: root.s(4)
-                            cornerRadius: root.boxRadius - root.s(2)
+                            anchors.margins: root.s(3)
+                            cornerRadius: height / 2
                             fontFamily: root.isDesktop ? ThemeBackend.fontFamily : ThemeBackend.iconFont
-                            fontPixelSize: root.isDesktop ? root.s(13) : root.s(18)
+                            fontPixelSize: root.isDesktop ? root.s(12) : root.s(15)
                             options: {
                                 if (root.isDesktop) {
                                     return PowerProfiles.hasPerformanceProfile

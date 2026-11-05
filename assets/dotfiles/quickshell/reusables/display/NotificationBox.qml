@@ -134,8 +134,8 @@ Item {
         anchors.fill: parent
         radius: root.cornerRadius
         color: bgGlass.active ? "transparent" : root.baseColor
-        border.width: 1
-        border.color: Qt.rgba(1, 1, 1, 0.05)
+        border.width: root.borderWidth
+        border.color: root.borderColor
         clip: true
 
         GlassFill {
@@ -144,6 +144,7 @@ Item {
             radius: parent.radius
             tintColor: ThemeBackend.surface0
             tintAmount: 0.3
+            visible: root.baseColor !== "transparent"
         }
 
         WallpaperBlur {
@@ -180,29 +181,28 @@ Item {
                 Layout.rightMargin: I18n.rtl ? root.s(4) : 0
                 horizontalAlignment: I18n.textAlignment
                 text: root.titleText
-                font.family: ThemeBackend.serifFont
-                font.weight: Font.Bold
-                font.capitalization: Font.AllUppercase
-                font.letterSpacing: 0.6
+                font.family: ThemeBackend.fontFamily
+                font.weight: Font.DemiBold
+                font.letterSpacing: 0.2
                 font.pixelSize: root.s(13)
-                color: ThemeBackend.blue
+                color: ThemeBackend.text
             }
 
             Item { Layout.fillWidth: true }
 
             ClickButton {
                 id: clearBtn
-                Layout.preferredWidth: root.s(74)
-                Layout.preferredHeight: root.s(28)
+                Layout.preferredWidth: root.s(76)
+                Layout.preferredHeight: root.s(26)
                 horizontalPadding: root.s(8)
-                cornerRadius: root.s(6)
+                cornerRadius: root.s(13)
                 buttonText: I18n.t("syspanel.notifications.clear")
                 textFontSize: root.s(11)
                 buttonIcon: "󰅖"
-                iconFontSize: root.s(13)
-                accentColor: isHoveredOrHighlighted ? Qt.rgba(1, 1, 1, 0.08) : "transparent"
-                bgOpacity: isHoveredOrHighlighted ? 1.0 : 0.0
-                textColor: isHoveredOrHighlighted ? ThemeBackend.text : ThemeBackend.blue
+                iconFontSize: root.s(12)
+                accentColor: isHoveredOrHighlighted ? Qt.rgba(1, 1, 1, 0.08) : Qt.rgba(1, 1, 1, 0.04)
+                bgOpacity: 1.0
+                textColor: isHoveredOrHighlighted ? ThemeBackend.text : ThemeBackend.subtext0
                 visible: NotificationManager.groupedHistory && NotificationManager.groupedHistory.count > 0
                 enabled: !root.isClearingNotifs
 
@@ -213,16 +213,16 @@ Item {
 
             ClickButton {
                 id: dndBtn
-                Layout.preferredWidth: root.s(78)
-                Layout.preferredHeight: root.s(28)
+                Layout.preferredWidth: root.s(76)
+                Layout.preferredHeight: root.s(26)
                 horizontalPadding: root.s(8)
-                cornerRadius: root.s(6)
+                cornerRadius: root.s(13)
                 buttonText: root.dndEnabled ? I18n.t("syspanel.notifications.silent") : I18n.t("syspanel.notifications.mute")
                 textFontSize: root.s(11)
                 buttonIcon: root.dndEnabled ? "󰂛" : "󰂚"
-                iconFontSize: root.s(13)
-                accentColor: root.dndEnabled ? ThemeBackend.blue : (isHoveredOrHighlighted ? Qt.rgba(1, 1, 1, 0.08) : "transparent")
-                bgOpacity: root.dndEnabled || isHoveredOrHighlighted ? 1.0 : 0.0
+                iconFontSize: root.s(12)
+                accentColor: root.dndEnabled ? ThemeBackend.blue : (isHoveredOrHighlighted ? Qt.rgba(1, 1, 1, 0.08) : Qt.rgba(1, 1, 1, 0.04))
+                bgOpacity: 1.0
                 textColor: root.dndEnabled ? ThemeBackend.crust : (isHoveredOrHighlighted ? ThemeBackend.text : ThemeBackend.subtext0)
 
                 onTriggered: {
@@ -270,18 +270,18 @@ Item {
                         visible: !root.showEmptyGraphic
                         text: "󰂚"
                         font.family: ThemeBackend.iconFont
-                        font.pixelSize: root.s(38)
-                        color: Qt.rgba(0.859, 0.612, 0.369, 0.32)
+                        font.pixelSize: root.s(32)
+                        color: Qt.rgba(ThemeBackend.text.r, ThemeBackend.text.g, ThemeBackend.text.b, 0.16)
                     }
                 }
 
                 Text {
                     Layout.alignment: Qt.AlignHCenter
                     text: I18n.t("syspanel.notifications.empty")
-                    font.family: ThemeBackend.editorialFont
-                    font.italic: true
-                    font.pixelSize: root.s(14)
-                    color: ThemeBackend.subtext1
+                    font.family: ThemeBackend.fontFamily
+                    font.weight: Font.Normal
+                    font.pixelSize: root.s(13)
+                    color: ThemeBackend.subtext0
                 }
             }
 

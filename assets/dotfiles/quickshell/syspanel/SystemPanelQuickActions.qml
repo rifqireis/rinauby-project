@@ -13,83 +13,78 @@ Item {
     property alias nightLight: nightLightBtn
     property alias coffee: coffeeBtn
 
-    component QuickActionBtn : Rectangle {
-        id: qaBtn
+    component GnomePillBtn : Rectangle {
+        id: pill
         Layout.fillWidth: true
-        Layout.fillHeight: true
-        radius: view.panel.cardRadius
+        Layout.preferredHeight: view.panel.s(42)
+        Layout.maximumHeight: view.panel.s(42)
+        radius: height / 2
 
         property bool isActive: false
         property string iconText: ""
+        property string labelText: ""
+        property bool hasSubmenu: false
         property color activeColor: ThemeBackend.blue
-        readonly property bool isHovered: qaMa.containsMouse
-        property real customFontSize: 0
-        property string customFontFamily: ""
-
-        property real togglePulse: 0.0
-
-        onIsActiveChanged: {
-            if (qaGlass.active) togglePulseAnim.restart();
-        }
-
-        SequentialAnimation {
-            id: togglePulseAnim
-            NumberAnimation { target: qaBtn; property: "togglePulse"; to: 1.0; duration: 90; easing.type: Easing.OutQuad }
-            NumberAnimation { target: qaBtn; property: "togglePulse"; to: 0.0; duration: 560; easing.type: Easing.OutCubic }
-        }
+        readonly property bool isHovered: pillMa.containsMouse
 
         signal leftClicked()
         signal rightClicked()
 
-        color: isActive ? activeColor : (qaMa.containsMouse ? Qt.rgba(1, 1, 1, 0.08) : Qt.rgba(1, 1, 1, 0.03))
+        color: isActive ? activeColor : (isHovered ? Qt.rgba(1, 1, 1, 0.08) : ThemeBackend.surface0)
         border.width: 1
-        border.color: isActive ? activeColor : (qaMa.containsMouse ? Qt.rgba(1, 1, 1, 0.08) : Qt.rgba(1, 1, 1, 0.04))
+        border.color: isActive ? activeColor : (isHovered ? Qt.rgba(1, 1, 1, 0.08) : Qt.rgba(1, 1, 1, 0.04))
 
-        GlassFill {
-            id: qaGlass
+        scale: pillMa.pressed ? 0.97 : (isHovered ? 1.01 : 1.0)
+        Behavior on scale { NumberAnimation { duration: 200; easing.type: Easing.OutQuart } }
+        Behavior on color { ColorAnimation { duration: 150 } }
+        Behavior on border.color { ColorAnimation { duration: 150 } }
+
+        RowLayout {
             anchors.fill: parent
-            radius: parent.radius
-            tintColor: qaBtn.isActive ? qaBtn.activeColor : (qaMa.containsMouse ? ThemeBackend.surface1 : ThemeBackend.surface0)
-            tintAmount: qaBtn.isActive ? 0.6 : 0.2
-            shadow: 0
-            press: qaMa.pressed ? 1 : (qaMa.containsMouse ? 0.25 : 0)
-            pulse: qaBtn.togglePulse
-            Behavior on press { NumberAnimation { duration: 250; easing.type: Easing.OutCubic } }
-            Behavior on tintAmount { NumberAnimation { duration: 150 } }
-        }
-        Behavior on color {
-            enabled: view.panel.visible
-            ColorAnimation { duration: 150 }
-        }
+            anchors.leftMargin: view.panel.s(14)
+            anchors.rightMargin: view.panel.s(12)
+            spacing: view.panel.s(8)
 
-        scale: qaMa.pressed ? 0.97 : (qaMa.containsMouse ? 1.01 : 1.0)
-        Behavior on scale {
-            enabled: view.panel.visible
-            NumberAnimation { duration: 250; easing.type: Easing.OutQuart }
-        }
+            Text {
+                text: pill.iconText
+                font.family: ThemeBackend.iconFont
+                font.pixelSize: view.panel.s(16)
+                color: pill.isActive ? ThemeBackend.crust : (pill.isHovered ? ThemeBackend.text : ThemeBackend.subtext0)
+                Layout.alignment: Qt.AlignVCenter
+                Behavior on color { ColorAnimation { duration: 150 } }
+            }
 
-        Text {
-            anchors.centerIn: parent
-            font.family: qaBtn.customFontFamily !== "" ? qaBtn.customFontFamily : ThemeBackend.iconFont
-            font.pixelSize: qaBtn.customFontSize > 0 ? qaBtn.customFontSize : view.panel.s(18)
-            font.weight: qaBtn.customFontSize > 0 ? Font.Bold : Font.Normal
-            color: qaBtn.isActive ? ThemeBackend.crust : (qaMa.containsMouse ? ThemeBackend.text : ThemeBackend.subtext0)
-            text: qaBtn.iconText
-            Behavior on color {
-                enabled: view.panel.visible
-                ColorAnimation { duration: 150 }
+            Text {
+                text: pill.labelText
+                font.family: ThemeBackend.fontFamily
+                font.pixelSize: view.panel.s(12)
+                font.weight: Font.DemiBold
+                color: pill.isActive ? ThemeBackend.crust : (pill.isHovered ? ThemeBackend.text : ThemeBackend.subtext0)
+                elide: Text.ElideRight
+                Layout.fillWidth: true
+                Layout.alignment: Qt.AlignVCenter
+                Behavior on color { ColorAnimation { duration: 150 } }
+            }
+
+            Text {
+                visible: pill.hasSubmenu
+                text: ""
+                font.family: ThemeBackend.iconFont
+                font.pixelSize: view.panel.s(11)
+                color: pill.isActive ? Qt.alpha(ThemeBackend.crust, 0.6) : Qt.alpha(ThemeBackend.subtext0, 0.45)
+                Layout.alignment: Qt.AlignVCenter
             }
         }
 
         MouseArea {
-            id: qaMa
+            id: pillMa
             anchors.fill: parent
             hoverEnabled: true
             cursorShape: Qt.PointingHandCursor
             acceptedButtons: Qt.LeftButton | Qt.RightButton
             onClicked: (mouse) => {
-                if (mouse.button === Qt.RightButton) qaBtn.rightClicked();
-                else qaBtn.leftClicked();
+                if (mouse.button === Qt.RightButton) pill.rightClicked();
+                else pill.leftClicked();
             }
         }
     }
@@ -97,19 +92,57 @@ Item {
     id: view
     z: 5
     Layout.fillWidth: true
-    Layout.preferredHeight: view.panel.s(64)
-    Layout.maximumHeight: view.panel.s(64)
+    Layout.preferredHeight: (3 * view.panel.s(42)) + (2 * view.panel.s(6))
+    Layout.maximumHeight: (3 * view.panel.s(42)) + (2 * view.panel.s(6))
     opacity: view.panel.introQuickActions
     transform: Translate { x: (view.panel.isLeftAnchored ? -view.panel.rowSlideDistance : view.panel.rowSlideDistance) * (1.0 - view.panel.introQuickActions) }
 
-    RowLayout {
+    GridLayout {
         anchors.fill: parent
-        spacing: view.panel.s(6)
+        columns: 2
+        rowSpacing: view.panel.s(6)
+        columnSpacing: view.panel.s(6)
 
-        QuickActionBtn {
+        // 1. Wi-Fi
+        GnomePillBtn {
+            iconText: view.panel.wifiRadioEnabled ? "󰤨" : "󰤮"
+            labelText: "Wi-Fi"
+            hasSubmenu: true
+            isActive: view.panel.wifiRadioEnabled
+            onLeftClicked: {
+                Sounds.playSfx("system/quick_click.wav");
+                Networking.wifiEnabled = !Networking.wifiEnabled;
+            }
+            onRightClicked: {
+                view.panel.closeAnim.start();
+                Quickshell.execDetached(["bash", Caching.serpantinumDir + "/scripts/qs_manager.sh", "toggle", "network", "wifi"]);
+            }
+        }
+
+        // 2. Bluetooth
+        GnomePillBtn {
+            iconText: view.panel.btRadioEnabled ? "󰂯" : "󰂲"
+            labelText: "Bluetooth"
+            hasSubmenu: true
+            isActive: view.panel.btRadioEnabled
+            onLeftClicked: {
+                Sounds.playSfx("system/quick_click.wav");
+                if (Bluetooth.defaultAdapter) {
+                    Bluetooth.defaultAdapter.enabled = !Bluetooth.defaultAdapter.enabled;
+                }
+            }
+            onRightClicked: {
+                view.panel.closeAnim.start();
+                Quickshell.execDetached(["bash", Caching.serpantinumDir + "/scripts/qs_manager.sh", "toggle", "network", "bt"]);
+            }
+        }
+
+        // 3. Night Light
+        GnomePillBtn {
             id: nightLightBtn
             iconText: "󰖔"
-            activeColor: ThemeBackend.blue
+            labelText: "Night Light"
+            hasSubmenu: false
 
             function updateState() {
                 let anyEnabled = false;
@@ -186,9 +219,9 @@ Item {
             }
         }
 
-        QuickActionBtn {
+        // 4. Caffeine
+        GnomePillBtn {
             id: coffeeBtn
-            activeColor: ThemeBackend.blue
 
             property double coffeeStartTime: 0
             property double coffeeEndTime: 0
@@ -206,9 +239,9 @@ Item {
                 return Math.max(1, m) + "m";
             }
 
-            iconText: (isActive && isHovered) ? remainingTimeString : "󰅶"
-            customFontSize: (isActive && isHovered) ? view.panel.s(12) : 0
-            customFontFamily: (isActive && isHovered) ? ThemeBackend.fontFamily : ""
+            iconText: "󰅶"
+            labelText: isActive ? remainingTimeString : "Caffeine"
+            hasSubmenu: false
 
             function updateRemaining() {
                 if (!isActive || coffeeEndTime <= 0) {
@@ -319,39 +352,11 @@ Item {
             }
         }
 
-        QuickActionBtn {
-            iconText: isActive ? "󰤨" : "󰤮"
-            activeColor: ThemeBackend.blue
-            isActive: view.panel.wifiRadioEnabled
-            onLeftClicked: {
-                Sounds.playSfx("system/quick_click.wav");
-                Networking.wifiEnabled = !Networking.wifiEnabled;
-            }
-            onRightClicked: {
-                view.panel.closeAnim.start();
-                Quickshell.execDetached(["bash", Caching.serpantinumDir + "/scripts/qs_manager.sh", "toggle", "network", "wifi"]);
-            }
-        }
-
-        QuickActionBtn {
-            iconText: isActive ? "󰂯" : "󰂲"
-            activeColor: ThemeBackend.blue
-            isActive: view.panel.btRadioEnabled
-            onLeftClicked: {
-                Sounds.playSfx("system/quick_click.wav");
-                if (Bluetooth.defaultAdapter) {
-                    Bluetooth.defaultAdapter.enabled = !Bluetooth.defaultAdapter.enabled;
-                }
-            }
-            onRightClicked: {
-                view.panel.closeAnim.start();
-                Quickshell.execDetached(["bash", Caching.serpantinumDir + "/scripts/qs_manager.sh", "toggle", "network", "bt"]);
-            }
-        }
-
-        QuickActionBtn {
+        // 5. Airplane Mode
+        GnomePillBtn {
             iconText: "󰀝"
-            activeColor: ThemeBackend.blue
+            labelText: "Airplane"
+            hasSubmenu: false
             isActive: !view.panel.wifiRadioEnabled && !view.panel.btRadioEnabled
             onLeftClicked: {
                 Sounds.playSfx("system/quick_click.wav");
@@ -370,6 +375,33 @@ Item {
                     Networking.wifiEnabled = restoreWifi;
                     if (Bluetooth.defaultAdapter) Bluetooth.defaultAdapter.enabled = restoreBt;
                 }
+            }
+        }
+
+        // 6. Do Not Disturb
+        GnomePillBtn {
+            id: dndPill
+            property bool dndActive: Boolean(Config.rawSettings && Config.rawSettings.notifications && Config.rawSettings.notifications.dnd)
+            iconText: dndActive ? "󰂛" : "󰂚"
+            labelText: "Do Not Disturb"
+            hasSubmenu: false
+            isActive: dndActive
+
+            Connections {
+                target: Config
+                function onSettingsLoaded() {
+                    let n = Config.getSetting("notifications", { "dnd": false });
+                    dndPill.dndActive = Boolean(n && n.dnd);
+                }
+            }
+
+            onLeftClicked: {
+                Sounds.playSfx("system/quick_click.wav");
+                dndPill.dndActive = !dndPill.dndActive;
+                let n = Config.getSetting("notifications", { "dnd": false });
+                if (typeof n !== "object" || n === null) n = {};
+                n.dnd = dndPill.dndActive;
+                Config.setSetting("notifications", n);
             }
         }
     }
