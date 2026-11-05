@@ -34,6 +34,7 @@ venv/
 # --- Testing / Verification Screenshots in assets/ ---
 # (Over 40MB of debug screenshots; install.sh does not use them)
 assets/*.png
+assets/tests/
 
 # --- Wallpaper Candidates & Raw Backups ---
 # (Keep only the 8 production wallpapers + .thumbs in assets/wallpapers/)
@@ -55,3 +56,4 @@ Thumbs.db
 *.log
 *.tmp
 /tmp/
+
