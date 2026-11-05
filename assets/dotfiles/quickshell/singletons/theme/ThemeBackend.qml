@@ -356,7 +356,8 @@ Item {
     FileView {
         id: themeWatcher
         path: root.configPath.startsWith("~") ? (Quickshell.env("HOME") ?? "") + root.configPath.slice(1) : root.configPath
-        watchChanges: false
+        watchChanges: true
+        onFileChanged: reload()
 
         onLoaded: {
             root._readInProgress = false;

@@ -1,15 +1,15 @@
-/* Waybar Theme: Modern Renaissance (Cobalt Blue & Cyber Mocha) */
-@define-color bar_bg rgba(17, 17, 27, 0.85);
-@define-color bar_fg #cdd6f4;
+/* Waybar Dynamic Monochromatic Matugen Palette */
+@define-color bar_bg rgba(17, 20, 22, 0.85);
+@define-color bar_fg #e2e2e6;
 @define-color bar_fg_bright #ffffff;
 @define-color bar_border_side transparent;
 @define-color bar_border_bottom transparent;
-@define-color accent #89b4fa;
-@define-color accent_gold #89b4fa;
-@define-color ws_active #11111b;
-@define-color ws_inactive #6c7086;
-@define-color ws_hover_bg rgba(137, 180, 250, 0.14);
-@define-color ws_active_bg #89b4fa;
+@define-color accent #9accf9;
+@define-color accent_gold #9accf9;
+@define-color ws_active #003351;
+@define-color ws_inactive #8b9199;
+@define-color ws_hover_bg rgba(154, 204, 249, 0.14);
+@define-color ws_active_bg #9accf9;
 @define-color sep_color rgba(255, 255, 255, 0.12);
-@define-color tooltip_bg rgba(17, 17, 27, 0.95);
-@define-color tooltip_border rgba(137, 180, 250, 0.30);
+@define-color tooltip_bg rgba(17, 20, 22, 0.95);
+@define-color tooltip_border rgba(154, 204, 249, 0.30);

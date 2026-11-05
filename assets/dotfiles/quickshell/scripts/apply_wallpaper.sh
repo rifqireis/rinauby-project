@@ -98,30 +98,23 @@ elif command -v swaybg &>/dev/null; then
     swaybg -i "$SELECTED_PATH" -m fill &
 fi
 
-# 3. Sinkronisasi Palet Warna Hyprland (Border Jendela Aktif & Inaktif)
-if [ "$THEME_MODE" = "modern" ]; then
-    # Modern Renaissance: Sapphire Cobalt Blue & Pastel Rose Subtle Neon
-    hyprctl eval 'hl.config({ general = { col = { active_border = "rgba(89b4faff)", inactive_border = "rgba(242437aa)" } } })' 2>/dev/null || true
-else
-    # Classic Renaissance: Warm Ochre Gold & Slate
-    hyprctl eval 'hl.config({ general = { col = { active_border = "rgba(db9c5eff)", inactive_border = "rgba(42475399)" } } })' 2>/dev/null || true
-fi
+# 3. Sinkronisasi Palet Warna (Dynamic Matugen vs Curated Classic)
+MATUGEN_SCRIPT="$(cd "$(dirname "${BASH_SOURCE[0]}")" 2>/dev/null && pwd)/theming/generate_matugen_palette.sh"
+[ -x "$MATUGEN_SCRIPT" ] || MATUGEN_SCRIPT="$HOME/.config/quickshell/scripts/theming/generate_matugen_palette.sh"
 
-# 4. Sinkronisasi Palet Warna Terminal Kitty
-if [ "$THEME_MODE" = "modern" ]; then
-    kitty +kitten themes --reload-in=all "Catppuccin-Mocha" 2>/dev/null || true
-else
-    kitty +kitten themes --reload-in=all "Everforest Dark Hard" 2>/dev/null || true
-fi
-
-# 5. Sinkronisasi Waybar (Config, Style, & Theme Palette)
-mkdir -p "$HOME/.config/waybar"
-WAYBAR_THEME_TARGET="$HOME/.config/waybar/theme.css"
 WAYBAR_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/../../waybar" 2>/dev/null && pwd)"
 [ -d "$WAYBAR_DIR" ] || WAYBAR_DIR="$HOME/.config/waybar"
+mkdir -p "$HOME/.config/waybar" "$HOME/.config/rofi" "$HOME/.local/state/serpantinum"
 
 if [ "$THEME_MODE" = "modern" ]; then
-    cat << 'EOF' > "$WAYBAR_THEME_TARGET"
+    # Mode Modern Renaissance: Ekstraksi Dinamis Matugen (Monochromatic Harmony)
+    if [ -x "$MATUGEN_SCRIPT" ] && [ "${RINAUBY_THEME_GENERATOR:-matugen}" = "matugen" ]; then
+        "$MATUGEN_SCRIPT" "$SELECTED_PATH" "dark" "scheme-fidelity" || true
+    else
+        # Fallback Curated Modern Renaissance: Sapphire Cobalt Blue & Cyber Mocha
+        hyprctl eval 'hl.config({ general = { col = { active_border = "rgba(89b4faff)", inactive_border = "rgba(242437aa)" } } })' 2>/dev/null || true
+        kitty +kitten themes --reload-in=all "Catppuccin-Mocha" 2>/dev/null || true
+        cat << 'EOF' > "$HOME/.config/waybar/theme.css"
 /* Waybar Theme: Modern Renaissance (Cobalt Blue & Cyber Mocha) */
 @define-color bar_bg rgba(17, 17, 27, 0.85);
 @define-color bar_fg #cdd6f4;
@@ -138,45 +131,7 @@ if [ "$THEME_MODE" = "modern" ]; then
 @define-color tooltip_bg rgba(17, 17, 27, 0.95);
 @define-color tooltip_border rgba(137, 180, 250, 0.30);
 EOF
-    if [ -f "$WAYBAR_DIR/config-modern.jsonc" ]; then
-        cp -f "$WAYBAR_DIR/config-modern.jsonc" "$HOME/.config/waybar/config.jsonc"
-    fi
-    if [ -f "$WAYBAR_DIR/style-modern.css" ]; then
-        cp -f "$WAYBAR_DIR/style-modern.css" "$HOME/.config/waybar/style.css"
-    fi
-else
-    cat << 'EOF' > "$WAYBAR_THEME_TARGET"
-/* Waybar Theme: Classic Renaissance (Ochre Gold & Parchment) */
-@define-color bar_bg rgba(28, 33, 37, 0.82);
-@define-color bar_fg #d3c6aa;
-@define-color bar_fg_bright #fbf2db;
-@define-color bar_border_side rgba(184, 134, 78, 0.22);
-@define-color bar_border_bottom #db9c5e;
-@define-color accent #db9c5e;
-@define-color accent_gold #e5c07b;
-@define-color ws_active #e5c07b;
-@define-color ws_inactive #859289;
-@define-color ws_hover_bg rgba(229, 192, 123, 0.10);
-@define-color ws_active_bg rgba(229, 192, 123, 0.15);
-@define-color sep_color rgba(184, 134, 78, 0.30);
-@define-color tooltip_bg rgba(24, 28, 31, 0.95);
-@define-color tooltip_border rgba(184, 134, 78, 0.45);
-EOF
-    if [ -f "$WAYBAR_DIR/config-classic.jsonc" ]; then
-        cp -f "$WAYBAR_DIR/config-classic.jsonc" "$HOME/.config/waybar/config.jsonc"
-    fi
-    if [ -f "$WAYBAR_DIR/style-classic.css" ]; then
-        cp -f "$WAYBAR_DIR/style-classic.css" "$HOME/.config/waybar/style.css"
-    fi
-fi
-pkill -x waybar 2>/dev/null || true
-waybar -c "$HOME/.config/waybar/config.jsonc" -s "$HOME/.config/waybar/style.css" >/dev/null 2>&1 &
-
-# 6. Sinkronisasi Palet Warna Rofi
-mkdir -p "$HOME/.config/rofi"
-ROFI_THEME_TARGET="$HOME/.config/rofi/theme_colors.rasi"
-if [ "$THEME_MODE" = "modern" ]; then
-    cat << 'EOF' > "$ROFI_THEME_TARGET"
+        cat << 'EOF' > "$HOME/.config/rofi/theme_colors.rasi"
 /* Rofi Theme: Modern Renaissance (Cobalt Blue & Cyber Mocha) */
 * {
     bg-base: rgba(24, 24, 37, 0.96);
@@ -191,29 +146,7 @@ if [ "$THEME_MODE" = "modern" ]; then
     fg-muted: #6c7086;
 }
 EOF
-else
-    cat << 'EOF' > "$ROFI_THEME_TARGET"
-/* Rofi Theme: Classic Renaissance (Ochre Gold & Parchment) */
-* {
-    bg-base: rgba(22, 26, 30, 0.96);
-    bg-input: rgba(14, 17, 20, 0.85);
-    bg-selected: rgba(219, 156, 94, 0.14);
-    border-subtle: rgba(255, 255, 255, 0.05);
-    border-hairline: rgba(255, 255, 255, 0.04);
-    accent-gold: #db9c5e;
-    accent-gold-bright: #e5c07b;
-    fg-main: #d3c6aa;
-    fg-bright: #fbf2db;
-    fg-muted: #859289;
-}
-EOF
-fi
-
-# 7. Sinkronisasi Palet Warna Quickshell (Control Center & Popups)
-QS_STATE_DIR="$HOME/.local/state/serpantinum"
-mkdir -p "$QS_STATE_DIR"
-if [ "$THEME_MODE" = "modern" ]; then
-    cat << 'EOF' > "$QS_STATE_DIR/qs_colors.json"
+        cat << 'EOF' > "$HOME/.local/state/serpantinum/qs_colors.json"
 {
   "base": "#181825",
   "mantle": "#11111b",
@@ -239,8 +172,51 @@ if [ "$THEME_MODE" = "modern" ]; then
   "teal": "#94e2d5"
 }
 EOF
+    fi
+
+    if [ -f "$WAYBAR_DIR/config-modern.jsonc" ]; then
+        cp -f "$WAYBAR_DIR/config-modern.jsonc" "$HOME/.config/waybar/config.jsonc"
+    fi
+    if [ -f "$WAYBAR_DIR/style-modern.css" ]; then
+        cp -f "$WAYBAR_DIR/style-modern.css" "$HOME/.config/waybar/style.css"
+    fi
 else
-    cat << 'EOF' > "$QS_STATE_DIR/qs_colors.json"
+    # Mode Classic Renaissance: Curated Warm Ochre Gold & Slate
+    hyprctl eval 'hl.config({ general = { col = { active_border = "rgba(db9c5eff)", inactive_border = "rgba(42475399)" } } })' 2>/dev/null || true
+    kitty +kitten themes --reload-in=all "Everforest Dark Hard" 2>/dev/null || true
+    cat << 'EOF' > "$HOME/.config/waybar/theme.css"
+/* Waybar Theme: Classic Renaissance (Ochre Gold & Parchment) */
+@define-color bar_bg rgba(28, 33, 37, 0.82);
+@define-color bar_fg #d3c6aa;
+@define-color bar_fg_bright #fbf2db;
+@define-color bar_border_side rgba(184, 134, 78, 0.22);
+@define-color bar_border_bottom #db9c5e;
+@define-color accent #db9c5e;
+@define-color accent_gold #e5c07b;
+@define-color ws_active #e5c07b;
+@define-color ws_inactive #859289;
+@define-color ws_hover_bg rgba(229, 192, 123, 0.10);
+@define-color ws_active_bg rgba(229, 192, 123, 0.15);
+@define-color sep_color rgba(184, 134, 78, 0.30);
+@define-color tooltip_bg rgba(24, 28, 31, 0.95);
+@define-color tooltip_border rgba(184, 134, 78, 0.45);
+EOF
+    cat << 'EOF' > "$HOME/.config/rofi/theme_colors.rasi"
+/* Rofi Theme: Classic Renaissance (Ochre Gold & Parchment) */
+* {
+    bg-base: rgba(22, 26, 30, 0.96);
+    bg-input: rgba(14, 17, 20, 0.85);
+    bg-selected: rgba(219, 156, 94, 0.14);
+    border-subtle: rgba(255, 255, 255, 0.05);
+    border-hairline: rgba(255, 255, 255, 0.04);
+    accent-gold: #db9c5e;
+    accent-gold-bright: #e5c07b;
+    fg-main: #d3c6aa;
+    fg-bright: #fbf2db;
+    fg-muted: #859289;
+}
+EOF
+    cat << 'EOF' > "$HOME/.local/state/serpantinum/qs_colors.json"
 {
   "base": "#171a1d",
   "mantle": "#131518",
@@ -266,25 +242,33 @@ else
   "teal": "#879a39"
 }
 EOF
+    if [ -f "$WAYBAR_DIR/config-classic.jsonc" ]; then
+        cp -f "$WAYBAR_DIR/config-classic.jsonc" "$HOME/.config/waybar/config.jsonc"
+    fi
+    if [ -f "$WAYBAR_DIR/style-classic.css" ]; then
+        cp -f "$WAYBAR_DIR/style-classic.css" "$HOME/.config/waybar/style.css"
+    fi
 fi
 
-QS_QML="/home/rifqi/Workspace/Belajar/SO/Tubes-2604/Rancangan/assets/dotfiles/quickshell/shell.qml"
-[ -f "$QS_QML" ] || QS_QML="$HOME/.config/quickshell/shell.qml"
-quickshell -p "$QS_QML" ipc call theme reloadColors 2>/dev/null || quickshell ipc call theme reloadColors 2>/dev/null || true
-
-# 8. Rotasi Kutipan & Update Title Waybar
+# 4. Rotasi Kutipan & Motto Waybar
 if [ -f "$HOME/.config/waybar/quote_rotator.sh" ]; then
     bash "$HOME/.config/waybar/quote_rotator.sh" --next >/dev/null 2>&1
 elif command -v rinauby-quote >/dev/null 2>&1; then
     rinauby-quote --next >/dev/null 2>&1
 fi
 
-pkill -RTMIN+8 waybar 2>/dev/null || true
+# 5. Restart Waybar dengan Konfigurasi yang Sesuai
+pkill -x waybar 2>/dev/null || true
+sleep 0.1
+setsid -f waybar -c "$HOME/.config/waybar/config.jsonc" -s "$HOME/.config/waybar/style.css" >/dev/null 2>&1
+
+# 6. Reload Warna Quickshell (IPC & Signal)
+quickshell -p "$HOME/.config/quickshell/shell.qml" ipc call theme reloadColors 2>/dev/null || quickshell ipc call theme reloadColors 2>/dev/null || true
 pkill -USR1 -f window_title.py 2>/dev/null || true
 
 # 9. Notifikasi Sukses
 if [ "$THEME_MODE" = "modern" ]; then
-    notify-send -a "System" "Tema Modern Diaktifkan" "$CHOSEN · Cobalt Blue & Cyber Mocha" -i "$SELECTED_PATH" 2>/dev/null || true
+    notify-send -a "System" "Tema Modern Diaktifkan" "$CHOSEN · Monochromatic Matugen Dynamic" -i "$SELECTED_PATH" 2>/dev/null || true
 else
     notify-send -a "System" "Tema Klasik Diaktifkan" "$CHOSEN · Ochre Gold & Warm Parchment" -i "$SELECTED_PATH" 2>/dev/null || true
 fi

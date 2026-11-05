@@ -1,13 +1,13 @@
-/* Rofi Theme: Modern Renaissance (Cobalt Blue & Cyber Mocha) */
+/* Rofi Dynamic Monochromatic Matugen Palette */
 * {
-    bg-base: rgba(24, 24, 37, 0.96);
-    bg-input: rgba(17, 17, 27, 0.85);
-    bg-selected: rgba(137, 180, 250, 0.18);
-    border-subtle: rgba(137, 180, 250, 0.18);
-    border-hairline: rgba(137, 180, 250, 0.08);
-    accent-gold: #89b4fa;
-    accent-gold-bright: #74c7ec;
-    fg-main: #cdd6f4;
+    bg-base: rgba(17, 20, 22, 0.96);
+    bg-input: rgba(25, 28, 31, 0.85);
+    bg-selected: rgba(154, 204, 249, 0.18);
+    border-subtle: rgba(154, 204, 249, 0.18);
+    border-hairline: rgba(154, 204, 249, 0.08);
+    accent-gold: #9accf9;
+    accent-gold-bright: #9accf9;
+    fg-main: #e2e2e6;
     fg-bright: #ffffff;
-    fg-muted: #6c7086;
+    fg-muted: #8b9199;
 }

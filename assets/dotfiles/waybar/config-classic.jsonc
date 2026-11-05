@@ -2,7 +2,6 @@
 // WAYBAR CONFIGURATION: CLASSIC RENAISSANCE
 // Filosofi: Academic Humanism & School of Athens (Roman Workspaces & Classical Logo)
 // =============================================================================
-
 {
     "layer": "top",
     "position": "top",
@@ -15,25 +14,21 @@
     "passthrough": false,
     "gtk-layer-shell": true,
     "reload_style_on_change": true,
-
     "modules-left": [
         "custom/logo",
         "hyprland/workspaces",
         "custom/separator-left",
         "custom/window-title"
     ],
-
     "modules-center": [
         "custom/quote"
     ],
-
     "modules-right": [
         "pulseaudio",
         "battery",
         "custom/separator-right",
         "clock"
     ],
-
     // -------------------------------------------------------------------------
     // 1. SISI KIRI (Logo Klasik, Workspaces Romawi, Window Title / Wallpaper)
     // -------------------------------------------------------------------------
@@ -43,7 +38,6 @@
         "tooltip-format": "Menu (Click to Launch)",
         "on-click": "sh -c 'if command -v rinauby-launcher >/dev/null 2>&1; then exec rinauby-launcher; else exec rofi -show drun -theme /home/rifqi/Workspace/Belajar/SO/Tubes-2604/Rancangan/assets/dotfiles/rofi/renaissance_launcher.rasi; fi'"
     },
-
     "hyprland/workspaces": {
         "disable-scroll": true,
         "all-outputs": true,
@@ -63,22 +57,19 @@
             "default": "{name}"
         },
         "persistent-workspaces": {
-            "*": 5
+            "*": 1
         }
     },
-
     "custom/separator-left": {
         "format": "│",
         "tooltip": false
     },
-
     "custom/window-title": {
         "format": "{}",
         "return-type": "json",
         "exec": "sh -c 'if command -v rinauby-window-title >/dev/null 2>&1; then exec rinauby-window-title; elif [ -f \"$HOME/.config/waybar/window_title.py\" ]; then exec python3 \"$HOME/.config/waybar/window_title.py\"; else exec /home/rifqi/Workspace/Belajar/SO/Tubes-2604/Rancangan/assets/dotfiles/waybar/window_title.py; fi'",
         "tooltip": true
     },
-
     // -------------------------------------------------------------------------
     // 2. SISI TENGAH (Semboyan Klasik Renaissance Humanism)
     // -------------------------------------------------------------------------
@@ -91,7 +82,6 @@
         "tooltip-format": "Philosophy & Quotes\n(Click to rotate)",
         "on-click": "sh -c 'if command -v rinauby-quote >/dev/null 2>&1; then rinauby-quote --next; elif [ -f \"$HOME/.config/waybar/quote_rotator.sh\" ]; then bash \"$HOME/.config/waybar/quote_rotator.sh\" --next; else /home/rifqi/Workspace/Belajar/SO/Tubes-2604/Rancangan/assets/dotfiles/waybar/quote_rotator.sh --next; fi; pkill -RTMIN+8 waybar'"
     },
-
     // -------------------------------------------------------------------------
     // 3. SISI KANAN (Esensial: Audio, Baterai, Waktu)
     // -------------------------------------------------------------------------
@@ -105,13 +95,16 @@
             "phone": "󰏲",
             "portable": "󰏲",
             "car": "󰄋",
-            "default": ["󰕿", "󰖀", "󰕾"]
+            "default": [
+                "󰕿",
+                "󰖀",
+                "󰕾"
+            ]
         },
         "scroll-step": 5,
         "on-click": "pactl set-sink-mute @DEFAULT_SINK@ toggle",
         "tooltip-format": "Volume: {volume}%\nSink: {desc}"
     },
-
     "battery": {
         "interval": 10,
         "states": {
@@ -121,15 +114,19 @@
         "format": "{icon}  {capacity}%",
         "format-charging": "󰂄  {capacity}%",
         "format-plugged": "󰂄  {capacity}%",
-        "format-icons": ["󰁺", "󰁼", "󰁾", "󰂀", "󰁹"],
+        "format-icons": [
+            "󰁺",
+            "󰁼",
+            "󰁾",
+            "󰂀",
+            "󰁹"
+        ],
         "tooltip-format": "{timeTo}\nDaya: {power} W"
     },
-
     "custom/separator-right": {
         "format": "│",
         "tooltip": false
     },
-
     "clock": {
         "interval": 1,
         "format": "{0:%a, %d %b  %H:%M}",
