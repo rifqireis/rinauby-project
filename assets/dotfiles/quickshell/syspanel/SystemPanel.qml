@@ -106,9 +106,7 @@ Item {
         }
     }
 
-    property bool isDraggingVol: false
-    property bool isDraggingBri: false
-    property bool usesDdcBrightness: false
+
 
     property bool btStateBeforeAirplane: false
     property bool wifiStateBeforeAirplane: true
@@ -129,17 +127,7 @@ Item {
         }
     }
 
-    onSysVolumeChanged: {
-        if (root.visible && slidersBox.volumeSlider && !root.isDraggingVol && slidersBox.volumeSlider.value !== sysVolume) {
-            slidersBox.volumeSlider.value = sysVolume;
-        }
-    }
 
-    onSysBrightnessChanged: {
-        if (root.visible && slidersBox.brightnessSlider && !root.isDraggingBri && slidersBox.brightnessSlider.value !== sysBrightness) {
-            slidersBox.brightnessSlider.value = sysBrightness;
-        }
-    }
 
     Process {
         id: hibernateCheck
@@ -155,7 +143,6 @@ Item {
 
     property real introContent: 0.0
     property real introTop: 0.0
-    property real introSliders: 0.0
     property real introQuickActions: 0.0
     property real introNotifs: 0.0
     property real introActions: 0.0
@@ -164,7 +151,6 @@ Item {
     function resetAndPlayIntro() {
         introContent = 0.0;
         introTop = 0.0;
-        introSliders = 0.0;
         introQuickActions = 0.0;
         introNotifs = 0.0;
         introActions = 0.0;
@@ -181,22 +167,9 @@ Item {
 
             animCapacity = batCapacity;
 
-            if (slidersBox.volumeSlider && !root.isDraggingVol) {
-                slidersBox.volumeSlider.value = root.sysVolume;
-            }
-
-            if (slidersBox.brightnessSlider && !root.isDraggingBri) {
-                slidersBox.brightnessSlider.value = root.sysBrightness;
-            }
-
             if (quickActionsBox.nightLight) quickActionsBox.nightLight.updateState();
             if (quickActionsBox.coffee) quickActionsBox.coffee.updateState();
-
-            briPollerTimer.interval = 150;
-            briPollerTimer.restart();
         } else {
-            briPollerTimer.stop();
-            briPoller.running = false;
             startupSequence.stop();
             closeSequence.stop();
         }
@@ -210,51 +183,12 @@ Item {
             if (quickActionsBox.coffee) quickActionsBox.coffee.updateState();
             resetAndPlayIntro();
             forceActiveFocus();
-            briPollerTimer.interval = 150;
-            briPollerTimer.restart();
             animCapacity = batCapacity;
         }
     }
 
     Component.onDestruction: {
         NotificationManager.sysPanelOpen = false;
-        briPollerTimer.stop();
-    }
-
-    Timer {
-        id: briPollerTimer
-        interval: root.usesDdcBrightness ? 10000 : 1500
-        repeat: false
-        onTriggered: {
-            if (root.visible) {
-                briPoller.running = true;
-                interval = root.usesDdcBrightness ? 10000 : 1500;
-            }
-        }
-    }
-
-    Process {
-        id: briBackend
-        command: ["bash", Caching.serpantinumDir + "/scripts/brightness.sh", "backend"]
-        running: true
-        stdout: StdioCollector {
-            onStreamFinished: root.usesDdcBrightness = this.text.trim() === "ddc"
-        }
-    }
-
-    Process {
-        id: briPoller
-        command: ["bash", Caching.serpantinumDir + "/scripts/brightness.sh", "get"]
-        running: false
-        stdout: StdioCollector {
-            onStreamFinished: {
-                let out = this.text.trim();
-                if (out !== "" && !root.isDraggingBri) {
-                    root.sysBrightness = parseInt(out) || 0;
-                }
-                if (root.visible) briPollerTimer.start();
-            }
-        }
     }
 
     ParallelAnimation {
@@ -264,22 +198,18 @@ Item {
 
         SequentialAnimation {
             PauseAnimation { duration: 30 }
-            NumberAnimation { target: root; property: "introSliders"; from: 0; to: 1.0; duration: 250; easing.type: Easing.OutCubic }
-        }
-        SequentialAnimation {
-            PauseAnimation { duration: 55 }
             NumberAnimation { target: root; property: "introQuickActions"; from: 0; to: 1.0; duration: 250; easing.type: Easing.OutCubic }
         }
         SequentialAnimation {
-            PauseAnimation { duration: 80 }
+            PauseAnimation { duration: 60 }
             NumberAnimation { target: root; property: "introNotifs"; from: 0; to: 1.0; duration: 330; easing.type: Easing.OutCubic }
         }
         SequentialAnimation {
-            PauseAnimation { duration: 105 }
+            PauseAnimation { duration: 90 }
             NumberAnimation { target: root; property: "introActions"; from: 0; to: 1.0; duration: 330; easing.type: Easing.OutCubic }
         }
         SequentialAnimation {
-            PauseAnimation { duration: 130 }
+            PauseAnimation { duration: 120 }
             NumberAnimation { target: root; property: "introCore"; from: 0; to: 1.0; duration: 340; easing.type: Easing.OutCubic }
         }
     }
@@ -299,7 +229,6 @@ Item {
         ParallelAnimation {
             NumberAnimation { target: root; property: "introContent"; to: 0.0; duration: 250; easing.type: Easing.InCubic }
             NumberAnimation { target: root; property: "introTop"; to: 0.0; duration: 250; easing.type: Easing.InCubic }
-            NumberAnimation { target: root; property: "introSliders"; to: 0.0; duration: 250; easing.type: Easing.InCubic }
             NumberAnimation { target: root; property: "introQuickActions"; to: 0.0; duration: 250; easing.type: Easing.InCubic }
             NumberAnimation { target: root; property: "introNotifs"; to: 0.0; duration: 250; easing.type: Easing.InCubic }
             NumberAnimation { target: root; property: "introActions"; to: 0.0; duration: 250; easing.type: Easing.InCubic }
@@ -567,10 +496,6 @@ Item {
                     }
                 }
 
-                SystemPanelSliders {
-                    id: slidersBox
-                    panel: root
-                }
 
                 SystemPanelQuickActions {
                     id: quickActionsBox
