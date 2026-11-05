@@ -39,9 +39,9 @@
     // 1. SISI KIRI (Logo, Workspaces Romawi, Window Title / Wallpaper Title)
     // -------------------------------------------------------------------------
     "custom/logo": {
-        "format": "󰣇",
+        "format": "󰀻",
         "tooltip": true,
-        "tooltip-format": "Aplikasi (Klik untuk Membuka)",
+        "tooltip-format": "Aplikasi",
         "on-click": "sh -c 'if command -v rinauby-launcher >/dev/null 2>&1; then exec rinauby-launcher; else exec rofi -show drun -theme /home/rifqi/Workspace/Belajar/SO/Tubes-2604/Rancangan/assets/dotfiles/rofi/renaissance_launcher.rasi; fi'"
     },
 

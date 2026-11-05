@@ -58,7 +58,7 @@ tooltip label {
  * ----------------------------------------------------------------------------- */
 #custom-logo {
     color: @accent;
-    font-size: 17px;
+    font-size: 16px;
     margin-left: 12px;
     margin-right: 6px;
     padding: 0 4px;
@@ -140,9 +140,9 @@ tooltip label {
 #custom-motto {
     color: @bar_fg_bright;
     font-family: "Inter", sans-serif;
-    font-size: 11.5px;
+    font-size: 13.5px;
     font-weight: 600;
-    letter-spacing: 0.6px;
+    letter-spacing: 0.4px;
     background: transparent;
     border: none;
     padding: 0 14px;
