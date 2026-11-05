@@ -3,7 +3,8 @@
  * RINAUBY : HORIZONTAL CAROUSEL WALLPAPER SELECTOR
  * Inspired by Community Coverflow & Modern Hyprland Wallpaper Carousels
  * Layout: Horizontal Panoramic Card Strip with Large Previews & Popin Animation
- * Desain: Bersih, Humanis Modern (Font Inter), Border Emas Renaissance
+ * Desain: Bersih, Humanis Modern (Font Inter), Kedalaman Tonal & Ambient Shadow
+ * Aturan: Tanpa outline oranye (hanya pada Waybar), hairline kaca ultra-subtle
  * =============================================================================
  */
 
@@ -18,13 +19,15 @@ configuration {
 
 * {
     font: "Inter 11";
-    bg-base: rgba(20, 24, 27, 0.94);
-    bg-card: rgba(36, 43, 49, 0.78);
-    bg-card-hover: rgba(52, 63, 72, 0.90);
-    bg-selected: rgba(219, 156, 94, 0.26);
-    border-gold: #db9c5e;
-    border-gold-bright: #e5c07b;
-    border-muted: rgba(219, 156, 94, 0.28);
+    bg-base: rgba(19, 23, 27, 0.96);
+    bg-card: rgba(30, 36, 42, 0.80);
+    bg-card-hover: rgba(42, 50, 58, 0.92);
+    bg-selected: rgba(48, 57, 66, 0.96);
+    border-subtle: rgba(255, 255, 255, 0.05);
+    border-card: rgba(255, 255, 255, 0.04);
+    border-selected: rgba(255, 255, 255, 0.12);
+    accent-gold: #db9c5e;
+    accent-gold-bright: #e5c07b;
     fg-main: #d3c6aa;
     fg-bright: #fbf2db;
     fg-muted: #859289;
@@ -40,8 +43,8 @@ window {
     max-width: 1720px;
     height: 520px;
     background-color: @bg-base;
-    border: 2px;
-    border-color: @border-gold;
+    border: 1px;
+    border-color: @border-subtle;
     border-radius: 20px;
     padding: 24px 28px;
     location: center;
@@ -54,9 +57,9 @@ mainbox {
 }
 
 inputbar {
-    background-color: rgba(13, 17, 20, 0.75);
+    background-color: rgba(13, 16, 19, 0.85);
     border: 1px;
-    border-color: @border-muted;
+    border-color: @border-card;
     border-radius: 12px;
     padding: 10px 18px;
     children: [ prompt, entry ];
@@ -65,7 +68,7 @@ inputbar {
 
 prompt {
     font: "Inter 13";
-    text-color: @border-gold;
+    text-color: @accent-gold;
     vertical-align: 0.5;
 }
 
@@ -80,8 +83,8 @@ entry {
 
 listview {
     layout: horizontal;
-    lines: 1;
-    columns: 8;
+    lines: 8;
+    columns: 1;
     spacing: 16px;
     cycle: true;
     dynamic: true;
@@ -95,8 +98,8 @@ element {
     padding: 10px 10px 14px 10px;
     border-radius: 14px;
     background-color: @bg-card;
-    border: 1.5px;
-    border-color: transparent;
+    border: 1px;
+    border-color: @border-card;
     spacing: 10px;
     children: [ element-icon, element-text ];
     cursor: pointer;
@@ -104,18 +107,20 @@ element {
 
 element normal.normal {
     background-color: @bg-card;
+    border-color: @border-card;
     text-color: @fg-main;
 }
 
 element alternate.normal {
     background-color: @bg-card;
+    border-color: @border-card;
     text-color: @fg-main;
 }
 
 element selected.normal {
     background-color: @bg-selected;
-    border: 2px;
-    border-color: @border-gold;
+    border: 1px;
+    border-color: @border-selected;
     text-color: @fg-bright;
 }
 

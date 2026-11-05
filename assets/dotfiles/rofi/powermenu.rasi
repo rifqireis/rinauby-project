@@ -1,9 +1,11 @@
 * {
     font: "Inter Bold 9";
-    bg-base: #1a1d21;
-    bg-card: #23282e;
-    bg-active: #2f363f;
-    border-gold: #db9c5e;
+    bg-base: rgba(20, 24, 28, 0.96);
+    bg-card: rgba(32, 38, 44, 0.80);
+    bg-active: rgba(48, 57, 66, 0.95);
+    border-subtle: rgba(255, 255, 255, 0.05);
+    border-card: rgba(255, 255, 255, 0.04);
+    border-selected: rgba(255, 255, 255, 0.12);
     fg-main: #d3c6aa;
     fg-bright: #fbf2db;
     fg-gold: #e5c07b;
@@ -17,8 +19,8 @@
 window {
     width: 680px;
     background-color: @bg-base;
-    border: 2px;
-    border-color: @border-gold;
+    border: 1px;
+    border-color: @border-subtle;
     border-radius: 16px;
     padding: 26px 28px 28px 28px;
     location: center;
@@ -50,8 +52,8 @@ element {
     padding: 16px 12px 14px 12px;
     border-radius: 12px;
     background-color: @bg-card;
-    border: 2px;
-    border-color: transparent;
+    border: 1px;
+    border-color: @border-card;
     width: 110px;
     spacing: 10px;
     children: [ element-icon, element-text ];
@@ -60,7 +62,7 @@ element {
 
 element selected.normal {
     background-color: @bg-active;
-    border-color: @border-gold;
+    border-color: @border-selected;
 }
 
 element-icon {

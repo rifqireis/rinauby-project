@@ -22,6 +22,8 @@
 
   "widgets": [
     "title",
+    "dnd",
+    "volume",
     "backlight",
     "mpris",
     "notifications"
@@ -31,6 +33,12 @@
       "text": "Control Center",
       "clear-all-button": true,
       "button-text": "Clear All"
+    },
+    "dnd": {
+      "text": "Do Not Disturb"
+    },
+    "volume": {
+      "label": "󰕾"
     },
     "backlight": {
       "label": "󰃠"

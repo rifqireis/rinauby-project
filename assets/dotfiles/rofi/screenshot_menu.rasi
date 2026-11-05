@@ -2,7 +2,8 @@
  * =============================================================================
  * RENAISSANCE OS : ROFI SCREENSHOT MENU THEME
  * Filosofi: Digital Humanism & The Renaissance of Open Source
- * Desain: Modal Tengah Klasik, Garis Emas Antik, Panel Frosted Glass
+ * Desain: Modal Tengah Klasik, Kedalaman Tonal & Ambient Shadow
+ * Aturan: Tanpa outline oranye (hanya pada Waybar), hairline kaca ultra-subtle
  * =============================================================================
  */
 
@@ -12,11 +13,12 @@ configuration {
 }
 
 * {
-    bg-base: rgba(28, 33, 37, 0.92);
-    bg-input: rgba(20, 24, 27, 0.70);
-    bg-selected: rgba(45, 53, 59, 0.90);
-    border-gold: #db9c5e;
-    border-subtle: rgba(219, 156, 94, 0.60);
+    bg-base: rgba(22, 26, 30, 0.96);
+    bg-input: rgba(14, 17, 20, 0.85);
+    bg-selected: rgba(219, 156, 94, 0.14);
+    border-subtle: rgba(255, 255, 255, 0.05);
+    border-hairline: rgba(255, 255, 255, 0.04);
+    accent-gold: #db9c5e;
     fg-main: #d3c6aa;
     fg-bright: #fbf2db;
     fg-muted: #859289;
@@ -29,11 +31,11 @@ configuration {
 }
 
 window {
-    width: 440px;
+    width: 460px;
     background-color: @bg-base;
-    border: 1.5px;
-    border-color: @border-gold;
-    border-radius: 12px;
+    border: 1px;
+    border-color: @border-subtle;
+    border-radius: 14px;
     padding: 20px;
     location: center;
     anchor: center;
@@ -47,7 +49,7 @@ mainbox {
 inputbar {
     background-color: @bg-input;
     border: 1px;
-    border-color: @border-subtle;
+    border-color: @border-hairline;
     border-radius: 8px;
     padding: 8px 14px;
     children: [ prompt, entry ];
@@ -55,7 +57,7 @@ inputbar {
 }
 
 prompt {
-    text-color: @border-gold;
+    text-color: @accent-gold;
     font: "JetBrainsMono Nerd Font Bold 12";
 }
 
@@ -80,6 +82,7 @@ listview {
 element {
     padding: 8px 12px;
     border-radius: 8px;
+    border: 0px;
     cursor: pointer;
 }
 
@@ -96,8 +99,7 @@ element alternate.normal {
 element selected.normal {
     background-color: @bg-selected;
     text-color: @fg-bright;
-    border: 1px;
-    border-color: @border-gold;
+    border: 0px;
     border-radius: 8px;
 }
 
