@@ -1809,9 +1809,31 @@ auto_save=false
         ]
         wp_path = next((c for c in candidates if os.path.exists(c)), candidates[0])
         if os.path.exists(wp_path):
-            subprocess.run(["pkill", "-x", "swaybg"], stderr=subprocess.DEVNULL)
-            subprocess.Popen(["swaybg", "-i", wp_path, "-m", "fill"],
-                             stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+            # Cek ketersediaan swww atau awww untuk efek transisi circular
+            swww_bin = shutil.which("swww") or shutil.which("awww")
+            if swww_bin:
+                daemon_name = os.path.basename(swww_bin) + "-daemon"
+                # Pastikan daemon aktif
+                check_daemon = subprocess.run(["pgrep", "-x", daemon_name], stdout=subprocess.DEVNULL)
+                if check_daemon.returncode != 0:
+                    daemon_bin = shutil.which(daemon_name)
+                    if daemon_bin:
+                        subprocess.Popen([daemon_bin], stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+                        import time
+                        time.sleep(0.3)
+                subprocess.run(["pkill", "-x", "swaybg"], stderr=subprocess.DEVNULL)
+                subprocess.Popen([
+                    swww_bin, "img", wp_path,
+                    "--transition-type", "grow",
+                    "--transition-pos", "center",
+                    "--transition-duration", "1.5",
+                    "--transition-fps", "60",
+                    "--transition-bezier", ".43,1.19,1,1"
+                ], stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+            else:
+                subprocess.run(["pkill", "-x", "swaybg"], stderr=subprocess.DEVNULL)
+                subprocess.Popen(["swaybg", "-i", wp_path, "-m", "fill"],
+                                 stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
             with open("/tmp/current_wallpaper_title", "w") as f:
                 f.write(title)
             # Rotasi semboyan dan update Waybar

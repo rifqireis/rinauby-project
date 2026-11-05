@@ -105,9 +105,28 @@ if [ -n "$CHOSEN" ]; then
         # Simpan judul wallpaper aktif ke file state
         echo "$CHOSEN" > /tmp/current_wallpaper_title
 
-        # Terapkan wallpaper ke Hyprland
-        if command -v swww &>/dev/null; then
-            swww img "$SELECTED_PATH" --transition-type wipe --transition-duration 1.5
+        # Terapkan wallpaper ke Hyprland dengan animasi circular jika swww/awww tersedia
+        if command -v swww &>/dev/null || command -v awww &>/dev/null; then
+            WP_CMD=$(command -v swww 2>/dev/null || command -v awww 2>/dev/null)
+            WP_DAEMON="${WP_CMD}-daemon"
+            WP_NAME="${WP_DAEMON##*/}"
+
+            # Pastikan daemon swww/awww sedang berjalan
+            if ! pgrep -x "$WP_NAME" >/dev/null; then
+                "$WP_DAEMON" &>/dev/null &
+                sleep 0.4
+            fi
+
+            # Hentikan swaybg agar layer gambar ditangani mulus oleh swww/awww
+            pkill -x swaybg 2>/dev/null || true
+
+            # Terapkan animasi circular reveal (grow dari center)
+            "$WP_CMD" img "$SELECTED_PATH" \
+                --transition-type grow \
+                --transition-pos center \
+                --transition-duration 1.5 \
+                --transition-fps 60 \
+                --transition-bezier .43,1.19,1,1
         elif command -v hyprctl &>/dev/null && pgrep -x hyprpaper >/dev/null; then
             hyprctl hyprpaper preload "$SELECTED_PATH"
             hyprctl hyprpaper wallpaper ",$SELECTED_PATH"
