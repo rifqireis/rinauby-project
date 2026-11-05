@@ -1,17 +1,30 @@
 /**
  * =============================================================================
- * SCHOOL OF ATHENS : ROFI WALLPAPER SELECTOR GRID
- * Visual Grid Layout: 2 Rows x 4 Columns
- * Desain: Bersih, Humanis Modern (Font Inter), Tanpa Outline Nanggung
+ * RINAUBY : HORIZONTAL CAROUSEL WALLPAPER SELECTOR
+ * Inspired by Community Coverflow & Modern Hyprland Wallpaper Carousels
+ * Layout: Horizontal Panoramic Card Strip with Large Previews & Popin Animation
+ * Desain: Bersih, Humanis Modern (Font Inter), Border Emas Renaissance
  * =============================================================================
  */
 
+configuration {
+    modi: "dmenu";
+    show-icons: true;
+    drun-display-format: "{name}";
+    hover-select: true;
+    me-select-entry: "";
+    me-accept-entry: "MousePrimary";
+}
+
 * {
     font: "Inter 11";
-    bg-base: rgba(28, 33, 37, 0.95);
-    bg-card: rgba(42, 50, 56, 0.85);
-    bg-active: rgba(219, 156, 94, 0.22);
+    bg-base: rgba(20, 24, 27, 0.94);
+    bg-card: rgba(36, 43, 49, 0.78);
+    bg-card-hover: rgba(52, 63, 72, 0.90);
+    bg-selected: rgba(219, 156, 94, 0.26);
     border-gold: #db9c5e;
+    border-gold-bright: #e5c07b;
+    border-muted: rgba(219, 156, 94, 0.28);
     fg-main: #d3c6aa;
     fg-bright: #fbf2db;
     fg-muted: #859289;
@@ -23,12 +36,14 @@
 }
 
 window {
-    width: 980px;
+    width: 94%;
+    max-width: 1720px;
+    height: 520px;
     background-color: @bg-base;
-    border: 1.5px;
+    border: 2px;
     border-color: @border-gold;
-    border-radius: 16px;
-    padding: 24px;
+    border-radius: 20px;
+    padding: 24px 28px;
     location: center;
     anchor: center;
 }
@@ -39,10 +54,11 @@ mainbox {
 }
 
 inputbar {
-    background-color: rgba(18, 22, 25, 0.75);
-    border: 0px;
-    border-radius: 10px;
-    padding: 12px 18px;
+    background-color: rgba(13, 17, 20, 0.75);
+    border: 1px;
+    border-color: @border-muted;
+    border-radius: 12px;
+    padding: 10px 18px;
     children: [ prompt, entry ];
     spacing: 12px;
 }
@@ -54,52 +70,67 @@ prompt {
 }
 
 entry {
-    placeholder: "Search / Choose Wallpaper";
+    placeholder: "Search or browse wallpapers with Left / Right arrows...";
     placeholder-color: @fg-muted;
     text-color: @fg-bright;
     font: "Inter 12";
     vertical-align: 0.5;
+    horizontal-align: 0.0;
 }
 
 listview {
-    layout: vertical;
-    lines: 2;
-    columns: 4;
-    cycle: true;
-    dynamic: false;
+    layout: horizontal;
+    lines: 1;
+    columns: 8;
     spacing: 16px;
-    flow: horizontal;
-    fixed-columns: true;
+    cycle: true;
+    dynamic: true;
+    scrollbar: false;
+    fixed-height: true;
 }
 
 element {
     orientation: vertical;
-    padding: 6px 6px 30px 6px;
-    border-radius: 12px;
+    width: 190px;
+    padding: 10px 10px 14px 10px;
+    border-radius: 14px;
     background-color: @bg-card;
-    border: 0px;
-    spacing: 0px;
+    border: 1.5px;
+    border-color: transparent;
+    spacing: 10px;
     children: [ element-icon, element-text ];
+    cursor: pointer;
+}
+
+element normal.normal {
+    background-color: @bg-card;
+    text-color: @fg-main;
+}
+
+element alternate.normal {
+    background-color: @bg-card;
+    text-color: @fg-main;
 }
 
 element selected.normal {
-    background-color: @bg-active;
+    background-color: @bg-selected;
     border: 2px;
     border-color: @border-gold;
+    text-color: @fg-bright;
 }
 
 element-icon {
-    size: 195px;
+    size: 280px;
     horizontal-align: 0.5;
-    border-radius: 8px;
+    vertical-align: 0.5;
+    border-radius: 10px;
+    cursor: pointer;
 }
 
 element-text {
-    font: "Inter 11";
+    font: "Inter 10.5";
     horizontal-align: 0.5;
-    text-color: #d3c6aa;
-}
-
-element selected.normal element-text {
-    text-color: #fbf2db;
+    vertical-align: 0.5;
+    text-color: inherit;
+    cursor: pointer;
 }

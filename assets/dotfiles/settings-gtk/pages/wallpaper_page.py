@@ -6,13 +6,13 @@ from gi.repository import Gtk, Adw, GdkPixbuf, Gdk
 from backend import backend, ASSETS_DIR
 
 WALLPAPERS = [
+    ("apotheosis.jpg", "The Apotheosis"),
     ("school_of_athens.jpg", "The School of Athens"),
     ("the_creation_of_adam.jpg", "The Creation of Adam"),
     ("the_last_supper.jpg", "The Last Supper"),
     ("birth_of_venus.jpg", "The Birth of Venus"),
-    ("classical_ruins.jpg", "Classical Ruins"),
-    ("tower_of_babel.jpg", "The Tower of Babel"),
     ("primavera.jpg", "Primavera"),
+    ("tower_of_babel.jpg", "The Tower of Babel"),
     ("annunciation.jpg", "The Annunciation")
 ]
 
@@ -46,7 +46,7 @@ class WallpaperPage(Gtk.Box):
         scrolled.set_child(self.flowbox)
 
         self.cards = {}
-        active_wp = backend.get("active_wallpaper", "school_of_athens.jpg")
+        active_wp = backend.get("active_wallpaper", "apotheosis.jpg")
 
         wp_dir = os.path.join(ASSETS_DIR, "wallpapers") if os.path.isdir(os.path.join(ASSETS_DIR, "wallpapers")) else (
             ASSETS_DIR if os.path.isdir(ASSETS_DIR) else "/usr/share/backgrounds/rinauby"

@@ -387,12 +387,16 @@ SYS_WALL_DIR="/usr/share/backgrounds/rinauby"
 SYS_SHARE_DIR="/usr/share/rinauby"
 
 mkdir -p "$SYS_WALL_DIR/.thumbs"
+mkdir -p "$SYS_WALL_DIR/.thumbs_carousel"
 mkdir -p "$SYS_SHARE_DIR"
 
 if [ -d "$WALLPAPERS_DIR" ]; then
     cp -f "$WALLPAPERS_DIR"/*.jpg "$SYS_WALL_DIR/" 2>/dev/null || true
     if [ -d "$WALLPAPERS_DIR/.thumbs" ]; then
         cp -f "$WALLPAPERS_DIR/.thumbs"/*.jpg "$SYS_WALL_DIR/.thumbs/" 2>/dev/null || true
+    fi
+    if [ -d "$WALLPAPERS_DIR/.thumbs_carousel" ]; then
+        cp -f "$WALLPAPERS_DIR/.thumbs_carousel"/*.jpg "$SYS_WALL_DIR/.thumbs_carousel/" 2>/dev/null || true
     fi
     chmod -R 755 "$SYS_WALL_DIR"
     log_ok "8 Renaissance masterpieces and thumbnails deployed to $SYS_WALL_DIR"
@@ -417,7 +421,9 @@ mkdir -p "$SYS_SHARE_DIR/hypr"
 if command -v magick >/dev/null 2>&1 || command -v convert >/dev/null 2>&1; then
     IMG_CMD="convert"
     command -v magick >/dev/null 2>&1 && IMG_CMD="magick"
-    if [ -f "$SYS_WALL_DIR/school_of_athens.jpg" ]; then
+    if [ -f "$SYS_WALL_DIR/apotheosis.jpg" ]; then
+        "$IMG_CMD" "$SYS_WALL_DIR/apotheosis.jpg" -gravity center -crop 400x400+0+0 +repage -resize 180x180 "$SYS_SHARE_DIR/hypr/avatar.png" 2>/dev/null || true
+    elif [ -f "$SYS_WALL_DIR/school_of_athens.jpg" ]; then
         "$IMG_CMD" "$SYS_WALL_DIR/school_of_athens.jpg" -gravity center -crop 400x400+0+0 +repage -resize 180x180 "$SYS_SHARE_DIR/hypr/avatar.png" 2>/dev/null || true
     fi
 fi
@@ -514,7 +520,8 @@ sanitize_and_deploy_config() {
 
     # 2. Path for hyprlock wallpaper, avatar & dynamic username
     if [ -f "$cfg_dir/hypr/hyprlock.conf" ]; then
-        sed -i "s|$HOST_HARDCODED_PREFIX/wallpapers/school_of_athens.jpg|$SYS_WALL_DIR/school_of_athens.jpg|g" "$cfg_dir/hypr/hyprlock.conf"
+        sed -i -e "s|$HOST_HARDCODED_PREFIX/wallpapers/apotheosis.jpg|$SYS_WALL_DIR/apotheosis.jpg|g" \
+               -e "s|$HOST_HARDCODED_PREFIX/wallpapers/school_of_athens.jpg|$SYS_WALL_DIR/school_of_athens.jpg|g" "$cfg_dir/hypr/hyprlock.conf"
         sed -i "s|/home/rifqi/.config/hypr/hyprlock/avatar-kde.png|$SYS_SHARE_DIR/hypr/avatar.png|g" "$cfg_dir/hypr/hyprlock.conf"
         if [ "$target_user" != "root" ] && [ "$target_user" != "skel" ]; then
             local display_name

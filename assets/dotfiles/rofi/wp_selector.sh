@@ -37,17 +37,19 @@ if [ ! -d "$WALL_DIR" ]; then
 fi
 
 mkdir -p "$THUMB_DIR"
+CAROUSEL_THUMB_DIR="$WALL_DIR/.thumbs_carousel"
+mkdir -p "$CAROUSEL_THUMB_DIR"
 
-# Definisi 8 karya seni klasik Renaissance persis urutan mockup
+# Definisi 8 karya seni klasik Renaissance persis urutan mockup (Apotheosis sebagai utama)
 ITEMS=(
+    "apotheosis:The Apotheosis"
+    "school_of_athens:The School of Athens"
     "the_creation_of_adam:The Creation of Adam"
+    "the_last_supper:The Last Supper"
+    "birth_of_venus:The Birth of Venus"
     "primavera:Primavera"
     "tower_of_babel:The Tower of Babel"
-    "birth_of_venus:The Birth of Venus"
     "annunciation:The Annunciation"
-    "the_last_supper:The Last Supper"
-    "classical_ruins:Classical Ruins"
-    "school_of_athens:The School of Athens"
 )
 
 ENTRY_LIST=""
@@ -59,14 +61,23 @@ for item in "${ITEMS[@]}"; do
 
     [ -f "$img" ] || continue
 
-    # Buat thumbnail jika belum ada
+    # Buat carousel thumbnail jika belum ada
+    c_thumb="$CAROUSEL_THUMB_DIR/${stem}.jpg"
+    if [ ! -f "$c_thumb" ]; then
+        IMG_CMD="convert"
+        command -v magick >/dev/null 2>&1 && IMG_CMD="magick"
+        "$IMG_CMD" "$img" -gravity center -crop 822x1200+0+0 +repage -resize 240x350 -quality 95 "$c_thumb" 2>/dev/null || true
+    fi
+
+    # Buat thumbnail standar jika belum ada
     if [ ! -f "$thumb" ]; then
         IMG_CMD="convert"
         command -v magick >/dev/null 2>&1 && IMG_CMD="magick"
         "$IMG_CMD" "$img" -resize 340x260^ -gravity center -extent 340x260 -quality 95 "$thumb" 2>/dev/null || true
     fi
 
-    icon_to_use="$thumb"
+    icon_to_use="$c_thumb"
+    [ -f "$icon_to_use" ] || icon_to_use="$thumb"
     [ -f "$icon_to_use" ] || icon_to_use="$img"
 
     # Format Rofi dmenu: Title\0icon\x1fPath
