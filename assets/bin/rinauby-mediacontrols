@@ -36,3 +36,4 @@ case "$ACTION" in
         quickshell ipc call mediacontrols toggle "$PARAM_X" >/dev/null 2>&1
         ;;
 esac
+
