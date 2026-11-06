@@ -1,6 +1,7 @@
 /*
  * =============================================================================
- * WAYBAR STYLE: MODERN RENAISSANCE (MINIMALIST & BORDERLESS)
+ * WAYBAR STYLE: CLASSIC RENAISSANCE (ACADEMIC HUMANIST)
+ * Konsep: Nempel ke Atas, Garis Emas Bawah, Tipografi Klasik Serif (Cinzel)
  * =============================================================================
  */
 
@@ -15,20 +16,23 @@
     min-height: 0;
     margin: 0;
     padding: 0;
-    font-family: "Inter", "JetBrainsMono Nerd Font", sans-serif;
-    font-size: 12.5px;
+    font-family: "Cinzel", "EB Garamond", "Inter", serif;
+    font-size: 13px;
     font-weight: 500;
 }
 
 /* -----------------------------------------------------------------------------
- * 1. FLOATING BAR CONTAINER (Flat, Borderless, Bebas Outline Bawah)
+ * 1. FLOATING BAR CONTAINER (Nempel ke Atas dengan Garis Aksen Bawah)
  * ----------------------------------------------------------------------------- */
 window#waybar {
     background-color: @bar_bg;
     color: @bar_fg;
-    border: none;
-    border-radius: 0;
-    box-shadow: none;
+    border-top: none;
+    border-left: 1px solid @bar_border_side;
+    border-right: 1px solid @bar_border_side;
+    border-bottom: 2px solid @bar_border_bottom;
+    border-radius: 0 0 6px 6px;
+    box-shadow: 0 4px 18px rgba(0, 0, 0, 0.40);
 }
 
 window#waybar.hidden {
@@ -42,47 +46,42 @@ tooltip {
     background-color: @tooltip_bg;
     border: 1px solid @tooltip_border;
     border-radius: 6px;
-    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.4);
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.5);
 }
 
 tooltip label {
     color: @bar_fg;
     padding: 6px 10px;
-    font-size: 12px;
+    font-size: 12.5px;
 }
 
 /* -----------------------------------------------------------------------------
- * 3. SISI KIRI (Logo Minimalis, Workspaces Angka Bersih, Window Title)
+ * 3. SISI KIRI (Logo Klasik, Workspaces Romawi, Window Title / Wallpaper Title)
  * ----------------------------------------------------------------------------- */
 #custom-logo {
     color: @accent;
-    font-size: 16px;
-    margin-left: 12px;
-    margin-right: 6px;
-    padding: 0 4px;
-    transition: color 150ms ease;
-}
-
-#custom-logo:hover {
-    color: @bar_fg_bright;
+    font-size: 15px;
+    margin-left: 14px;
+    margin-right: 8px;
+    padding: 0 2px;
 }
 
 #workspaces {
     background: transparent;
-    margin: 0 4px;
+    margin: 0 2px;
 }
 
 #workspaces button {
     padding: 0 9px;
-    margin: 4px 2px;
+    margin: 3px 1px;
     background: transparent;
     border: none;
-    border-radius: 6px;
+    border-radius: 4px;
     color: @ws_inactive;
-    font-family: "Inter", sans-serif;
-    font-size: 12px;
+    font-family: "Cinzel", "EB Garamond", "Inter", serif;
+    font-size: 13.5px;
     font-weight: 600;
-    letter-spacing: 0.2px;
+    letter-spacing: 0.8px;
     transition: all 180ms ease;
 }
 
@@ -95,52 +94,48 @@ tooltip label {
     color: @ws_active;
     font-weight: 700;
     background: @ws_active_bg;
-    border-radius: 6px;
 }
 
 #workspaces button.urgent {
-    color: #11111b;
-    background: #f38ba8;
-    border-radius: 6px;
+    color: #e67e80;
+    background: rgba(230, 126, 128, 0.2);
 }
 
 #custom-separator-left,
 #custom-separator-right {
     color: @sep_color;
-    font-size: 11px;
-    margin: 0 8px;
+    font-size: 13px;
+    margin: 0 12px;
 }
 
 #custom-window-title {
-    font-size: 12px;
+    font-size: 12.5px;
     font-weight: 500;
     letter-spacing: 0.2px;
-    color: @bar_fg;
     transition: color 150ms ease;
 }
 
 #custom-window-title.active-app {
-    color: @bar_fg_bright;
-    font-weight: 500;
+    color: #a7c080;
 }
 
 #custom-window-title.active-wallpaper {
-    color: @accent;
-    font-weight: 500;
+    color: @accent_gold;
+    font-weight: 600;
     letter-spacing: 0.3px;
 }
 
 /* -----------------------------------------------------------------------------
- * 4. SISI TENGAH (Motto Modern Renaissance)
+ * 4. SISI TENGAH (Semboyan Klasik Renaissance Humanism)
  * ----------------------------------------------------------------------------- */
 #custom-quote,
 #custom-wallpaper,
 #custom-motto {
     color: @bar_fg_bright;
-    font-family: "Inter", sans-serif;
+    font-family: "Cinzel", "EB Garamond", "Inter", serif;
     font-size: 13.5px;
     font-weight: 600;
-    letter-spacing: 0.4px;
+    letter-spacing: 0.8px;
     background: transparent;
     border: none;
     padding: 0 14px;
@@ -160,13 +155,13 @@ tooltip label {
 #pulseaudio,
 #battery,
 #clock {
-    padding: 0 8px;
+    padding: 0 7px;
     margin: 0 2px;
     background: transparent;
     border: none;
     box-shadow: none;
     color: @bar_fg;
-    font-size: 12px;
+    font-size: 13px;
     font-weight: 500;
     transition: color 150ms ease;
 }
@@ -177,21 +172,21 @@ tooltip label {
 }
 
 #pulseaudio.muted {
-    color: #f38ba8;
+    color: #e67e80;
 }
 
 #battery.warning:not(.charging) {
-    color: @accent;
+    color: @accent_gold;
 }
 
 #battery.critical:not(.charging) {
-    color: #f38ba8;
+    color: #e67e80;
 }
 
 #clock {
-    color: @accent;
+    color: @accent_gold;
     font-weight: 600;
-    margin-right: 12px;
+    margin-right: 14px;
 }
 
 #clock:hover {

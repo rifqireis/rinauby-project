@@ -260,7 +260,78 @@ EOF
     fg-muted: #859289;
 }
 EOF
-    cat << 'EOF' > "$HOME/.local/state/serpantinum/qs_colors.json"
+    CURRENT_SCHEME="$(gsettings get org.gnome.desktop.interface color-scheme 2>/dev/null | tr -d "'" | grep -o 'light\|dark' || echo 'dark')"
+    if [ "$CURRENT_SCHEME" = "light" ]; then
+        cat << 'EOF' > "$HOME/.local/state/serpantinum/qs_colors.json"
+{
+  "base": "#fbf8f1",
+  "mantle": "#f4ede0",
+  "crust": "#eae1d0",
+  "surface0": "#f3ede2",
+  "surface1": "#ede5d6",
+  "surface2": "#e2d8c5",
+  "overlay0": "#baa990",
+  "overlay1": "#8c7b64",
+  "overlay2": "#6d5f4c",
+  "text": "#2c2825",
+  "subtext0": "#544c45",
+  "subtext1": "#786d63",
+  "blue": "#b87732",
+  "sapphire": "#c98a44",
+  "peach": "#b87732",
+  "green": "#587c47",
+  "red": "#b83a3a",
+  "mauve": "#8f5832",
+  "pink": "#c98a44",
+  "yellow": "#c98a44",
+  "maroon": "#8f3232",
+  "teal": "#4d7c6e"
+}
+EOF
+        cat << 'EOF' > "$HOME/.local/state/serpantinum/qs_bar_theme.json"
+{
+  "themeMode": "classic",
+  "barBg": "#1c2125",
+  "barBgAlpha": 0.82,
+  "barFg": "#d3c6aa",
+  "barFgBright": "#fbf2db",
+  "barBorderSide": "#38b8864e",
+  "barBorderBottom": "#db9c5e",
+  "accent": "#db9c5e",
+  "accentGold": "#e5c07b",
+  "wsActive": "#e5c07b",
+  "wsInactive": "#859289",
+  "wsHoverBg": "#e5c07b",
+  "wsHoverBgAlpha": 0.10,
+  "wsActiveBg": "#e5c07b",
+  "wsActiveBgAlpha": 0.15,
+  "sepColor": "#4db8864e",
+  "tooltipBg": "#181c1f",
+  "tooltipBgAlpha": 0.95,
+  "tooltipBorder": "#b8864e",
+  "tooltipBorderAlpha": 0.45,
+  "windowTitleAppColor": "#a7c080",
+  "mutedColor": "#e67e80",
+  "criticalColor": "#e67e80",
+  "rofiBgBase": "#fbf8f1",
+  "rofiBgBaseAlpha": 0.96,
+  "rofiBgInput": "#f3ede2",
+  "rofiBgInputAlpha": 0.85,
+  "rofiBgSelected": "#b87732",
+  "rofiBgSelectedAlpha": 0.15,
+  "rofiBorderSubtle": "#baa990",
+  "rofiBorderSubtleAlpha": 0.35,
+  "rofiBorderHairline": "#baa990",
+  "rofiBorderHairlineAlpha": 0.15,
+  "rofiAccent": "#b87732",
+  "rofiAccentBright": "#c98a44",
+  "rofiFgMain": "#2c2825",
+  "rofiFgBright": "#1f1c1a",
+  "rofiFgMuted": "#786d63"
+}
+EOF
+    else
+        cat << 'EOF' > "$HOME/.local/state/serpantinum/qs_colors.json"
 {
   "base": "#171a1d",
   "mantle": "#131518",
@@ -286,7 +357,7 @@ EOF
   "teal": "#879a39"
 }
 EOF
-    cat << 'EOF' > "$HOME/.local/state/serpantinum/qs_bar_theme.json"
+        cat << 'EOF' > "$HOME/.local/state/serpantinum/qs_bar_theme.json"
 {
   "themeMode": "classic",
   "barBg": "#1c2125",
@@ -328,6 +399,7 @@ EOF
   "rofiFgMuted": "#859289"
 }
 EOF
+    fi
     if [ -f "$WAYBAR_DIR/config-classic.jsonc" ]; then
         cp -f "$WAYBAR_DIR/config-classic.jsonc" "$HOME/.config/waybar/config.jsonc"
     fi

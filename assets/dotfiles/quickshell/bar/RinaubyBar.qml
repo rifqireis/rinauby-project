@@ -5,6 +5,7 @@ import Quickshell.Io
 import Quickshell.Wayland
 import Quickshell.Hyprland
 import Quickshell.Services.UPower
+import Quickshell.Services.Mpris
 import ".."
 
 Scope {
@@ -139,6 +140,37 @@ Scope {
         "Cogito Ergo Sum",
         "Ars Longa Vita Brevis"
     ]
+
+    // MPRIS Active Player & Track Title Tracking
+    readonly property var mprisPlayersList: {
+        if (!Mpris.players || !Mpris.players.values) return [];
+        return Mpris.players.values.filter(p => p !== null && p !== undefined);
+    }
+
+    readonly property MprisPlayer barActivePlayer: {
+        let list = mprisPlayersList;
+        if (list.length === 0) return null;
+        let playing = list.find(p => p.isPlaying);
+        if (playing) return playing;
+        let withTitle = list.find(p => p.trackTitle && p.trackTitle.trim() !== "");
+        if (withTitle) return withTitle;
+        let controllable = list.find(p => p.canControl);
+        if (controllable) return controllable;
+        return list[0];
+    }
+
+    readonly property bool hasMediaPlaying: barActivePlayer !== null && barActivePlayer.trackTitle && barActivePlayer.trackTitle.trim() !== ""
+    readonly property string rawMediaTitle: hasMediaPlaying ? barActivePlayer.trackTitle : ""
+    readonly property string rawMediaArtist: (hasMediaPlaying && barActivePlayer.trackArtist) ? barActivePlayer.trackArtist : ""
+    readonly property bool isMediaPlayingState: hasMediaPlaying && barActivePlayer.isPlaying === true
+
+    function cleanBarMediaTitle(title) {
+        if (!title) return "";
+        return title
+            .replace(/\s*[\(\[](official\s*(music\s*)?video|video|audio|lyrics|hd|4k|remastered)[\)\]]/gi, "")
+            .replace(/\s*-\s*YouTube$/i, "")
+            .trim();
+    }
 
     function parseBarTheme(txt) {
         if (!txt || txt.trim() === "") return;
@@ -972,6 +1004,100 @@ Scope {
                                 onFullTooltipChanged: {
                                     if (winTitleMouse.containsMouse) {
                                         screenScope.showTooltip(winTitleContainer, winTitleContainer.fullTooltip, false);
+                                    }
+                                }
+                            }
+
+                            // Media Separator (visible when both winTitle and mediaTitle are present)
+                            Item {
+                                visible: root.hasMediaPlaying && (root.hasActiveWindow || root.showTitleWhenIdle)
+                                height: parent.height
+                                width: visible ? (sepMediaText.implicitWidth + (root.isClassic ? 20 : 14)) : 0
+
+                                Text {
+                                    id: sepMediaText
+                                    anchors.centerIn: parent
+                                    text: "│"
+                                    color: root.sepColor
+                                    font.family: "Inter"
+                                    font.pixelSize: root.isClassic ? 13 : 11
+                                }
+                            }
+
+                            // Media Player Title Module (custom/mediaTitle)
+                            Item {
+                                id: mediaTitle
+                                visible: root.hasMediaPlaying
+                                height: parent.height
+                                width: visible ? (mediaRow.implicitWidth + (root.isClassic ? 16 : 12)) : 0
+                                clip: true
+
+                                Row {
+                                    id: mediaRow
+                                    anchors.centerIn: parent
+                                    spacing: 6
+
+                                    Text {
+                                        id: mediaIcon
+                                        anchors.verticalCenter: parent.verticalCenter
+                                        text: root.isMediaPlayingState ? "󰎆" : "󰐊"
+                                        font.family: "JetBrainsMono Nerd Font"
+                                        font.pixelSize: root.isClassic ? 13 : 12
+                                        color: mediaMouse.containsMouse ? root.barFgBright : root.accent
+                                        Behavior on color { ColorAnimation { duration: 150 } }
+                                    }
+
+                                    Text {
+                                        id: mediaTitleText
+                                        anchors.verticalCenter: parent.verticalCenter
+                                        text: {
+                                            let clean = root.cleanBarMediaTitle(root.rawMediaTitle);
+                                            let display = clean;
+                                            if (root.rawMediaArtist !== "") display += " • " + root.rawMediaArtist;
+                                            return root.truncateTitle(display);
+                                        }
+                                        font.family: root.isClassic ? "EB Garamond" : "Inter"
+                                        font.pixelSize: root.isClassic ? 13 : 12
+                                        font.weight: Font.Medium
+                                        color: mediaMouse.containsMouse ? root.accentGoldBright : root.barFgBright
+                                        Behavior on color { ColorAnimation { duration: 150 } }
+                                    }
+                                }
+
+                                MouseArea {
+                                    id: mediaMouse
+                                    anchors.fill: parent
+                                    hoverEnabled: true
+                                    cursorShape: Qt.PointingHandCursor
+                                    acceptedButtons: Qt.LeftButton | Qt.RightButton | Qt.MiddleButton
+
+                                    readonly property string mediaTipText: {
+                                        let tip = "Media: " + root.rawMediaTitle;
+                                        if (root.rawMediaArtist !== "") tip += "\nArtist: " + root.rawMediaArtist;
+                                        tip += "\n(Click: Media Player Controls • Middle: Play/Pause • Right: Next)";
+                                        return tip;
+                                    }
+
+                                    onEntered: screenScope.showTooltip(mediaTitle, mediaTipText, false)
+                                    onExited: screenScope.hideTooltip()
+
+                                    onClicked: function(mouse) {
+                                        if (mouse.button === Qt.LeftButton) {
+                                            let pos = null;
+                                            try {
+                                                pos = mediaTitle.mapToItem(null, 0, 0);
+                                            } catch(e) {}
+                                            let targetX = pos ? pos.x : 200;
+                                            Quickshell.execDetached(["rinauby-mediacontrols", "toggle", String(targetX)]);
+                                        } else if (mouse.button === Qt.MiddleButton) {
+                                            if (root.barActivePlayer && typeof root.barActivePlayer.togglePlaying === "function") {
+                                                root.barActivePlayer.togglePlaying();
+                                            }
+                                        } else if (mouse.button === Qt.RightButton) {
+                                            if (root.barActivePlayer && typeof root.barActivePlayer.next === "function") {
+                                                root.barActivePlayer.next();
+                                            }
+                                        }
                                     }
                                 }
                             }

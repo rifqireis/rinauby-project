@@ -10,7 +10,7 @@ PanelWindow {
     id: root
 
     visible: root.isOpen
-    WlrLayershell.namespace: "rofi"
+    WlrLayershell.namespace: "rinauby-launcher"
     WlrLayershell.layer: WlrLayer.Overlay
     WlrLayershell.keyboardFocus: root.isOpen ? WlrKeyboardFocus.Exclusive : WlrKeyboardFocus.None
     exclusionMode: ExclusionMode.Ignore
@@ -275,7 +275,8 @@ PanelWindow {
         }
 
         function powermenu() {
-            root.powermenu();
+            root.close();
+            Quickshell.execDetached(["rinauby-powermenu"]);
         }
 
         function screenshot() {

@@ -1,13 +1,13 @@
-/* Rofi Dynamic Monochromatic Matugen Palette */
+/* Rofi Theme: Classic Renaissance (Ochre Gold & Parchment) */
 * {
-    bg-base: rgba(17, 20, 22, 0.96);
-    bg-input: rgba(25, 28, 31, 0.85);
-    bg-selected: rgba(154, 204, 249, 0.18);
-    border-subtle: rgba(154, 204, 249, 0.18);
-    border-hairline: rgba(154, 204, 249, 0.08);
-    accent-gold: #9accf9;
-    accent-gold-bright: #9accf9;
-    fg-main: #e2e2e6;
-    fg-bright: #ffffff;
-    fg-muted: #8b9199;
+    bg-base: rgba(22, 26, 30, 0.96);
+    bg-input: rgba(14, 17, 20, 0.85);
+    bg-selected: rgba(219, 156, 94, 0.14);
+    border-subtle: rgba(255, 255, 255, 0.05);
+    border-hairline: rgba(255, 255, 255, 0.04);
+    accent-gold: #db9c5e;
+    accent-gold-bright: #e5c07b;
+    fg-main: #d3c6aa;
+    fg-bright: #fbf2db;
+    fg-muted: #859289;
 }

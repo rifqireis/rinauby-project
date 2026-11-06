@@ -12,6 +12,6 @@ if ! pgrep -x quickshell >/dev/null && ! pgrep -x qs >/dev/null; then
     sleep 0.4
 fi
 
-quickshell -p "$QS_CFG" ipc call launcher toggle "powermenu" >/dev/null 2>&1 || \
-quickshell -p "$HOME/.config/quickshell/shell.qml" ipc call launcher toggle "powermenu" >/dev/null 2>&1 || \
-quickshell ipc call launcher toggle "powermenu" >/dev/null 2>&1
+quickshell -p "$QS_CFG" ipc call session toggle >/dev/null 2>&1 || \
+quickshell -p "$HOME/.config/quickshell/shell.qml" ipc call session toggle >/dev/null 2>&1 || \
+quickshell ipc call session toggle >/dev/null 2>&1

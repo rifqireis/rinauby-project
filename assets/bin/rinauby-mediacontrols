@@ -1,0 +1,38 @@
+#!/usr/bin/env bash
+# ==============================================================================
+# RINAUBY : MEDIA PLAYER CONTROLS POPUP
+# Native Quickshell Component (Interactive MPRIS Control)
+# ==============================================================================
+
+ACTION="${1:-toggle}"
+PARAM_X="${2:-200}"
+
+QS_CFG="$(cd "$(dirname "${BASH_SOURCE[0]}")/../dotfiles/quickshell" 2>/dev/null && pwd)/shell.qml"
+[ -f "$QS_CFG" ] || QS_CFG="$HOME/.config/quickshell/shell.qml"
+
+if ! pgrep -x quickshell >/dev/null && ! pgrep -x qs >/dev/null; then
+    quickshell -p "$QS_CFG" >/dev/null 2>&1 &
+    sleep 0.4
+fi
+
+case "$ACTION" in
+    toggle)
+        quickshell -p "$QS_CFG" ipc call mediacontrols toggle "$PARAM_X" >/dev/null 2>&1 || \
+        quickshell -p "$HOME/.config/quickshell/shell.qml" ipc call mediacontrols toggle "$PARAM_X" >/dev/null 2>&1 || \
+        quickshell ipc call mediacontrols toggle "$PARAM_X" >/dev/null 2>&1
+        ;;
+    open)
+        quickshell -p "$QS_CFG" ipc call mediacontrols open "$PARAM_X" >/dev/null 2>&1 || \
+        quickshell -p "$HOME/.config/quickshell/shell.qml" ipc call mediacontrols open "$PARAM_X" >/dev/null 2>&1 || \
+        quickshell ipc call mediacontrols open "$PARAM_X" >/dev/null 2>&1
+        ;;
+    close)
+        quickshell -p "$QS_CFG" ipc call mediacontrols close >/dev/null 2>&1 || \
+        quickshell -p "$HOME/.config/quickshell/shell.qml" ipc call mediacontrols close >/dev/null 2>&1 || \
+        quickshell ipc call mediacontrols close >/dev/null 2>&1
+        ;;
+    *)
+        quickshell -p "$QS_CFG" ipc call mediacontrols toggle "$PARAM_X" >/dev/null 2>&1 || \
+        quickshell ipc call mediacontrols toggle "$PARAM_X" >/dev/null 2>&1
+        ;;
+esac

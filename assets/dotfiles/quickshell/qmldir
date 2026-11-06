@@ -4,6 +4,8 @@ Main 1.0 Main.qml
 
 RinaubyBar 1.0 bar/RinaubyBar.qml
 RinaubyLauncher 1.0 launcher/RinaubyLauncher.qml
+RinaubySession 1.0 session/RinaubySession.qml
+RinaubyMediaControls 1.0 media/RinaubyMediaControls.qml
 
 Bar 1.0 bar/Bar.qml
 Floating 1.0 quickactions/Floating.qml
