@@ -12,6 +12,8 @@ ShellRoot {
     }
 
     Main {}
+    RinaubyBar {}
+    RinaubyLauncher {}
 
     Component.onCompleted: {
         Qt.application.organization = "rinauby";

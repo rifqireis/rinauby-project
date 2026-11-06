@@ -78,3 +78,4 @@ fi
 # 6. Kirim notifikasi sistem
 LABEL="$([ "$NEW_MODE" = "dark" ] && echo "Dark Mode" || echo "Light Mode")"
 notify-send -a "System" "Skema Warna Diubah" "$LABEL aktif untuk GTK, Qt, dan Desktop" -i "preferences-desktop-theme" 2>/dev/null || true
+

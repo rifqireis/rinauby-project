@@ -174,6 +174,48 @@ EOF
   "teal": "#94e2d5"
 }
 EOF
+        cat << 'EOF' > "$HOME/.local/state/serpantinum/qs_bar_theme.json"
+{
+  "themeMode": "modern",
+  "barBg": "#11111b",
+  "barBgAlpha": 0.85,
+  "barFg": "#cdd6f4",
+  "barFgBright": "#ffffff",
+  "barBorderSide": "transparent",
+  "barBorderBottom": "transparent",
+  "accent": "#89b4fa",
+  "accentGold": "#89b4fa",
+  "wsActive": "#11111b",
+  "wsInactive": "#6c7086",
+  "wsHoverBg": "#89b4fa",
+  "wsHoverBgAlpha": 0.14,
+  "wsActiveBg": "#89b4fa",
+  "wsActiveBgAlpha": 1.0,
+  "sepColor": "#1fffffff",
+  "tooltipBg": "#11111b",
+  "tooltipBgAlpha": 0.95,
+  "tooltipBorder": "#89b4fa",
+  "tooltipBorderAlpha": 0.30,
+  "windowTitleAppColor": "#ffffff",
+  "mutedColor": "#f38ba8",
+  "criticalColor": "#f38ba8",
+  "rofiBgBase": "#181825",
+  "rofiBgBaseAlpha": 0.96,
+  "rofiBgInput": "#11111b",
+  "rofiBgInputAlpha": 0.85,
+  "rofiBgSelected": "#89b4fa",
+  "rofiBgSelectedAlpha": 0.18,
+  "rofiBorderSubtle": "#89b4fa",
+  "rofiBorderSubtleAlpha": 0.18,
+  "rofiBorderHairline": "#89b4fa",
+  "rofiBorderHairlineAlpha": 0.08,
+  "rofiAccent": "#89b4fa",
+  "rofiAccentBright": "#74c7ec",
+  "rofiFgMain": "#cdd6f4",
+  "rofiFgBright": "#ffffff",
+  "rofiFgMuted": "#6c7086"
+}
+EOF
     fi
 
     if [ -f "$WAYBAR_DIR/config-modern.jsonc" ]; then
@@ -244,6 +286,48 @@ EOF
   "teal": "#879a39"
 }
 EOF
+    cat << 'EOF' > "$HOME/.local/state/serpantinum/qs_bar_theme.json"
+{
+  "themeMode": "classic",
+  "barBg": "#1c2125",
+  "barBgAlpha": 0.82,
+  "barFg": "#d3c6aa",
+  "barFgBright": "#fbf2db",
+  "barBorderSide": "#38b8864e",
+  "barBorderBottom": "#db9c5e",
+  "accent": "#db9c5e",
+  "accentGold": "#e5c07b",
+  "wsActive": "#e5c07b",
+  "wsInactive": "#859289",
+  "wsHoverBg": "#e5c07b",
+  "wsHoverBgAlpha": 0.10,
+  "wsActiveBg": "#e5c07b",
+  "wsActiveBgAlpha": 0.15,
+  "sepColor": "#4db8864e",
+  "tooltipBg": "#181c1f",
+  "tooltipBgAlpha": 0.95,
+  "tooltipBorder": "#b8864e",
+  "tooltipBorderAlpha": 0.45,
+  "windowTitleAppColor": "#a7c080",
+  "mutedColor": "#e67e80",
+  "criticalColor": "#e67e80",
+  "rofiBgBase": "#161a1e",
+  "rofiBgBaseAlpha": 0.96,
+  "rofiBgInput": "#0e1114",
+  "rofiBgInputAlpha": 0.85,
+  "rofiBgSelected": "#db9c5e",
+  "rofiBgSelectedAlpha": 0.14,
+  "rofiBorderSubtle": "#ffffff",
+  "rofiBorderSubtleAlpha": 0.05,
+  "rofiBorderHairline": "#ffffff",
+  "rofiBorderHairlineAlpha": 0.04,
+  "rofiAccent": "#db9c5e",
+  "rofiAccentBright": "#e5c07b",
+  "rofiFgMain": "#d3c6aa",
+  "rofiFgBright": "#fbf2db",
+  "rofiFgMuted": "#859289"
+}
+EOF
     if [ -f "$WAYBAR_DIR/config-classic.jsonc" ]; then
         cp -f "$WAYBAR_DIR/config-classic.jsonc" "$HOME/.config/waybar/config.jsonc"
     fi
@@ -252,20 +336,19 @@ EOF
     fi
 fi
 
-# 4. Rotasi Kutipan & Motto Waybar
+# 4. Rotasi Kutipan & Motto
 if [ -f "$HOME/.config/waybar/quote_rotator.sh" ]; then
     bash "$HOME/.config/waybar/quote_rotator.sh" --next >/dev/null 2>&1
 elif command -v rinauby-quote >/dev/null 2>&1; then
     rinauby-quote --next >/dev/null 2>&1
 fi
 
-# 5. Restart Waybar dengan Konfigurasi yang Sesuai
+# 5. Pastikan Waybar Legacy Tidak Berjalan (Digantikan oleh Quickshell RinaubyBar)
 pkill -x waybar 2>/dev/null || true
-sleep 0.1
-setsid -f waybar -c "$HOME/.config/waybar/config.jsonc" -s "$HOME/.config/waybar/style.css" >/dev/null 2>&1
 
-# 6. Reload Warna Quickshell (IPC & Signal)
+# 6. Reload Warna & TopBar Quickshell (IPC & Signal)
 quickshell -p "$HOME/.config/quickshell/shell.qml" ipc call theme reloadColors 2>/dev/null || quickshell ipc call theme reloadColors 2>/dev/null || true
+quickshell -p "$HOME/.config/quickshell/shell.qml" ipc call waybar reload 2>/dev/null || quickshell ipc call waybar reload 2>/dev/null || true
 pkill -USR1 -f window_title.py 2>/dev/null || true
 
 # 9. Notifikasi Sukses

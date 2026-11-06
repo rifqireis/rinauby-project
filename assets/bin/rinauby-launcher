@@ -1,23 +1,23 @@
 #!/usr/bin/env bash
-THEMES=(
-    "$HOME/.config/rofi/renaissance_launcher.rasi"
-    "/etc/skel/.config/rofi/renaissance_launcher.rasi"
-    "/usr/share/rinauby/rofi/renaissance_launcher.rasi"
-)
-REPO_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." 2>/dev/null && pwd)"
-THEMES+=("$REPO_DIR/dotfiles/rofi/renaissance_launcher.rasi")
-THEMES+=("/home/rifqi/Workspace/Belajar/SO/Tubes-2604/Rancangan/assets/dotfiles/rofi/renaissance_launcher.rasi")
+# ==============================================================================
+# RINAUBY : APPLICATION LAUNCHER & COMMAND PALETTE
+# Native Quickshell Component (Replaces Rofi drun/run/clipboard)
+# ==============================================================================
 
-THEME_FILE=""
-for t in "${THEMES[@]}"; do
-    if [ -f "$t" ]; then
-        THEME_FILE="$t"
-        break
-    fi
-done
-
-if [ -n "$THEME_FILE" ]; then
-    exec rofi -show drun -theme "$THEME_FILE" "$@"
-else
-    exec rofi -show drun "$@"
+MODE="${1:-drun}"
+# Normalize legacy rofi flags if passed (e.g. -show drun)
+if [ "$1" = "-show" ] && [ -n "$2" ]; then
+    MODE="$2"
 fi
+
+QS_CFG="$(cd "$(dirname "${BASH_SOURCE[0]}")/../dotfiles/quickshell" 2>/dev/null && pwd)/shell.qml"
+[ -f "$QS_CFG" ] || QS_CFG="$HOME/.config/quickshell/shell.qml"
+
+if ! pgrep -x quickshell >/dev/null && ! pgrep -x qs >/dev/null; then
+    quickshell -p "$QS_CFG" >/dev/null 2>&1 &
+    sleep 0.4
+fi
+
+quickshell -p "$QS_CFG" ipc call launcher toggle "$MODE" >/dev/null 2>&1 || \
+quickshell -p "$HOME/.config/quickshell/shell.qml" ipc call launcher toggle "$MODE" >/dev/null 2>&1 || \
+quickshell ipc call launcher toggle "$MODE" >/dev/null 2>&1

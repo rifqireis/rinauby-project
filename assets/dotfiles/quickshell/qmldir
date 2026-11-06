@@ -2,6 +2,9 @@ Dock 1.0 dock/Dock.qml
 Dim 1.0 Dim.qml
 Main 1.0 Main.qml
 
+RinaubyBar 1.0 bar/RinaubyBar.qml
+RinaubyLauncher 1.0 launcher/RinaubyLauncher.qml
+
 Bar 1.0 bar/Bar.qml
 Floating 1.0 quickactions/Floating.qml
 FloatingEdgeTrigger 1.0 quickactions/FloatingEdgeTrigger.qml

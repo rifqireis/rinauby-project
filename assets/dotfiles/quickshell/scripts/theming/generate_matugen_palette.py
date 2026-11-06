@@ -44,7 +44,12 @@ def fallback_palette():
         "on_surface_variant": "#a6adc8",
         "outline": "#6c7086",
         "outline_variant": "#45475a",
-        "error": "#f38ba8"
+        "error": "#f38ba8",
+        "waybar_surface": "#11111b",
+        "waybar_fg": "#cdd6f4",
+        "waybar_accent": "#89b4fa",
+        "waybar_ws_active": "#11111b",
+        "waybar_outline": "#6c7086"
     }
 
 def extract_matugen(wallpaper_path, mode="dark", scheme_type="scheme-fidelity"):
@@ -71,6 +76,11 @@ def extract_matugen(wallpaper_path, mode="dark", scheme_type="scheme-fidelity"):
             val = v.get("default", {}).get("color") or v.get("dark", {}).get("color")
             return val if val else default
 
+        def c_dark(key, default):
+            v = raw_colors.get(key, {})
+            val = v.get("dark", {}).get("color") or v.get("default", {}).get("color")
+            return val if val else default
+
         palette = {
             "primary": c("primary", "#89b4fa"),
             "on_primary": c("on_primary", "#11111b"),
@@ -85,7 +95,12 @@ def extract_matugen(wallpaper_path, mode="dark", scheme_type="scheme-fidelity"):
             "on_surface_variant": c("on_surface_variant", "#a6adc8"),
             "outline": c("outline", "#6c7086"),
             "outline_variant": c("outline_variant", "#45475a"),
-            "error": c("error", "#f38ba8")
+            "error": c("error", "#f38ba8"),
+            "waybar_surface": c_dark("surface", "#111416"),
+            "waybar_fg": c_dark("on_surface", "#e2e2e6"),
+            "waybar_accent": c_dark("primary", "#9accf9"),
+            "waybar_ws_active": c_dark("on_primary", "#003351"),
+            "waybar_outline": c_dark("outline", "#8b9199")
         }
         return palette
     except Exception as e:
@@ -106,6 +121,14 @@ def apply_theme(palette, home_dir):
     outline = palette["outline"]
     outline_variant = palette["outline_variant"]
     error = palette["error"]
+
+    # Aturan Desain Waybar: Shell Bar Selalu Gelap Permanen (Permanent Dark Shell Bar)
+    # Mode terang tidak boleh mengubah bilah atas menjadi putih, menjaga keterbacaan & estetika GNOME shell.
+    waybar_surface = palette.get("waybar_surface", "#111416")
+    waybar_fg = palette.get("waybar_fg", "#e2e2e6")
+    waybar_accent = palette.get("waybar_accent", primary)
+    waybar_ws_active = palette.get("waybar_ws_active", on_primary)
+    waybar_outline = palette.get("waybar_outline", outline)
 
     # 1. Quickshell: qs_colors.json and qs_matugen_colors.json
     state_dir = os.path.join(home_dir, ".local", "state", "serpantinum")
@@ -143,24 +166,71 @@ def apply_theme(palette, home_dir):
     with open(os.path.join(state_dir, "qs_matugen_colors.json"), "w") as f:
         f.write(qs_json_str + "\n")
 
-    # 2. Waybar: ~/.config/waybar/theme.css
+    # 1b. Quickshell Bar & Launcher Theme: qs_bar_theme.json (Enforcing Aturan 10: Permanent Dark Shell Bar)
+    is_light_surface = sum(hex_to_rgb(surface)) > 380
+    rofi_fg_bright = on_surface if is_light_surface else "#ffffff"
+
+    qs_bar_theme = {
+        "themeMode": "modern",
+        "barBg": waybar_surface,
+        "barBgAlpha": 0.85,
+        "barFg": waybar_fg,
+        "barFgBright": "#ffffff",
+        "barBorderSide": "transparent",
+        "barBorderBottom": "transparent",
+        "accent": waybar_accent,
+        "accentGold": waybar_accent,
+        "wsActive": waybar_ws_active,
+        "wsInactive": waybar_outline,
+        "wsHoverBg": waybar_accent,
+        "wsHoverBgAlpha": 0.14,
+        "wsActiveBg": waybar_accent,
+        "wsActiveBgAlpha": 1.0,
+        "sepColor": "#1fffffff",
+        "tooltipBg": waybar_surface,
+        "tooltipBgAlpha": 0.95,
+        "tooltipBorder": waybar_accent,
+        "tooltipBorderAlpha": 0.30,
+        "windowTitleAppColor": "#ffffff",
+        "mutedColor": "#f38ba8",
+        "criticalColor": "#f38ba8",
+        "rofiBgBase": surface,
+        "rofiBgBaseAlpha": 0.96,
+        "rofiBgInput": surface_low,
+        "rofiBgInputAlpha": 0.85,
+        "rofiBgSelected": primary,
+        "rofiBgSelectedAlpha": 0.18,
+        "rofiBorderSubtle": primary,
+        "rofiBorderSubtleAlpha": 0.18,
+        "rofiBorderHairline": primary,
+        "rofiBorderHairlineAlpha": 0.08,
+        "rofiAccent": primary,
+        "rofiAccentBright": primary,
+        "rofiFgMain": on_surface,
+        "rofiFgBright": rofi_fg_bright,
+        "rofiFgMuted": outline
+    }
+    with open(os.path.join(state_dir, "qs_bar_theme.json"), "w") as f:
+        f.write(json.dumps(qs_bar_theme, indent=2) + "\n")
+
+    # 2. Waybar: ~/.config/waybar/theme.css (Legacy compatibility)
     waybar_dir = os.path.join(home_dir, ".config", "waybar")
     os.makedirs(waybar_dir, exist_ok=True)
-    waybar_theme_css = f"""/* Waybar Dynamic Monochromatic Matugen Palette */
-@define-color bar_bg {hex_to_rgba_css(surface, 0.85)};
-@define-color bar_fg {on_surface};
+    waybar_theme_css = f"""/* Waybar Dynamic Monochromatic Palette (Permanent Dark Shell Bar Standard) */
+@define-color bar_bg {hex_to_rgba_css(waybar_surface, 0.85)};
+@define-color bar_fg {waybar_fg};
 @define-color bar_fg_bright #ffffff;
 @define-color bar_border_side transparent;
 @define-color bar_border_bottom transparent;
-@define-color accent {primary};
-@define-color accent_gold {primary};
-@define-color ws_active {on_primary};
-@define-color ws_inactive {outline};
-@define-color ws_hover_bg {hex_to_rgba_css(primary, 0.14)};
-@define-color ws_active_bg {primary};
+@define-color accent {waybar_accent};
+@define-color accent_gold {waybar_accent};
+@define-color ws_active {waybar_ws_active};
+@define-color ws_inactive {waybar_outline};
+@define-color ws_hover_bg {hex_to_rgba_css(waybar_accent, 0.14)};
+@define-color ws_active_bg {waybar_accent};
 @define-color sep_color rgba(255, 255, 255, 0.12);
-@define-color tooltip_bg {hex_to_rgba_css(surface, 0.95)};
-@define-color tooltip_border {hex_to_rgba_css(primary, 0.30)};
+@define-color tooltip_bg {hex_to_rgba_css(waybar_surface, 0.95)};
+@define-color tooltip_border {hex_to_rgba_css(waybar_accent, 0.30)};
 """
     with open(os.path.join(waybar_dir, "theme.css"), "w") as f:
         f.write(waybar_theme_css)
@@ -257,13 +327,15 @@ color15 #ffffff
     except Exception:
         pass
 
-    # 7. Notify Quickshell to reload colors
+    # 7. Notify Quickshell to reload colors and bar theme
     try:
         qs_shell = os.path.join(home_dir, ".config", "quickshell", "shell.qml")
         subprocess.run(["quickshell", "-p", qs_shell, "ipc", "call", "theme", "reloadColors"], stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+        subprocess.run(["quickshell", "-p", qs_shell, "ipc", "call", "waybar", "reload"], stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
     except Exception:
         try:
             subprocess.run(["quickshell", "ipc", "call", "theme", "reloadColors"], stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+            subprocess.run(["quickshell", "ipc", "call", "waybar", "reload"], stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
         except Exception:
             pass
 

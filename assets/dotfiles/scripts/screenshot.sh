@@ -73,8 +73,14 @@ case "$1" in
         fi
         ;;
 
-    "delay")
-        SEC="${2:-5}"
+    "delay"|"delay3"|"delay5")
+        if [ "$1" = "delay3" ]; then
+            SEC=3
+        elif [ "$1" = "delay5" ]; then
+            SEC=5
+        else
+            SEC="${2:-5}"
+        fi
         if command -v notify-send >/dev/null 2>&1; then
             notify-send -a "System" "Tangkapan Layar Tunda" "Mengambil tangkapan layar dalam $SEC detik..." 2>/dev/null || true
         fi
@@ -85,39 +91,16 @@ case "$1" in
         ;;
 
     "menu"|*)
-        SCRIPT_PATH="$(readlink -f "$0")"
-        if [ -f "$HOME/.config/rofi/screenshot_menu.rasi" ]; then
-            ROFI_THEME="$HOME/.config/rofi/screenshot_menu.rasi"
-        elif [ -f "/usr/share/rinauby/rofi/screenshot_menu.rasi" ]; then
-            ROFI_THEME="/usr/share/rinauby/rofi/screenshot_menu.rasi"
-        elif [ -f "/home/rifqi/Workspace/Belajar/SO/Tubes-2604/Rancangan/assets/dotfiles/rofi/screenshot_menu.rasi" ]; then
-            ROFI_THEME="/home/rifqi/Workspace/Belajar/SO/Tubes-2604/Rancangan/assets/dotfiles/rofi/screenshot_menu.rasi"
-        else
-            ROFI_THEME="$(cd "$(dirname "${BASH_SOURCE[0]}")/../rofi" 2>/dev/null && pwd)/screenshot_menu.rasi"
+        QS_CFG="$(cd "$(dirname "${BASH_SOURCE[0]}")/../quickshell" 2>/dev/null && pwd)/shell.qml"
+        [ -f "$QS_CFG" ] || QS_CFG="$HOME/.config/quickshell/shell.qml"
+
+        if ! pgrep -x quickshell >/dev/null && ! pgrep -x qs >/dev/null; then
+            quickshell -p "$QS_CFG" >/dev/null 2>&1 &
+            sleep 0.4
         fi
 
-        OPTIONS="󰒆  Potong Area (Snip Selection)\n󰹑  Layar Penuh (Fullscreen)\n󱂬  Jendela Aktif (Active Window)\n󰏫  Potong & Anotasi (Swappy Editor)\n󱞩  Tunda 5 Detik (5s Delay Fullscreen)\n📁  Buka Folder Screenshots"
-
-        CHOSEN=$(echo -e "$OPTIONS" | rofi -dmenu -theme "$ROFI_THEME" -p "📸" -no-custom)
-        case "$CHOSEN" in
-            *"Potong Area"*)
-                exec "$SCRIPT_PATH" snip
-                ;;
-            *"Layar Penuh"*)
-                exec "$SCRIPT_PATH" full
-                ;;
-            *"Jendela Aktif"*)
-                exec "$SCRIPT_PATH" window
-                ;;
-            *"Potong & Anotasi"*)
-                exec "$SCRIPT_PATH" edit
-                ;;
-            *"Tunda 5 Detik"*)
-                exec "$SCRIPT_PATH" delay 5
-                ;;
-            *"Buka Folder"*)
-                xdg-open "$TARGET_DIR" 2>/dev/null || thunar "$TARGET_DIR" 2>/dev/null &
-                ;;
-        esac
+        quickshell -p "$QS_CFG" ipc call launcher toggle "screenshot" >/dev/null 2>&1 || \
+        quickshell -p "$HOME/.config/quickshell/shell.qml" ipc call launcher toggle "screenshot" >/dev/null 2>&1 || \
+        quickshell ipc call launcher toggle "screenshot" >/dev/null 2>&1
         ;;
 esac
