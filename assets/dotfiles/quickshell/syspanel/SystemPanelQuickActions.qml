@@ -352,29 +352,61 @@ Item {
             }
         }
 
-        // 5. Airplane Mode
+        // 5. Dark Style / Mode (Menggantikan Airplane Mode)
         GnomePillBtn {
-            iconText: "󰀝"
-            labelText: "Airplane"
+            id: darkStylePill
+            property bool isDarkMode: true
+
+            FileView {
+                id: colorSchemeWatcher
+                path: (typeof Caching !== "undefined" && Caching.stateDir ? Caching.stateDir : ((Quickshell.env("HOME") ?? "") + "/.local/state/serpantinum")) + "/color_scheme"
+                watchChanges: true
+                onFileChanged: reload()
+                onLoaded: {
+                    let txt = text().trim().toLowerCase();
+                    if (txt === "light") {
+                        darkStylePill.isDarkMode = false;
+                    } else if (txt === "dark") {
+                        darkStylePill.isDarkMode = true;
+                    }
+                }
+            }
+
+            Process {
+                id: initialSchemeChecker
+                command: ["bash", "-c", "gsettings get org.gnome.desktop.interface color-scheme 2>/dev/null | tr -d \"'\""]
+                running: true
+                stdout: StdioCollector {
+                    onStreamFinished: {
+                        let res = this.text.trim().toLowerCase();
+                        if (res.indexOf("light") !== -1) {
+                            darkStylePill.isDarkMode = false;
+                        } else {
+                            darkStylePill.isDarkMode = true;
+                        }
+                    }
+                }
+            }
+
+            iconText: isDarkMode ? "󰤄" : "󰖨"
+            labelText: isDarkMode ? "Dark Mode" : "Light Mode"
             hasSubmenu: false
-            isActive: !view.panel.wifiRadioEnabled && !view.panel.btRadioEnabled
+            isActive: isDarkMode
+
             onLeftClicked: {
                 Sounds.playSfx("system/quick_click.wav");
-                let enableAirplane = !isActive;
-                if (enableAirplane) {
-                    view.panel.btStateBeforeAirplane = view.panel.btRadioEnabled;
-                    view.panel.wifiStateBeforeAirplane = view.panel.wifiRadioEnabled;
-                    Networking.wifiEnabled = false;
-                    if (Bluetooth.defaultAdapter) Bluetooth.defaultAdapter.enabled = false;
-                } else {
-                    let restoreWifi = view.panel.wifiStateBeforeAirplane;
-                    let restoreBt = view.panel.btStateBeforeAirplane;
-                    if (!restoreWifi && !restoreBt) {
-                        restoreWifi = true;
-                    }
-                    Networking.wifiEnabled = restoreWifi;
-                    if (Bluetooth.defaultAdapter) Bluetooth.defaultAdapter.enabled = restoreBt;
-                }
+                let targetMode = !darkStylePill.isDarkMode ? "dark" : "light";
+                darkStylePill.isDarkMode = !darkStylePill.isDarkMode;
+                Quickshell.execDetached([
+                    "bash", "-c",
+                    "if [ -x \"$HOME/.config/quickshell/scripts/theming/set_color_scheme.sh\" ]; then exec \"$HOME/.config/quickshell/scripts/theming/set_color_scheme.sh\" \"$1\"; else exec /home/rifqi/Workspace/Belajar/SO/Tubes-2604/Rancangan/assets/dotfiles/quickshell/scripts/theming/set_color_scheme.sh \"$1\"; fi",
+                    "_", targetMode
+                ]);
+            }
+
+            onRightClicked: {
+                view.panel.closeAnim.start();
+                Quickshell.execDetached(["bash", "-c", "rinauby-settings appearance || true"]);
             }
         }
 

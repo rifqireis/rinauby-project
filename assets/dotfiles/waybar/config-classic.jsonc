@@ -57,7 +57,7 @@
             "default": "{name}"
         },
         "persistent-workspaces": {
-            "*": 1
+            "*": 0
         }
     },
     "custom/separator-left": {

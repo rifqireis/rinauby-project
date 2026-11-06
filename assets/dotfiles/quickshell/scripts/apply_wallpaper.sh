@@ -67,6 +67,7 @@ case "$STEM" in
         ;;
 esac
 
+echo "$SELECTED_PATH" > /tmp/current_wallpaper_path
 echo "$CHOSEN" > /tmp/current_wallpaper_title
 echo "$THEME_MODE" > /tmp/current_theme_mode
 
@@ -109,7 +110,8 @@ mkdir -p "$HOME/.config/waybar" "$HOME/.config/rofi" "$HOME/.local/state/serpant
 if [ "$THEME_MODE" = "modern" ]; then
     # Mode Modern Renaissance: Ekstraksi Dinamis Matugen (Monochromatic Harmony)
     if [ -x "$MATUGEN_SCRIPT" ] && [ "${RINAUBY_THEME_GENERATOR:-matugen}" = "matugen" ]; then
-        "$MATUGEN_SCRIPT" "$SELECTED_PATH" "dark" "scheme-fidelity" || true
+        CURRENT_SCHEME="$(gsettings get org.gnome.desktop.interface color-scheme 2>/dev/null | tr -d "'" | grep -o 'light\|dark' || echo 'dark')"
+        "$MATUGEN_SCRIPT" "$SELECTED_PATH" "$CURRENT_SCHEME" "scheme-fidelity" || true
     else
         # Fallback Curated Modern Renaissance: Sapphire Cobalt Blue & Cyber Mocha
         hyprctl eval 'hl.config({ general = { col = { active_border = "rgba(89b4faff)", inactive_border = "rgba(242437aa)" } } })' 2>/dev/null || true
