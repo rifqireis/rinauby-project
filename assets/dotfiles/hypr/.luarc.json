@@ -1,0 +1,35 @@
+{
+  "$schema": "https://raw.githubusercontent.com/sumneko/vscode-lua/master/setting/schema.json",
+  "runtime": {
+    "version": "LuaJIT"
+  },
+  "workspace": {
+    "checkThirdParty": false
+  },
+  "diagnostics": {
+    "globals": [
+      "hl",
+      "HOME",
+      "is_file_exists",
+      "create_if_not_exists",
+      "workspace_in_group",
+      "terminal",
+      "fileManager",
+      "browser",
+      "codeEditor",
+      "textEditor",
+      "officeSoftware",
+      "volumeMixer",
+      "settingsApp",
+      "taskManager",
+      "workspaceGroupSize",
+      "disabled_base_execs",
+      "monitor_w",
+      "monitor_h"
+    ],
+    "disable": [
+      "undefined-global",
+      "lowercase-global"
+    ]
+  }
+}

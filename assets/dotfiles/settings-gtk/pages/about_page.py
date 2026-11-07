@@ -24,7 +24,7 @@ class AboutPage(Gtk.Box):
         # Hero Row
         hero_row = Adw.ActionRow(
             title="Desktop Environment",
-            subtitle="Clean, Elegant & Cohesive Desktop Experience"
+            subtitle="Clean, Elegant &amp; Cohesive Desktop Experience"
         )
         badge_hero = Gtk.Label(label="v1.0")
         badge_hero.add_css_class("pill-dropdown-button")
@@ -45,11 +45,23 @@ class AboutPage(Gtk.Box):
         group.add(k_row)
 
         # Window Manager / Compositor
+        hypr_ver = "Hyprland 0.56+"
+        try:
+            out = subprocess.check_output(["hyprctl", "version"], text=True, stderr=subprocess.DEVNULL)
+            if out:
+                first_line = out.splitlines()[0].strip()
+                # e.g. "Hyprland 0.57.1 built from branch..."
+                parts = first_line.split()
+                if len(parts) >= 2:
+                    hypr_ver = f"{parts[0]} {parts[1]}"
+        except Exception:
+            pass
+
         wm_row = Adw.ActionRow(
             title="Window Manager",
-            subtitle="Hyprland Wayland Compositor with dynamic animations &amp; blur"
+            subtitle="Hyprland Modular Lua Compositor with dynamic animations &amp; blur"
         )
-        badge_wm = Gtk.Label(label="Hyprland 0.54+")
+        badge_wm = Gtk.Label(label=hypr_ver)
         badge_wm.add_css_class("pill-dropdown-button")
         badge_wm.set_valign(Gtk.Align.CENTER)
         wm_row.add_suffix(badge_wm)
@@ -58,7 +70,7 @@ class AboutPage(Gtk.Box):
         # Architecture & Target ISO
         arch_row = Adw.ActionRow(
             title="Target Distribution",
-            subtitle="Custom Ubuntu 26.04 Noble LTS built via Cubic ISO builder"
+            subtitle="Custom Ubuntu 26.04 LTS built via Cubic ISO builder"
         )
         badge_arch = Gtk.Label(label="x86_64 EFI")
         badge_arch.add_css_class("pill-dropdown-button")

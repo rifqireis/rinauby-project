@@ -29,7 +29,7 @@ class AppearancePage(Gtk.Box):
         )
         # Dropdown / Pill Button
         self.scheme_btn = Gtk.MenuButton()
-        self.scheme_btn.set_label(backend.get("color_scheme", "Everforest Warm"))
+        self.scheme_btn.set_label(backend.get_color_scheme())
         self.scheme_btn.add_css_class("pill-dropdown-button")
         self.scheme_btn.set_valign(Gtk.Align.CENTER)
 

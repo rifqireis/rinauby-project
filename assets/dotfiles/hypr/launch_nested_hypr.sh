@@ -6,7 +6,10 @@
 # ==============================================================================
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-HYPR_CONF="$SCRIPT_DIR/hyprland.conf"
+HYPR_CONF="$SCRIPT_DIR/hyprland.lua"
+if [ ! -f "$HYPR_CONF" ]; then
+    HYPR_CONF="$SCRIPT_DIR/hyprland.conf"
+fi
 
 echo "=========================================================="
 echo "Meluncurkan Renaissance Hyprland (Nested Mode)..."

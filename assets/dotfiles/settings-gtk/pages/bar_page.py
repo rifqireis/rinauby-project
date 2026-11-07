@@ -44,13 +44,17 @@ class BarPage(Gtk.Box):
 
     def _on_position_changed(self, row, _param):
         pos = "bottom" if row.get_selected() == 1 else "top"
+        backend.set("bar.position", pos)
         backend.set("waybar.position", pos)
-        self._on_reload_waybar()
+        subprocess.run(["quickshell", "-c", "rs", "ipc", "call", "rinaubybar", "setPosition", pos], stderr=subprocess.DEVNULL)
+        self._on_reload_bar()
 
     def _on_height_changed(self, row, _param):
         val = int(row.get_value())
+        backend.set("bar.height", val)
         backend.set("waybar.height", val)
-        self._on_reload_waybar()
+        subprocess.run(["quickshell", "-c", "rs", "ipc", "call", "rinaubybar", "setHeight", str(val)], stderr=subprocess.DEVNULL)
+        self._on_reload_bar()
 
     def _build_content_group(self):
         group = Adw.PreferencesGroup()
@@ -59,13 +63,13 @@ class BarPage(Gtk.Box):
 
         # Motto rotator
         motto_row = Adw.SwitchRow(title="Rotate Humanism Mottos")
-        motto_row.set_active(backend.get("waybar.rotate_quotes", True))
+        motto_row.set_active(backend.get("bar.rotate_quotes", backend.get("waybar.rotate_quotes", True)))
         motto_row.connect("notify::active", self._on_toggle_rotate_quotes)
         group.add(motto_row)
 
         # Artwork title when idle
         art_row = Adw.SwitchRow(title="Artwork Title When Idle")
-        art_row.set_active(backend.get("waybar_show_title", True))
+        art_row.set_active(backend.get("bar_show_title", backend.get("waybar_show_title", True)))
         art_row.connect("notify::active", self._on_toggle_show_title)
         group.add(art_row)
 
@@ -77,39 +81,41 @@ class BarPage(Gtk.Box):
 
         # Hardware telemetry
         telem_row = Adw.SwitchRow(title="Hardware Telemetry")
-        telem_row.set_active(backend.get("waybar_telemetry", True))
+        telem_row.set_active(backend.get("bar_telemetry", backend.get("waybar_telemetry", True)))
         telem_row.connect("notify::active", self._on_toggle_telemetry)
         group.add(telem_row)
 
     def _on_toggle_rotate_quotes(self, row, _param):
+        backend.set("bar.rotate_quotes", row.get_active())
         backend.set("waybar.rotate_quotes", row.get_active())
-        self._on_reload_waybar()
+        self._on_reload_bar()
 
     def _on_toggle_show_title(self, row, _param):
+        backend.set("bar_show_title", row.get_active())
         backend.set("waybar_show_title", row.get_active())
-        self._on_reload_waybar()
+        self._on_reload_bar()
 
     def _on_toggle_roman_workspaces(self, row, _param):
         backend.set_roman_workspaces(row.get_active())
-        self._on_reload_waybar()
+        self._on_reload_bar()
 
     def _on_toggle_telemetry(self, row, _param):
+        backend.set("bar_telemetry", row.get_active())
         backend.set("waybar_telemetry", row.get_active())
-        self._on_reload_waybar()
+        self._on_reload_bar()
 
     def _build_action_group(self):
         group = Adw.PreferencesGroup()
         group.set_title("Maintenance")
         self.append(group)
 
-        reload_row = Adw.ActionRow(title="Reload Waybar Panel")
+        reload_row = Adw.ActionRow(title="Reload Status Bar")
         reload_btn = Gtk.Button(label="Reload")
         reload_btn.add_css_class("flat")
         reload_btn.set_valign(Gtk.Align.CENTER)
-        reload_btn.connect("clicked", self._on_reload_waybar)
+        reload_btn.connect("clicked", self._on_reload_bar)
         reload_row.add_suffix(reload_btn)
         group.add(reload_row)
 
-    def _on_reload_waybar(self, *_args):
+    def _on_reload_bar(self, *_args):
         subprocess.run(["quickshell", "-c", "rs", "ipc", "call", "rinaubybar", "reload"], stderr=subprocess.DEVNULL)
-        subprocess.run(["quickshell", "ipc", "call", "waybar", "reload"], stderr=subprocess.DEVNULL)

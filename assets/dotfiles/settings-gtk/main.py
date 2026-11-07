@@ -44,8 +44,8 @@ PAGE_SPECS = {
     "execs": ("pages.execs_page", "ExecsPage", "Startup Applications"),
     "env": ("pages.env_page", "EnvPage", "Session Variables"),
     # 4. Panel & System
-    "bar": ("pages.bar_page", "BarPage", "Waybar Panel"),
-    "dock_lock": ("pages.dock_lock_page", "LockPage", "Lock Screen"),
+    "bar": ("pages.bar_page", "BarPage", "Top Status Bar"),
+    "dock_lock": ("pages.dock_lock_page", "LockPage", "Lock Screen & Dock"),
     "audio": ("pages.audio_page", "AudioPage", "Sound"),
     "power": ("pages.power_page", "PowerPage", "Power & Battery"),
     "shortcuts": ("pages.shortcuts_page", "ShortcutsPage", "Keyboard Shortcuts"),

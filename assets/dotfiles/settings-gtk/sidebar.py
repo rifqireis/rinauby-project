@@ -88,15 +88,15 @@ SIDEBAR_GROUPS = [
         "items": [
             {
                 "id": "bar",
-                "title": "Waybar Panel",
+                "title": "Top Status Bar",
                 "icon": "user-desktop-symbolic",
-                "keywords": ["bar", "waybar", "panel", "motto", "clock", "telemetry", "status", "system"]
+                "keywords": ["bar", "quickshell", "panel", "top bar", "status bar", "motto", "clock", "telemetry", "status", "system"]
             },
             {
                 "id": "dock_lock",
-                "title": "Lock Screen",
+                "title": "Lock Screen & Dock",
                 "icon": "system-lock-screen-symbolic",
-                "keywords": ["lockscreen", "hyprlock", "security", "password", "blur", "clock"]
+                "keywords": ["lockscreen", "dock", "desktop dock", "hyprlock", "security", "password", "blur", "clock"]
             },
             {
                 "id": "audio",

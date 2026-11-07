@@ -32,8 +32,25 @@ def _detect_assets_dir():
 
 ASSETS_DIR = _detect_assets_dir()
 
+def _find_apply_wallpaper_script():
+    candidates = [
+        os.path.expanduser("~/.config/quickshell/scripts/apply_wallpaper.sh"),
+        os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "quickshell", "scripts", "apply_wallpaper.sh")),
+        os.path.expanduser("~/.config/scripts/apply_wallpaper.sh"),
+        "/usr/local/bin/rinauby-wallpaper"
+    ]
+    return next((c for c in candidates if os.path.exists(c)), "")
+
+def _find_color_scheme_script():
+    candidates = [
+        os.path.expanduser("~/.config/quickshell/scripts/theming/set_color_scheme.sh"),
+        os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "quickshell", "scripts", "theming", "set_color_scheme.sh")),
+        "/usr/local/bin/rinauby-theme"
+    ]
+    return next((c for c in candidates if os.path.exists(c)), "")
+
 GENERATE_HYPR_SCRIPT = os.path.expanduser("~/.config/hypr/scripts/generate_hypr_gui.sh")
-SWITCHWALL_SCRIPT = os.path.expanduser("~/.config/quickshell/ii/scripts/colors/switchwall.sh")
+SWITCHWALL_SCRIPT = _find_color_scheme_script()
 
 def normalize_keybind_combo(combo: str) -> str:
     """Normalisasi string kombinasi tombol ke bentuk kanonikal (SUPER, CTRL, ALT, SHIFT + key)."""
@@ -234,6 +251,40 @@ auto_save=false
                 "# 100% Compatible with Ubuntu Hyprland PPA & Standard hyprland.conf",
                 "# ==============================================================================",
                 "",
+            ]
+
+            # Environment variables
+            env_data = self.get_env()
+            term = self.get("apps.terminal", "kitty -1")
+            lines.append("# --- Variabel Sesi Lingkungan (Environment Variables) ---")
+            lines.append(f"env = TERMINAL,{term}")
+            lines.append(f"env = XCURSOR_SIZE,{env_data.get('xcursor_size', 24)}")
+            lines.append(f"env = HYPRCURSOR_SIZE,{env_data.get('xcursor_size', 24)}")
+            lines.append(f"env = ELECTRON_OZONE_PLATFORM_HINT,{env_data.get('electron_platform', 'auto')}")
+            if env_data.get("moz_wayland", True):
+                lines.append("env = MOZ_ENABLE_WAYLAND,1")
+            driver = env_data.get("libva_driver", "iHD")
+            if driver and driver != "auto":
+                lines.append(f"env = LIBVA_DRIVER_NAME,{driver}")
+            for cv in env_data.get("custom_vars", []):
+                k = cv.get("key", "").strip()
+                v = cv.get("val", "").strip()
+                if k:
+                    lines.append(f"env = {k},{v}")
+            lines.append("")
+
+            # Autostart applications
+            execs = self.get_execs()
+            if execs:
+                lines.append("# --- Aplikasi Startup Kustom (Autostart) ---")
+                for item in execs:
+                    if item.get("enabled", True):
+                        cmd = item.get("command", "").strip()
+                        if cmd:
+                            lines.append(f"exec-once = {cmd}")
+                lines.append("")
+
+            lines.extend([
                 "general {",
                 f"    layout = {layout}",
                 f"    gaps_in = {gaps_in}",
@@ -277,7 +328,7 @@ auto_save=false
                 "    }",
                 "}",
                 ""
-            ]
+            ])
 
             # Window Rules
             rules = self.get_window_rules()
@@ -307,11 +358,137 @@ auto_save=false
         except Exception as e:
             print(f"Error generating rinauby_overrides.conf: {e}")
 
+    def generate_colors_lua(self):
+        colors_lua_path = os.path.expanduser("~/.config/hypr/custom/colors.lua")
+        cur_mode = self.get_current_color_scheme()
+        if cur_mode == "light":
+            act_border = self.get("hyprland.activeBorderLight", "rgba(db9c5eff)")
+            inact_border = self.get("hyprland.inactiveBorderLight", "rgba(45535bcc)")
+        else:
+            act_border = self.get("hyprland.activeBorderDark", "rgba(db9c5eff)")
+            inact_border = self.get("hyprland.inactiveBorderDark", "rgba(45535bcc)")
+
+        lines = [
+            "-- File ini dihasilkan otomatis oleh Theme Engine (Hyprland GUI)",
+            "hl.config({",
+            "    general = {",
+            "        col = {",
+            f'            active_border = "{act_border}",',
+            f'            inactive_border = "{inact_border}",',
+            "        },",
+            "    },",
+            "})",
+            ""
+        ]
+        self._atomic_write_lua(colors_lua_path, "\n".join(lines))
+
+    def generate_general_lua(self):
+        general_lua_path = os.path.expanduser("~/.config/hypr/custom/general.lua")
+        layout = self.get("hyprland.layout", "dwindle")
+        gaps_in = self.get("hyprland.gapsIn", 8)
+        gaps_out = self.get("hyprland.gapsOut", 10)
+        border_size = self.get("hyprland.borderSize", 2)
+        rounding = min(20, self.get("hyprland.rounding", 12))
+        rounding_power = self.get("hyprland.roundingPower", 2.5)
+
+        active_op = self.get("hyprland.activeOpacity", 1.0)
+        inactive_op = self.get("hyprland.inactiveOpacity", 0.95)
+        dim_inactive = "true" if self.get("hyprland.dimInactive", False) else "false"
+        dim_strength = self.get("hyprland.dimStrength", 0.05)
+
+        blur_enabled = "true" if self.get("hyprland.blurEnabled", True) else "false"
+        blur_size = self.get("hyprland.blurSize", 8)
+        blur_passes = self.get("hyprland.blurPasses", 3)
+        blur_noise = self.get("hyprland.blurNoise", 0.0117)
+
+        shadow_enabled = "true" if self.get("hyprland.shadowEnabled", True) else "false"
+        shadow_range = self.get("hyprland.shadowRange", 16)
+
+        anim_enabled = "true" if self.get("hyprland.animationsEnabled", True) else "false"
+
+        sensitivity = self.get("hyprland.mouseSensitivity", 0.0)
+        natural_scroll = "true" if self.get("hyprland.touchpadNaturalScroll", True) else "false"
+        tap_to_click = "true" if self.get("hyprland.touchpadTapToClick", True) else "false"
+        disable_typing = "true" if self.get("hyprland.touchpadDisableWhileTyping", False) else "false"
+
+        resize_border = "true" if self.get("hyprland.resizeOnBorder", True) else "false"
+        grab_area = self.get("hyprland.extendBorderGrabArea", 15)
+        hover_icon = "true" if self.get("hyprland.hoverIconOnBorder", True) else "false"
+        allow_tearing = "true" if self.get("hyprland.allowTearing", True) else "false"
+
+        lines = [
+            "-- File ini dihasilkan otomatis oleh Quickshell Settings (Hyprland GUI)",
+            "hl.config({",
+            "    general = {",
+            f'        layout = "{layout}",',
+            f"        gaps_in = {gaps_in},",
+            f"        gaps_out = {gaps_out},",
+            f"        border_size = {border_size},",
+            f"        resize_on_border = {resize_border},",
+            f"        extend_border_grab_area = {grab_area},",
+            f"        hover_icon_on_border = {hover_icon},",
+            f"        allow_tearing = {allow_tearing},",
+            "    },",
+            "    decoration = {",
+            f"        rounding = {rounding},",
+            f"        rounding_power = {rounding_power},",
+            f"        active_opacity = {active_op},",
+            f"        inactive_opacity = {inactive_op},",
+            f"        dim_inactive = {dim_inactive},",
+            f"        dim_strength = {dim_strength},",
+            "        blur = {",
+            f"            enabled = {blur_enabled},",
+            f"            size = {blur_size},",
+            f"            passes = {blur_passes},",
+            f"            noise = {blur_noise},",
+            "            xray = true,",
+            "            popups = false,",
+            "        },",
+            "        shadow = {",
+            f"            enabled = {shadow_enabled},",
+            f"            range = {shadow_range},",
+            "            render_power = 3,",
+            "        }",
+            "    },",
+            "    animations = {",
+            f"        enabled = {anim_enabled},",
+            "    },",
+            "    input = {",
+            "        follow_mouse = 1,",
+            f"        sensitivity = {sensitivity},",
+            "        touchpad = {",
+            f"            natural_scroll = {natural_scroll},",
+            f"            tap_to_click = {tap_to_click},",
+            f"            disable_while_typing = {disable_typing},",
+            "        }",
+            "    },",
+            "    misc = {",
+            "        animate_manual_resizes = false,",
+            "        animate_mouse_windowdragging = false,",
+            "    }",
+            "})",
+            "",
+            'hl.layer_rule({ match = { namespace = "rinauby-bar" }, blur = true })',
+            'hl.layer_rule({ match = { namespace = "rinauby-bar" }, ignore_alpha = 0.2 })',
+            'hl.layer_rule({ match = { namespace = "rinauby-session" }, blur = true })',
+            'hl.layer_rule({ match = { namespace = "rinauby-session" }, ignore_alpha = 0.0 })',
+            'hl.layer_rule({ match = { namespace = "quickshell:bar" }, blur = true })',
+            'hl.layer_rule({ match = { namespace = "quickshell:bar" }, ignore_alpha = 0.0 })',
+            'hl.layer_rule({ match = { namespace = "quickshell:sidebarRight" }, blur = true })',
+            'hl.layer_rule({ match = { namespace = "quickshell:sidebarRight" }, ignore_alpha = 0.0 })',
+            'hl.layer_rule({ match = { namespace = "quickshell:sidebarLeft" }, blur = true })',
+            'hl.layer_rule({ match = { namespace = "quickshell:sidebarLeft" }, ignore_alpha = 0.0 })',
+            ""
+        ]
+        self._atomic_write_lua(general_lua_path, "\n".join(lines))
+
     def ensure_hyprland_source(self):
         """Memastikan source rinauby_overrides.conf ada di hyprland.conf."""
+        repo_conf = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "hypr", "hyprland.conf"))
         confs = [
             os.path.expanduser("~/.config/hypr/hyprland.conf"),
-            "/home/rifqi/Workspace/Belajar/SO/Tubes-2604/Rancangan/assets/dotfiles/hypr/hyprland.conf"
+            "/etc/skel/.config/hypr/hyprland.conf",
+            repo_conf
         ]
         override_line = "source = ~/.config/hypr/rinauby_overrides.conf"
         for path in confs:
@@ -326,18 +503,26 @@ auto_save=false
                     print(f"Error ensuring source in {path}: {e}")
 
     def apply_hyprland(self):
-        # 1. Terapkan konfigurasi standar Ubuntu Hyprland PPA
+        # 1. Update Modular Lua Configurations (Hyprland 0.56+)
+        self.generate_general_lua()
+        self.generate_colors_lua()
+        self.generate_rules_lua()
+        self.generate_execs_lua()
+        self.generate_env_lua()
+        self.generate_variables_lua()
+
+        # 2. Update Fallback Standard Conf (Ubuntu / Legacy mode)
         self.generate_standard_hypr_conf()
         self.ensure_hyprland_source()
 
-        # 2. Jika ada script generator host, jalankan juga secara paralel
+        # 3. Jika ada script generator host, jalankan juga secara paralel
         if os.path.exists(GENERATE_HYPR_SCRIPT):
             try:
                 subprocess.Popen(["bash", GENERATE_HYPR_SCRIPT])
             except Exception:
                 pass
 
-        # 3. Reload hyprland secara instan
+        # 4. Reload hyprland secara instan
         subprocess.run(["hyprctl", "reload"], stderr=subprocess.DEVNULL)
 
     def update_gtk_settings_ini(self, updates: dict):
@@ -738,7 +923,6 @@ auto_save=false
             lines.append("")
 
         self._atomic_write_lua(rules_lua_path, "\n".join(lines))
-        self.apply_hyprland()
 
     def rescan_system(self):
         self.load()
@@ -1799,49 +1983,98 @@ auto_save=false
         self.set("rinauby.roman_workspaces", enabled)
         subprocess.run(["quickshell", "-c", "rs", "ipc", "call", "rinaubybar", "reload"], stderr=subprocess.DEVNULL)
 
+    def get_color_scheme(self) -> str:
+        return self.get("appearance.colorScheme", "Classical Athens Gold")
+
+    def set_color_scheme(self, name: str):
+        self.set("appearance.colorScheme", name)
+        mode = "light" if ("vatican" in name.lower() or "light" in name.lower()) else "dark"
+        self.set("appearance.colorMode", mode)
+
+        # Set specific active/inactive border colors depending on the scheme
+        if "Athens" in name:
+            self.set("hyprland.activeBorderDark", "rgba(db9c5eff)")
+            self.set("hyprland.inactiveBorderDark", "rgba(45535bcc)")
+        elif "Everforest" in name:
+            self.set("hyprland.activeBorderDark", "rgba(a7c080ff)")
+            self.set("hyprland.inactiveBorderDark", "rgba(3a4248cc)")
+        elif "Florence" in name:
+            self.set("hyprland.activeBorderDark", "rgba(7fbbb3ff)")
+            self.set("hyprland.inactiveBorderDark", "rgba(2d353bcc)")
+        elif "Vatican" in name:
+            self.set("hyprland.activeBorderLight", "rgba(d6995eff)")
+            self.set("hyprland.inactiveBorderLight", "rgba(8c8c8ccc)")
+
+        # Call set_color_scheme.sh if available
+        color_script = _find_color_scheme_script()
+        if color_script:
+            try:
+                subprocess.Popen(["bash", color_script, mode], stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+            except Exception as e:
+                print(f"Error running color scheme script: {e}")
+
+        # Update GTK theme
+        self.apply_gtk_theme(mode=mode)
+        # Apply Hyprland border and colors
+        self.apply_hyprland()
+        # Notify Quickshell IPC
+        subprocess.run(["quickshell", "-c", "rs", "ipc", "call", "rinaubybar", "reload"], stderr=subprocess.DEVNULL)
+        subprocess.run(["quickshell", "-c", "rs", "ipc", "call", "theme", "reloadColors"], stderr=subprocess.DEVNULL)
+
     def set_wallpaper(self, wp_filename: str, title: str):
         self.set("active_wallpaper", wp_filename)
+        self.set("active_wallpaper_title", title)
         candidates = [
             os.path.join(ASSETS_DIR, "wallpapers", wp_filename) if os.path.isdir(os.path.join(ASSETS_DIR, "wallpapers")) else os.path.join(ASSETS_DIR, wp_filename),
             os.path.join("/usr/share/backgrounds/rinauby", wp_filename),
             os.path.expanduser(f"~/.local/share/backgrounds/rinauby/{wp_filename}"),
-            f"/home/rifqi/Workspace/Belajar/SO/Tubes-2604/Rancangan/assets/wallpapers/{wp_filename}"
+            os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "..", "wallpapers", wp_filename))
         ]
         wp_path = next((c for c in candidates if os.path.exists(c)), candidates[0])
         if os.path.exists(wp_path):
-            # Cek ketersediaan swww atau awww untuk efek transisi circular
-            swww_bin = shutil.which("swww") or shutil.which("awww")
-            if swww_bin:
-                daemon_name = os.path.basename(swww_bin) + "-daemon"
-                # Pastikan daemon aktif
-                check_daemon = subprocess.run(["pgrep", "-x", daemon_name], stdout=subprocess.DEVNULL)
-                if check_daemon.returncode != 0:
-                    daemon_bin = shutil.which(daemon_name)
-                    if daemon_bin:
-                        subprocess.Popen([daemon_bin], stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
-                        import time
-                        time.sleep(0.3)
-                subprocess.run(["pkill", "-x", "swaybg"], stderr=subprocess.DEVNULL)
-                subprocess.Popen([
-                    swww_bin, "img", wp_path,
-                    "--transition-type", "grow",
-                    "--transition-pos", "center",
-                    "--transition-duration", "1.5",
-                    "--transition-fps", "60",
-                    "--transition-bezier", ".43,1.19,1,1"
-                ], stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
-            else:
-                subprocess.run(["pkill", "-x", "swaybg"], stderr=subprocess.DEVNULL)
-                subprocess.Popen(["swaybg", "-i", wp_path, "-m", "fill"],
-                                 stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
             with open("/tmp/current_wallpaper_title", "w") as f:
                 f.write(title)
+            with open("/tmp/current_wallpaper_path", "w") as f:
+                f.write(wp_path)
+
+            apply_wp_script = _find_apply_wallpaper_script()
+            if apply_wp_script:
+                try:
+                    subprocess.Popen(["bash", apply_wp_script, wp_path],
+                                     stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+                except Exception as e:
+                    print(f"Error executing apply_wallpaper script: {e}")
+            else:
+                # Fallback langsung ke swww atau swaybg jika skrip orkestrasi belum terpasang
+                swww_bin = shutil.which("swww") or shutil.which("awww")
+                if swww_bin:
+                    daemon_name = os.path.basename(swww_bin) + "-daemon"
+                    check_daemon = subprocess.run(["pgrep", "-x", daemon_name], stdout=subprocess.DEVNULL)
+                    if check_daemon.returncode != 0:
+                        daemon_bin = shutil.which(daemon_name)
+                        if daemon_bin:
+                            subprocess.Popen([daemon_bin], stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+                            import time
+                            time.sleep(0.3)
+                    subprocess.run(["pkill", "-x", "swaybg"], stderr=subprocess.DEVNULL)
+                    subprocess.Popen([
+                        swww_bin, "img", wp_path,
+                        "--transition-type", "grow",
+                        "--transition-pos", "center",
+                        "--transition-duration", "1.5",
+                        "--transition-fps", "60",
+                        "--transition-bezier", ".43,1.19,1,1"
+                    ], stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+                else:
+                    subprocess.run(["pkill", "-x", "swaybg"], stderr=subprocess.DEVNULL)
+                    subprocess.Popen(["swaybg", "-i", wp_path, "-m", "fill"],
+                                     stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+
             # Rotasi semboyan dan update Quickshell
             quote_candidates = [
                 "/usr/local/bin/rinauby-quote",
                 os.path.expanduser("~/.config/scripts/quote_rotator.sh"),
-                os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "scripts", "quote_rotator.sh")),
-                "/home/rifqi/Workspace/Belajar/SO/Tubes-2604/Rancangan/assets/dotfiles/scripts/quote_rotator.sh"
+                os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "scripts", "quote_rotator.sh"))
             ]
             quote_rotator = next((q for q in quote_candidates if os.path.exists(q)), None)
             if quote_rotator:

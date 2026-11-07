@@ -528,7 +528,7 @@ sanitize_and_deploy_config() {
     fi
 
     # 3. General sanitization for remaining configuration text files
-    find "$cfg_dir" -type f \( -name "*.conf" -o -name "*.jsonc" -o -name "*.json" -o -name "*.rasi" -o -name "*.sh" -o -name "*.py" -o -name "*.css" \) \
+    find "$cfg_dir" -type f \( -name "*.conf" -o -name "*.jsonc" -o -name "*.json" -o -name "*.rasi" -o -name "*.sh" -o -name "*.py" -o -name "*.css" -o -name "*.lua" \) \
         -exec sed -i \
         -e "s|$HOST_HARDCODED_PREFIX/wallpapers|$SYS_WALL_DIR|g" \
         -e "s|$HOST_HARDCODED_PREFIX/dotfiles|$SYS_SHARE_DIR|g" \
@@ -632,8 +632,8 @@ fi
 mkdir -p "$HOME/.config/hypr"
 [ -f "$HOME/.config/hypr/rinauby_overrides.conf" ] || touch "$HOME/.config/hypr/rinauby_overrides.conf"
 
-# If a fresh user on Live CD doesn't yet have ~/.config/hypr/hyprland.conf, copy from /etc/skel
-if [ ! -f "$HOME/.config/hypr/hyprland.conf" ] && [ -d /etc/skel/.config ]; then
+# If a fresh user on Live CD doesn't yet have ~/.config/hypr/hyprland.conf or hyprland.lua, copy from /etc/skel
+if [ ! -f "$HOME/.config/hypr/hyprland.conf" ] && [ ! -f "$HOME/.config/hypr/hyprland.lua" ] && [ -d /etc/skel/.config ]; then
     cp -rn /etc/skel/.config/* "$HOME/.config/" 2>/dev/null || true
 fi
 

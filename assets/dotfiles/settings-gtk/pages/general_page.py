@@ -544,10 +544,10 @@ class GeneralPage(Gtk.Box):
 
     def _on_reset_border_colors(self, button):
         defaults = {
-            "hyprland.activeBorderDark": "rgba(33ffdcc6)",
-            "hyprland.activeBorderLight": "rgba(88f700f7)",
-            "hyprland.inactiveBorderDark": "rgba(23191933)",
-            "hyprland.inactiveBorderLight": "rgba(8839ef33)",
+            "hyprland.activeBorderDark": "rgba(db9c5eff)",
+            "hyprland.activeBorderLight": "rgba(db9c5eff)",
+            "hyprland.inactiveBorderDark": "rgba(45535bcc)",
+            "hyprland.inactiveBorderLight": "rgba(45535bcc)",
         }
         for k, v in defaults.items():
             backend.set(k, v)
