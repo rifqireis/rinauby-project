@@ -4,7 +4,14 @@
 # Menjamin pemuatan deterministik Wayland Compositor, Wallpaper, Quickshell & OSD
 # ==============================================================================
 
-# 1. Tunggu soket Wayland dan display compositor stabil
+# 1. Inisialisasi direktori cache dan state Quickshell agar bersih dari warning
+mkdir -p "$HOME/.cache/serpantinum/wallpaper" "$HOME/.local/state/serpantinum" "$HOME/.config/rinauby" 2>/dev/null || true
+touch "$HOME/.cache/serpantinum/wallpaper/favorites.txt" "$HOME/.cache/serpantinum/wallpaper/history.txt" 2>/dev/null || true
+[ ! -f "$HOME/.cache/serpantinum/wallpaper/search_state.json" ] && echo "{}" > "$HOME/.cache/serpantinum/wallpaper/search_state.json" 2>/dev/null || true
+[ ! -f "$HOME/.local/state/serpantinum/color_scheme" ] && echo "dark" > "$HOME/.local/state/serpantinum/color_scheme" 2>/dev/null || true
+[ ! -f "$HOME/.config/rinauby/config.json" ] && echo '{"theme":"everforest","mode":"renaissance"}' > "$HOME/.config/rinauby/config.json" 2>/dev/null || true
+
+# 2. Tunggu soket Wayland dan display compositor stabil
 MAX_TRIES=50
 COUNT=0
 while [ -z "$WAYLAND_DISPLAY" ] && [ $COUNT -lt $MAX_TRIES ]; do

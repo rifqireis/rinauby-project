@@ -412,6 +412,27 @@ deploy_default_apps_and_mime() {
         done
         log_ok "Default MIME associations registered (Nautilus, GNOME Text Editor, Evince, Celluloid)."
     fi
+
+    # Pre-populate Quickshell state and rinauby configuration files to avoid first-run warnings
+    mkdir -p /etc/skel/.config/rinauby /etc/skel/.cache/serpantinum/wallpaper /etc/skel/.local/state/serpantinum
+    echo '{"theme":"everforest","mode":"renaissance"}' > /etc/skel/.config/rinauby/config.json
+    touch /etc/skel/.cache/serpantinum/wallpaper/favorites.txt /etc/skel/.cache/serpantinum/wallpaper/history.txt
+    echo "{}" > /etc/skel/.cache/serpantinum/wallpaper/search_state.json
+    echo "dark" > /etc/skel/.local/state/serpantinum/color_scheme
+
+    for uhome in /home/*; do
+        [ -d "$uhome" ] || continue
+        local uname="$(basename "$uhome")"
+        if id "$uname" >/dev/null 2>&1; then
+            mkdir -p "$uhome/.config/rinauby" "$uhome/.cache/serpantinum/wallpaper" "$uhome/.local/state/serpantinum"
+            [ ! -f "$uhome/.config/rinauby/config.json" ] && echo '{"theme":"everforest","mode":"renaissance"}' > "$uhome/.config/rinauby/config.json"
+            touch "$uhome/.cache/serpantinum/wallpaper/favorites.txt" "$uhome/.cache/serpantinum/wallpaper/history.txt"
+            [ ! -f "$uhome/.cache/serpantinum/wallpaper/search_state.json" ] && echo "{}" > "$uhome/.cache/serpantinum/wallpaper/search_state.json"
+            [ ! -f "$uhome/.local/state/serpantinum/color_scheme" ] && echo "dark" > "$uhome/.local/state/serpantinum/color_scheme"
+            chown -R "$uname:$uname" "$uhome/.config/rinauby" "$uhome/.cache/serpantinum" "$uhome/.local/state/serpantinum" 2>/dev/null || true
+        fi
+    done
+    log_ok "Quickshell initial state and configuration files pre-seeded."
 }
 
 # ------------------------------------------------------------------------------

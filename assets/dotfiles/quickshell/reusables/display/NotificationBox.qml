@@ -257,8 +257,8 @@ Item {
                         size: root.emptyGraphicSize
                         cornerRadius: root.s(0)
                         imageRadius: root.s(0)
-                        source: Caching.serpantinumDir ? ("file://" + Caching.serpantinumDir + "/assets/pushy.gif") : Qt.resolvedUrl("../../assets/pushy.gif")
-                        isGif: true
+                        source: Caching.serpantinumDir ? ("file://" + Caching.serpantinumDir + "/assets/logo.svg") : Qt.resolvedUrl("../../assets/logo.svg")
+                        isGif: false
                         playing: true
                         fillMode: Image.PreserveAspectFit
                         interactive: false
