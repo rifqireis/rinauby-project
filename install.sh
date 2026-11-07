@@ -754,105 +754,60 @@ EOF
 cp -f /usr/share/wayland-sessions/hyprland.desktop /usr/share/wayland-sessions/rinauby.desktop
 log_ok "Wayland session 'Hyprland' registered in /usr/share/wayland-sessions/"
 
-# 10D. Display Manager Session Configuration (SDDM Sugar-Candy & Wayland)
+# 10D. Display Manager Session Configuration (GDM3 with Casper Autologin for Live ISO)
 mkdir -p /etc/X11
-echo "/usr/bin/sddm" > /etc/X11/default-display-manager
+echo "/usr/sbin/gdm3" > /etc/X11/default-display-manager
 if command -v debconf-set-selections >/dev/null 2>&1; then
-    echo "sddm shared/default-x-display-manager select sddm" | debconf-set-selections 2>/dev/null || true
-    echo "gdm3 shared/default-x-display-manager select sddm" | debconf-set-selections 2>/dev/null || true
+    echo "gdm3 shared/default-x-display-manager select gdm3" | debconf-set-selections 2>/dev/null || true
+    echo "sddm shared/default-x-display-manager select gdm3" | debconf-set-selections 2>/dev/null || true
 fi
 
-# Explicitly configure systemd symlinks (essential for chroot / Cubic ISO remastering where systemd is not PID 1)
+# Explicitly configure systemd symlinks for GDM3
 rm -f /etc/systemd/system/display-manager.service 2>/dev/null || true
-for sddm_unit in /usr/lib/systemd/system/sddm.service /lib/systemd/system/sddm.service; do
-    if [ -f "$sddm_unit" ]; then
-        ln -sfn "$sddm_unit" /etc/systemd/system/display-manager.service
+for gdm_unit in /usr/lib/systemd/system/gdm3.service /lib/systemd/system/gdm3.service /usr/lib/systemd/system/gdm.service; do
+    if [ -f "$gdm_unit" ]; then
+        ln -sfn "$gdm_unit" /etc/systemd/system/display-manager.service
         mkdir -p /etc/systemd/system/graphical.target.wants
-        ln -sfn "$sddm_unit" /etc/systemd/system/graphical.target.wants/sddm.service
+        ln -sfn "$gdm_unit" /etc/systemd/system/graphical.target.wants/gdm3.service
         break
     fi
 done
-rm -f /etc/systemd/system/graphical.target.wants/gdm3.service /etc/systemd/system/graphical.target.wants/gdm.service 2>/dev/null || true
-rm -f /etc/systemd/system/multi-user.target.wants/gdm3.service /etc/systemd/system/multi-user.target.wants/gdm.service 2>/dev/null || true
+rm -f /etc/systemd/system/graphical.target.wants/sddm.service 2>/dev/null || true
+
+# GDM3 custom.conf with Wayland & Hyprland
+mkdir -p /etc/gdm3
+cat << 'EOF' > /etc/gdm3/custom.conf
+[daemon]
+AutomaticLoginEnable=true
+AutomaticLogin=ubuntu
+DefaultSession=hyprland.desktop
+WaylandEnable=true
+
+[security]
+
+[xdmcp]
+
+[chooser]
+
+[debug]
+EOF
+
+mkdir -p /var/lib/AccountsService/users
+cat << 'EOF' > /var/lib/AccountsService/users/ubuntu
+[User]
+Session=hyprland
+XSession=hyprland
+Icon=/usr/share/pixmaps/faces/user-generic.png
+SystemAccount=false
+EOF
+chmod 644 /var/lib/AccountsService/users/ubuntu 2>/dev/null || true
 
 if command -v systemctl >/dev/null 2>&1; then
-    systemctl disable gdm3.service gdm.service 2>/dev/null || true
-    systemctl enable sddm.service 2>/dev/null || true
+    systemctl disable sddm.service 2>/dev/null || true
+    systemctl enable gdm3.service 2>/dev/null || true
 fi
 
-# Ensure sddm user has access to input devices, video, and render hardware
-id -u sddm >/dev/null 2>&1 && usermod -a -G input,video,render sddm 2>/dev/null || true
-chmod -R a+rX /usr/share/sddm/themes/sugar-candy 2>/dev/null || true
-
-# Register SDDM configuration with highest priority (both /etc/sddm.conf and /etc/sddm.conf.d/)
-mkdir -p /etc/sddm.conf.d
-cat << 'EOF' | tee /etc/sddm.conf /etc/sddm.conf.d/rinauby.conf /etc/sddm.conf.d/99-rinauby.conf >/dev/null
-[Theme]
-Current=sugar-candy
-ThemeDir=/usr/share/sddm/themes
-
-[Users]
-DefaultSession=hyprland.desktop
-RememberLastSession=false
-MinimumUid=1000
-
-[General]
-DisplayServer=x11
-DefaultSession=hyprland.desktop
-InputMethod=
-Numlock=none
-
-[Autologin]
-User=ubuntu
-Session=hyprland.desktop
-Relogin=false
-EOF
-
-# Configure PAM for SDDM to unconditionally permit live user login without password failure
-mkdir -p /etc/pam.d
-cat << 'EOF' > /etc/pam.d/sddm
-#%PAM-1.0
-auth    sufficient      pam_succeed_if.so user in ubuntu:live:root
-auth    requisite       pam_nologin.so
-auth    required        pam_succeed_if.so user != root quiet_success
-@include common-auth
--auth   optional        pam_gnome_keyring.so
--auth   optional        pam_kwallet.so
--auth   optional        pam_kwallet5.so
-account sufficient      pam_succeed_if.so user in ubuntu:live:root
-@include common-account
-session [success=ok ignore=ignore module_unknown=ignore default=bad] pam_selinux.so close
-session optional        pam_keyinit.so force revoke
-session required        pam_limits.so
-session required        pam_loginuid.so
-@include common-session
-session [success=ok ignore=ignore module_unknown=ignore default=bad] pam_selinux.so open
--session optional       pam_gnome_keyring.so auto_start
--session optional       pam_kwallet.so auto_start
--session optional       pam_kwallet5.so auto_start
-@include common-password
-session required        pam_env.so
-session required        pam_env.so envfile=/etc/default/locale
-EOF
-
-cat << 'EOF' > /etc/pam.d/sddm-autologin
-#%PAM-1.0
-auth    sufficient      pam_permit.so
-account sufficient      pam_permit.so
-password sufficient     pam_permit.so
-session sufficient      pam_permit.so
-EOF
-
-# Unlock user 'ubuntu' and ensure passwordless sudo if present
-if id -u ubuntu >/dev/null 2>&1; then
-    passwd -d ubuntu 2>/dev/null || true
-    usermod -U ubuntu 2>/dev/null || true
-fi
-mkdir -p /etc/sudoers.d
-echo "ubuntu ALL=(ALL) NOPASSWD: ALL" > /etc/sudoers.d/99-live-nopasswd
-chmod 0440 /etc/sudoers.d/99-live-nopasswd
-
-log_ok "SDDM Sugar-Candy enabled as default Display Manager (/etc/X11/default-display-manager and systemd display-manager.service)."
+log_ok "GDM3 set as primary Display Manager with direct Autologin to Hyprland."
 log_ok "Session 'Hyprland' registered as default Wayland session."
 
 # Ensure Wayland is not disabled in GDM3 configuration

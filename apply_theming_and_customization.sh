@@ -532,6 +532,15 @@ ACTION="${1:---install}"
 case "$ACTION" in
     --install|install)
         deploy_plymouth_pixels
+        deploy_gdm3_autologin
+        deploy_starship_prompt
+        deploy_papirus_folders
+        deploy_default_apps_and_mime
+        deploy_dual_theme_engine
+        verify_rinauby_environment
+        ;;
+    --sddm|--use-sddm)
+        deploy_plymouth_pixels
         deploy_sddm_sugar_candy
         deploy_starship_prompt
         deploy_papirus_folders
