@@ -124,15 +124,50 @@ deploy_sddm_sugar_candy() {
         log_ok "Mona Lisa Louvre C2RMF widescreen background installed."
     fi
 
+    # Install missing SDDM input drivers and Qt5 dependencies if APT is available
+    if command -v apt-get >/dev/null 2>&1; then
+        local sddm_deps=(
+            xserver-xorg-input-all
+            xserver-xorg-input-libinput
+            libinput-bin
+            libinput10
+            qml-module-qtquick-controls2
+            qml-module-qtquick-controls
+            qml-module-qtgraphicaleffects
+            qml-module-qtquick-layouts
+            qml-module-qtquick-window2
+            qml-module-qtsvg
+            libqt5svg5
+        )
+        local to_install=()
+        for pkg in "${sddm_deps[@]}"; do
+            if ! dpkg -s "$pkg" >/dev/null 2>&1; then
+                to_install+=("$pkg")
+            fi
+        done
+        if [ ${#to_install[@]} -gt 0 ]; then
+            log_info "Installing missing SDDM input drivers & Qt5 QML dependencies: ${to_install[*]}..."
+            DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends "${to_install[@]}" 2>/dev/null || \
+            DEBIAN_FRONTEND=noninteractive apt-get install -y "${to_install[@]}" 2>/dev/null || true
+            log_ok "SDDM input drivers and Qt5 QML dependencies provisioned."
+        fi
+    fi
+
+    # Ensure sddm user has access to input, video, and render devices
+    id -u sddm >/dev/null 2>&1 && usermod -a -G input,video,render sddm 2>/dev/null || true
+    chmod -R 755 "$theme_target" 2>/dev/null || true
+
     # Configure SDDM to use Sugar-Candy and default to hyprland.desktop session
     cat << 'EOF' > /etc/sddm.conf.d/rinauby.conf
 [Theme]
 Current=sugar-candy
+ThemeDir=/usr/share/sddm/themes
 
 [Users]
 DefaultSession=hyprland.desktop
 
 [General]
+DisplayServer=x11
 InputMethod=
 Numlock=none
 EOF

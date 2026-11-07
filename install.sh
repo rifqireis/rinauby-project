@@ -318,6 +318,19 @@ UTILITY_PKGS=(
     evince
     celluloid
     sddm
+    # Input stack for Xorg & Wayland (QEMU / Bare Metal keyboard & pointer handling)
+    xserver-xorg-input-all
+    xserver-xorg-input-libinput
+    libinput-bin
+    libinput10
+    # Qt5 QML stack required by SDDM Sugar-Candy
+    qml-module-qtquick-controls2
+    qml-module-qtquick-controls
+    qml-module-qtgraphicaleffects
+    qml-module-qtquick-layouts
+    qml-module-qtquick-window2
+    qml-module-qtsvg
+    libqt5svg5
     starship
     imv
     zathura
@@ -767,6 +780,11 @@ if command -v systemctl >/dev/null 2>&1; then
     systemctl disable gdm3.service gdm.service 2>/dev/null || true
     systemctl enable sddm.service 2>/dev/null || true
 fi
+
+# Ensure sddm user has access to input devices, video, and render hardware
+id -u sddm >/dev/null 2>&1 && usermod -a -G input,video,render sddm 2>/dev/null || true
+chmod -R 755 /usr/share/sddm/themes/sugar-candy 2>/dev/null || true
+
 log_ok "SDDM Sugar-Candy enabled as default Display Manager (/etc/X11/default-display-manager and systemd display-manager.service)."
 log_ok "Session 'Hyprland' registered as default Wayland session."
 
