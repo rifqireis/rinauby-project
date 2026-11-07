@@ -143,14 +143,28 @@ EOF
     echo "/usr/bin/sddm" > /etc/X11/default-display-manager
     if command -v debconf-set-selections >/dev/null 2>&1; then
         echo "sddm shared/default-x-display-manager select sddm" | debconf-set-selections 2>/dev/null || true
+        echo "gdm3 shared/default-x-display-manager select sddm" | debconf-set-selections 2>/dev/null || true
     fi
+
+    # Explicitly configure systemd symlinks (essential for chroot / Cubic ISO remastering where systemd is not PID 1)
+    rm -f /etc/systemd/system/display-manager.service 2>/dev/null || true
+    for sddm_unit in /usr/lib/systemd/system/sddm.service /lib/systemd/system/sddm.service; do
+        if [ -f "$sddm_unit" ]; then
+            ln -sfn "$sddm_unit" /etc/systemd/system/display-manager.service
+            mkdir -p /etc/systemd/system/graphical.target.wants
+            ln -sfn "$sddm_unit" /etc/systemd/system/graphical.target.wants/sddm.service
+            break
+        fi
+    done
+    rm -f /etc/systemd/system/graphical.target.wants/gdm3.service /etc/systemd/system/graphical.target.wants/gdm.service 2>/dev/null || true
+    rm -f /etc/systemd/system/multi-user.target.wants/gdm3.service /etc/systemd/system/multi-user.target.wants/gdm.service 2>/dev/null || true
 
     # Enable SDDM service and disable GDM3 if systemctl is available
     if command -v systemctl >/dev/null 2>&1; then
         systemctl disable gdm3.service gdm.service 2>/dev/null || true
         systemctl enable sddm.service 2>/dev/null || true
-        log_ok "SDDM display manager enabled as default system greeter (GDM3 disabled)."
     fi
+    log_ok "SDDM display manager enabled as default system greeter (GDM3 disabled and symlinks pinned)."
 }
 
 # ------------------------------------------------------------------------------
