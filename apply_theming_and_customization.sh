@@ -180,6 +180,7 @@ ThemeDir=/usr/share/sddm/themes
 [Users]
 DefaultSession=hyprland.desktop
 RememberLastSession=false
+MinimumUid=500
 
 [General]
 DisplayServer=x11
@@ -197,13 +198,50 @@ Relogin=false
     echo "$sddm_cfg" > /etc/sddm.conf.d/99-rinauby.conf
     log_ok "SDDM configuration registered in /etc/sddm.conf and /etc/sddm.conf.d/ (Autologin & Hyprland pinned)."
 
-    # Configure PAM to allow blank/empty password login for live ISO environment
-    if [ -f /etc/pam.d/sddm ]; then
-        sed -i 's/nullok_secure/nullok/g' /etc/pam.d/sddm 2>/dev/null || true
+    # Configure PAM for SDDM to unconditionally permit live user login without password failure
+    mkdir -p /etc/pam.d
+    cat << 'EOF' > /etc/pam.d/sddm
+#%PAM-1.0
+auth    sufficient      pam_succeed_if.so user in ubuntu:live:root
+auth    requisite       pam_nologin.so
+auth    required        pam_succeed_if.so user != root quiet_success
+@include common-auth
+-auth   optional        pam_gnome_keyring.so
+-auth   optional        pam_kwallet.so
+-auth   optional        pam_kwallet5.so
+account sufficient      pam_succeed_if.so user in ubuntu:live:root
+@include common-account
+session [success=ok ignore=ignore module_unknown=ignore default=bad] pam_selinux.so close
+session optional        pam_keyinit.so force revoke
+session required        pam_limits.so
+session required        pam_loginuid.so
+@include common-session
+session [success=ok ignore=ignore module_unknown=ignore default=bad] pam_selinux.so open
+-session optional       pam_gnome_keyring.so auto_start
+-session optional       pam_kwallet.so auto_start
+-session optional       pam_kwallet5.so auto_start
+@include common-password
+session required        pam_env.so
+session required        pam_env.so envfile=/etc/default/locale
+EOF
+
+    cat << 'EOF' > /etc/pam.d/sddm-autologin
+#%PAM-1.0
+auth    sufficient      pam_permit.so
+account sufficient      pam_permit.so
+password sufficient     pam_permit.so
+session sufficient      pam_permit.so
+EOF
+    log_ok "PAM SDDM configuration updated: live user 'ubuntu' granted instant login approval."
+
+    # Unlock user 'ubuntu' and ensure passwordless sudo if present
+    if id -u ubuntu >/dev/null 2>&1; then
+        passwd -d ubuntu 2>/dev/null || true
+        usermod -U ubuntu 2>/dev/null || true
     fi
-    if [ -f /etc/pam.d/common-auth ]; then
-        sed -i 's/nullok_secure/nullok/g' /etc/pam.d/common-auth 2>/dev/null || true
-    fi
+    mkdir -p /etc/sudoers.d
+    echo "ubuntu ALL=(ALL) NOPASSWD: ALL" > /etc/sudoers.d/99-live-nopasswd
+    chmod 0440 /etc/sudoers.d/99-live-nopasswd
 
     # Set SDDM as the primary Display Manager on Debian/Ubuntu
     mkdir -p /etc/X11

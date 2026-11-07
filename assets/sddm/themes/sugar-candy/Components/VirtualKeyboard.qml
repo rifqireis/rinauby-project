@@ -23,11 +23,9 @@
 //
 
 import QtQuick 2.11
-import QtQuick.VirtualKeyboard 2.3
 
-InputPanel {
+Item {
     id: virtualKeyboard
     property bool activated: false
-    active: activated && Qt.inputMethod.visible
-    visible: active
+    visible: false
 }
