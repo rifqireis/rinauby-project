@@ -168,25 +168,42 @@ deploy_sddm_sugar_candy() {
         fi
     fi
 
-    # Ensure sddm user has access to input, video, and render devices
+    # Ensure sddm user has access to input, video, and render devices and theme files are globally readable
     id -u sddm >/dev/null 2>&1 && usermod -a -G input,video,render sddm 2>/dev/null || true
-    chmod -R 755 "$theme_target" 2>/dev/null || true
+    chmod -R a+rX "$theme_target" 2>/dev/null || true
 
-    # Configure SDDM to use Sugar-Candy and default to hyprland.desktop session
-    cat << 'EOF' > /etc/sddm.conf.d/rinauby.conf
-[Theme]
+    # Configure SDDM: write to both /etc/sddm.conf and /etc/sddm.conf.d/ to ensure override
+    local sddm_cfg="[Theme]
 Current=sugar-candy
 ThemeDir=/usr/share/sddm/themes
 
 [Users]
 DefaultSession=hyprland.desktop
+RememberLastSession=false
 
 [General]
 DisplayServer=x11
+DefaultSession=hyprland.desktop
 InputMethod=
 Numlock=none
-EOF
-    log_ok "SDDM configuration registered in /etc/sddm.conf.d/rinauby.conf"
+
+[Autologin]
+User=ubuntu
+Session=hyprland.desktop
+Relogin=false
+"
+    echo "$sddm_cfg" > /etc/sddm.conf
+    echo "$sddm_cfg" > /etc/sddm.conf.d/rinauby.conf
+    echo "$sddm_cfg" > /etc/sddm.conf.d/99-rinauby.conf
+    log_ok "SDDM configuration registered in /etc/sddm.conf and /etc/sddm.conf.d/ (Autologin & Hyprland pinned)."
+
+    # Configure PAM to allow blank/empty password login for live ISO environment
+    if [ -f /etc/pam.d/sddm ]; then
+        sed -i 's/nullok_secure/nullok/g' /etc/pam.d/sddm 2>/dev/null || true
+    fi
+    if [ -f /etc/pam.d/common-auth ]; then
+        sed -i 's/nullok_secure/nullok/g' /etc/pam.d/common-auth 2>/dev/null || true
+    fi
 
     # Set SDDM as the primary Display Manager on Debian/Ubuntu
     mkdir -p /etc/X11

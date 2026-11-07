@@ -782,7 +782,38 @@ fi
 
 # Ensure sddm user has access to input devices, video, and render hardware
 id -u sddm >/dev/null 2>&1 && usermod -a -G input,video,render sddm 2>/dev/null || true
-chmod -R 755 /usr/share/sddm/themes/sugar-candy 2>/dev/null || true
+chmod -R a+rX /usr/share/sddm/themes/sugar-candy 2>/dev/null || true
+
+# Register SDDM configuration with highest priority (both /etc/sddm.conf and /etc/sddm.conf.d/)
+mkdir -p /etc/sddm.conf.d
+cat << 'EOF' | tee /etc/sddm.conf /etc/sddm.conf.d/rinauby.conf /etc/sddm.conf.d/99-rinauby.conf >/dev/null
+[Theme]
+Current=sugar-candy
+ThemeDir=/usr/share/sddm/themes
+
+[Users]
+DefaultSession=hyprland.desktop
+RememberLastSession=false
+
+[General]
+DisplayServer=x11
+DefaultSession=hyprland.desktop
+InputMethod=
+Numlock=none
+
+[Autologin]
+User=ubuntu
+Session=hyprland.desktop
+Relogin=false
+EOF
+
+# Configure PAM to allow blank/empty password login for live ISO environment
+if [ -f /etc/pam.d/sddm ]; then
+    sed -i 's/nullok_secure/nullok/g' /etc/pam.d/sddm 2>/dev/null || true
+fi
+if [ -f /etc/pam.d/common-auth ]; then
+    sed -i 's/nullok_secure/nullok/g' /etc/pam.d/common-auth 2>/dev/null || true
+fi
 
 log_ok "SDDM Sugar-Candy enabled as default Display Manager (/etc/X11/default-display-manager and systemd display-manager.service)."
 log_ok "Session 'Hyprland' registered as default Wayland session."
