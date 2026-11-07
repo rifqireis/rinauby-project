@@ -655,7 +655,8 @@ Item {
                                         Text {
                                             Layout.fillWidth: true; elide: Text.ElideRight
                                             font.family: ThemeBackend.fontFamily; font.pixelSize: window.s(10.5)
-                                            color: isActiveNode && !delegateGlass.active ? Qt.darker(ThemeBackend.crust, 1.5) : ThemeBackend.subtext0
+                                            font.weight: isActiveNode ? Font.DemiBold : Font.Normal
+                                            color: isActiveNode && !delegateGlass.active ? ThemeBackend.crust : ThemeBackend.subtext0
                                             text: isActiveNode ? I18n.t("volumepopup.active_default") : delegateRoot.nodeNameStr
                                         }
                                     }

@@ -932,7 +932,7 @@ Item {
                                 horizontalPadding: 0
                                 accentColor: isToday ? window.textAccent : ((ThemeBackend.liquidGlass && !isCurrentMonth) ? window.surface0 : "transparent")
                                 glassTintScale: isToday ? 2.6 : 1.0
-                                textColor: ThemeBackend.liquidGlass ? (isCurrentMonth ? window.text : window.subtext0) : (isToday ? window.base : (isCurrentMonth ? window.text : window.surface0))
+                                textColor: ThemeBackend.liquidGlass ? (isCurrentMonth ? window.text : window.subtext0) : (isToday ? window.base : (isCurrentMonth ? window.text : window.overlay1))
                             }
                         }
                     }

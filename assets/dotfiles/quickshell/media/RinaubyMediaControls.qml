@@ -38,7 +38,7 @@ PanelWindow {
         }
     }
 
-    implicitWidth: 440
+    implicitWidth: 460
     implicitHeight: root.hasPlayer ? 180 : 130
 
     mask: Region {
@@ -436,6 +436,7 @@ PanelWindow {
                             // Track Title
                             Text {
                                 Layout.fillWidth: true
+                                Layout.preferredWidth: 0
                                 text: root.cleanTrackTitle(root.rawTitle)
                                 font.family: root.isClassic ? "EB Garamond" : "Inter"
                                 font.pixelSize: root.isClassic ? 15 : 14
@@ -448,6 +449,7 @@ PanelWindow {
                             // Artist & Album
                             Text {
                                 Layout.fillWidth: true
+                                Layout.preferredWidth: 0
                                 text: root.rawArtist !== "" ? (root.rawArtist + (root.rawAlbum !== "" ? (" • " + root.rawAlbum) : "")) : (root.rawAlbum !== "" ? root.rawAlbum : "Unknown Artist")
                                 font.family: "Inter"
                                 font.pixelSize: 11

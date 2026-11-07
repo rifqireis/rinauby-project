@@ -217,8 +217,8 @@ Rectangle {
                                     buttonIcon: tabDelegate.modelData.icon || "󰒓"
                                     bgOpacity: 2.0
                                     iconFontSize: popup.s(15)
-                                    accentColor: ThemeBackend.surface0
-                                    textColor: "#ffffff"
+                                    accentColor: header.active ? (activeGlass.active ? ThemeBackend.mauve : ThemeBackend.surface0) : (headerMa.containsMouse ? ThemeBackend.surface1 : ThemeBackend.surface0)
+                                    textColor: header.active ? (activeGlass.active ? ThemeBackend.text : ThemeBackend.crust) : (headerMa.containsMouse ? ThemeBackend.text : ThemeBackend.text)
                                 }
 
                                 Text {
@@ -229,7 +229,7 @@ Rectangle {
                                     font.pixelSize: popup.s(13)
                                     color: header.active
                                         ? (activeGlass.active ? ThemeBackend.text : ThemeBackend.crust)
-                                        : (headerMa.containsMouse ? ThemeBackend.text : ThemeBackend.subtext0)
+                                        : (headerMa.containsMouse ? ThemeBackend.text : ThemeBackend.text)
                                     Layout.fillWidth: true
                                     Layout.alignment: Qt.AlignVCenter
                                     horizontalAlignment: I18n.textAlignment
@@ -244,7 +244,7 @@ Rectangle {
                                     font.pixelSize: popup.s(14)
                                     color: header.active
                                         ? (activeGlass.active ? ThemeBackend.text : ThemeBackend.crust)
-                                        : (headerMa.containsMouse ? ThemeBackend.text : ThemeBackend.subtext0)
+                                        : (headerMa.containsMouse ? ThemeBackend.text : ThemeBackend.text)
                                     Layout.alignment: Qt.AlignVCenter
                                     rotation: tabDelegate.expandProgress * 180 - 180
                                 }
@@ -367,8 +367,8 @@ Rectangle {
                                                     buttonIcon: sub.modelData.icon || "󰒓"
                                                     bgOpacity: 2.0
                                                     iconFontSize: popup.s(12)
-                                                    accentColor: ThemeBackend.surface0
-                                                    textColor: "#ffffff"
+                                                    accentColor: sub.isCurrent ? (activeGlass.active ? ThemeBackend.mauve : ThemeBackend.surface0) : (subMa.containsMouse ? ThemeBackend.surface1 : ThemeBackend.surface0)
+                                                    textColor: sub.isCurrent ? (activeGlass.active ? ThemeBackend.text : ThemeBackend.crust) : (subMa.containsMouse ? ThemeBackend.text : ThemeBackend.text)
                                                 }
 
                                                 Text {
@@ -377,7 +377,7 @@ Rectangle {
                                                     font.family: ThemeBackend.fontFamily
                                                     font.weight: sub.isCurrent ? Font.Bold : Font.Medium
                                                     font.pixelSize: popup.s(12)
-                                                    color: sub.isCurrent ? (activeGlass.active ? ThemeBackend.text : ThemeBackend.crust) : ThemeBackend.subtext0
+                                                    color: sub.isCurrent ? (activeGlass.active ? ThemeBackend.text : ThemeBackend.crust) : (subMa.containsMouse ? ThemeBackend.text : ThemeBackend.text)
                                                     Layout.fillWidth: true
                                                     Layout.alignment: Qt.AlignVCenter
                                                     horizontalAlignment: I18n.textAlignment

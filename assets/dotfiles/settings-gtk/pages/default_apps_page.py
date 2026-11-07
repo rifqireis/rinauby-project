@@ -17,19 +17,19 @@ def _create_app_factory():
     factory = Gtk.SignalListItemFactory()
 
     def _setup(f, list_item):
-        box = Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL, spacing=10)
+        box = Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL, spacing=8)
         box.set_margin_top(4)
         box.set_margin_bottom(4)
         box.set_margin_start(4)
         box.set_margin_end(4)
 
         img = Gtk.Image()
-        img.set_pixel_size(24)
+        img.set_pixel_size(20)
 
         lbl = Gtk.Label(xalign=0)
-        lbl.set_ellipsize(Pango.EllipsizeMode.NONE)
-        lbl.set_wrap(True)
-        lbl.set_wrap_mode(Pango.WrapMode.WORD_CHAR)
+        lbl.set_ellipsize(Pango.EllipsizeMode.END)
+        lbl.set_wrap(False)
+        lbl.set_max_width_chars(24)
 
         box.append(img)
         box.append(lbl)

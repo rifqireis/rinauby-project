@@ -47,7 +47,7 @@ class ShortcutsPage(Gtk.Box):
                 subtitle=desc
             )
             badge = Gtk.Label(label=combo)
-            badge.add_css_class("pill-dropdown-button")
+            badge.add_css_class("shortcut-badge")
             badge.set_valign(Gtk.Align.CENTER)
             row.add_suffix(badge)
             group.add(row)

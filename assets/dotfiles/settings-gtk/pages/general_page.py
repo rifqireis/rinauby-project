@@ -28,7 +28,7 @@ class GeneralPage(Gtk.Box):
         self.stack.add_titled_with_icon(self._build_tiling_page(), "tiling", "Layout", "view-grid-symbolic")
 
         # 2. Efek Visual
-        self.stack.add_titled_with_icon(self._build_effects_page(), "effects", "Visual Effects", "window-maximize-symbolic")
+        self.stack.add_titled_with_icon(self._build_effects_page(), "effects", "Effects", "window-maximize-symbolic")
 
         # 3. Animasi
         self.stack.add_titled_with_icon(self._build_anim_page(), "anim", "Animations", "system-run-symbolic")
