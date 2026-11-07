@@ -91,6 +91,7 @@ hl.bind("SUPER + code:86", function() zoomfunction(0.3) end, { repeating = true 
 ---------------------------------------------------------------------
 -- 3. APLIKASI UTAMA (APPS)
 ---------------------------------------------------------------------
+hl.bind("SUPER + Return", hl.dsp.exec_cmd(terminal), { description = "App: Terminal (Return)" })
 hl.bind("SUPER + T", hl.dsp.exec_cmd(terminal), { description = "App: Terminal" })
 hl.bind("CTRL + ALT + T", hl.dsp.exec_cmd(terminal), { description = "App: Terminal (Alt)" })
 hl.bind("SUPER + E", hl.dsp.exec_cmd(fileManager), { description = "App: File manager" })
@@ -98,6 +99,8 @@ hl.bind("SUPER + B", hl.dsp.exec_cmd(browser), { description = "App: Web browser
 hl.bind("SUPER + C", hl.dsp.exec_cmd(codeEditor), { description = "App: Code editor" })
 hl.bind("SUPER + I", hl.dsp.exec_cmd(rinauby_cmd("rinauby-settings", "--toggle")), { description = "Settings: Toggle Pengaturan Sistem" })
 hl.bind("SUPER + comma", hl.dsp.exec_cmd(rinauby_cmd("rinauby-settings", "--toggle")), { description = "Settings: Toggle Pengaturan Sistem (Alt)" })
+hl.bind("SUPER + P", hl.dsp.layout("pseudo"), { description = "Window: Toggle Pseudo Tiling" })
+hl.bind("SUPER + M", hl.dsp.exit(), { description = "System: Exit Hyprland Session" })
 hl.bind("CTRL + SUPER + V", hl.dsp.exec_cmd("pavucontrol"), { description = "App: Volume mixer" })
 hl.bind("CTRL + SHIFT + Escape", hl.dsp.exec_cmd("gnome-system-monitor"), { description = "App: Task manager" })
 
@@ -135,9 +138,10 @@ hl.bind(
 -- Clipboard Manager & Emoji
 hl.bind("SUPER + V", hl.dsp.exec_cmd(rinauby_cmd("rinauby-launcher", "clipboard")), { description = "Shell: Toggle Riwayat Clipboard" })
 
--- Wallpaper & Tema
-hl.bind("CTRL + SUPER + T", hl.dsp.exec_cmd(rinauby_cmd("rinauby-wp-selector")), { description = "Shell: Buka Pemilih Wallpaper" })
+-- Wallpaper & Tema (SUPER + K, SUPER + ALT + W, CTRL + SUPER + T)
+hl.bind("SUPER + K", hl.dsp.exec_cmd(rinauby_cmd("rinauby-wp-selector")), { description = "Shell: Buka Pemilih Wallpaper (Super+K)" })
 hl.bind("SUPER + ALT + W", hl.dsp.exec_cmd(rinauby_cmd("rinauby-wp-selector")), { description = "Shell: Buka Pemilih Wallpaper (Alt)" })
+hl.bind("CTRL + SUPER + T", hl.dsp.exec_cmd(rinauby_cmd("rinauby-wp-selector")), { description = "Shell: Buka Pemilih Wallpaper (Ctrl+Super+T)" })
 hl.bind(
 	"CTRL + SUPER + R",
 	hl.dsp.exec_cmd("killall -w -q qs quickshell 2>/dev/null; quickshell -c rs -d &"),
@@ -435,10 +439,8 @@ hl.bind("SUPER + Right", hl.dsp.focus({ direction = "right" }), { description = 
 hl.bind("SUPER + Up", hl.dsp.focus({ direction = "up" }), { description = "Window: Focus Up" })
 hl.bind("SUPER + Down", hl.dsp.focus({ direction = "down" }), { description = "Window: Focus Down" })
 
--- Fokus Jendela: Vim Style (H / K)
+-- Fokus Jendela: Vim Style (H)
 hl.bind("SUPER + H", hl.dsp.focus({ direction = "left" }), { description = "Window: Focus Left (Vim)" })
-hl.bind("SUPER + K", hl.dsp.focus({ direction = "up" }), { description = "Window: Focus Up (Vim)" })
-hl.bind("SUPER + Down", hl.dsp.focus({ direction = "down" }), { description = "Window: Focus Down" })
 
 -- Memindahkan Posisi Jendela: Vim Style
 hl.bind("SUPER + SHIFT + H", hl.dsp.window.move({ direction = "left" }), { description = "Window: Move Left" })
@@ -491,7 +493,7 @@ hl.bind("SUPER + Tab", hl.dsp.focus({ workspace = "previous" }), { description =
 -- Scratchpad (Special Workspace)
 hl.bind("SUPER + S", hl.dsp.workspace.toggle_special("special"), { description = "Workspace: Toggle Scratchpad" })
 hl.bind(
-	"SUPER + SHIFT + S",
+	"SUPER + ALT + S",
 	hl.dsp.window.move({ workspace = "special:special", follow = false }),
 	{ description = "Window: Send Window to Scratchpad (Silent)" }
 )

@@ -43,14 +43,42 @@ PanelWindow {
 
         try {
             if (typeof ToplevelManager !== "undefined" && ToplevelManager.activeToplevel && ToplevelManager.activeToplevel.screens && ToplevelManager.activeToplevel.screens.length > 0) {
-                return ToplevelManager.activeToplevel.screens[0];
+                let topScr = ToplevelManager.activeToplevel.screens[0];
+                if (topScr) {
+                    let screens = Quickshell.screens || [];
+                    for (let i = 0; i < screens.length; i++) {
+                        let s = screens[i] !== undefined ? screens[i] : screens.get(i);
+                        if (s === topScr || (s && topScr.name && s.name === topScr.name)) {
+                            return s;
+                        }
+                    }
+                }
             }
         } catch (e) {}
 
-        if (masterWindow.screen) return masterWindow.screen;
+        if (masterWindow.screen && Quickshell.screens) {
+            let screens = Quickshell.screens;
+            for (let i = 0; i < screens.length; i++) {
+                let s = screens[i] !== undefined ? screens[i] : screens.get(i);
+                if (s === masterWindow.screen || (s && masterWindow.screen.name && s.name === masterWindow.screen.name)) {
+                    return s;
+                }
+            }
+        }
+
         return (Quickshell.screens && (Quickshell.screens.length > 0 || Quickshell.screens.count > 0))
             ? (Quickshell.screens[0] || Quickshell.screens.get(0))
             : null;
+    }
+
+    Connections {
+        target: typeof Quickshell !== "undefined" ? Quickshell : null
+        function onScreensChanged() {
+            let sc = resolveTargetScreen();
+            if (sc && masterWindow.screen !== sc) {
+                masterWindow.screen = sc;
+            }
+        }
     }
 
     function reportWidgetState() {
