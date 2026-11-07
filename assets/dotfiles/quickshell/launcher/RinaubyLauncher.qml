@@ -34,7 +34,13 @@ PanelWindow {
     property string pendingScreenshotAction: ""
 
     readonly property string homeDir: Quickshell.env("HOME") || "/home/rifqi"
-    readonly property string dotfilesDir: "/home/rifqi/Workspace/Belajar/SO/Tubes-2604/Rancangan/assets/dotfiles"
+    readonly property string dotfilesDir: {
+        if (typeof Caching !== "undefined" && Caching.serpantinumDir) {
+            let p = Caching.serpantinumDir.replace(/\/quickshell\/?$/, "");
+            if (p !== Caching.serpantinumDir) return p;
+        }
+        return "/home/rifqi/Workspace/Belajar/SO/Tubes-2604/Rancangan/assets/dotfiles";
+    }
     readonly property string rofiIconsDir: "file://" + dotfilesDir + "/rofi/icons/"
     readonly property string screenshotScriptPath: dotfilesDir + "/scripts/screenshot.sh"
 

@@ -31,8 +31,8 @@ Item {
         signal rightClicked()
 
         color: isActive ? activeColor : (isHovered ? Qt.rgba(1, 1, 1, 0.08) : ThemeBackend.surface0)
-        border.width: 1
-        border.color: isActive ? activeColor : (isHovered ? Qt.rgba(1, 1, 1, 0.08) : Qt.rgba(1, 1, 1, 0.04))
+        border.width: 0
+        border.color: "transparent"
 
         scale: pillMa.pressed ? 0.97 : (isHovered ? 1.01 : 1.0)
         Behavior on scale { NumberAnimation { duration: 200; easing.type: Easing.OutQuart } }

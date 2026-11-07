@@ -372,9 +372,9 @@ Item {
 
     IpcHandler {
         target: "idle"
-        function trigger(name: string): void { idleRoot.executeAction(name); }
-        function execute(name: string): void { idleRoot.executeAction(name); }
-        function run(name: string): void { idleRoot.executeAction(name); }
+        function trigger(name: string) { idleRoot.executeAction(name); }
+        function execute(name: string) { idleRoot.executeAction(name); }
+        function run(name: string) { idleRoot.executeAction(name); }
         function status(): string { return idleRoot.statusJson(); }
     }
 

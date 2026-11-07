@@ -68,8 +68,8 @@ Singleton {
         let arr = [];
         for (const n of root.pipewireNodes()) {
             if (!n.isStream && !n.isSink && n.audio
-                && n.properties?.["device.class"] !== "monitor"
-                && !n.name?.endsWith(".monitor")) {
+                && (n.properties ? n.properties["device.class"] !== "monitor" : true)
+                && (!n.name || !n.name.endsWith(".monitor"))) {
                 arr.push(n);
             }
         }
@@ -80,7 +80,7 @@ Singleton {
         let arr = [];
         for (const n of root.pipewireNodes()) {
             if (n.isStream && n.audio
-                && n.properties?.["application.id"] !== "org.PulseAudio.pavucontrol"
+                && (n.properties ? n.properties["application.id"] !== "org.PulseAudio.pavucontrol" : true)
                 && !isSerpantinumStream(n)) {
                 arr.push(n);
             }
@@ -158,19 +158,19 @@ Singleton {
 
     function getNodeName(node) {
         if (!node) return "";
-        return node.properties?.["device.description"] || node.description || node.name || "Unknown Device";
+        return (node.properties ? node.properties["device.description"] : "") || node.description || node.name || "Unknown Device";
     }
 
     function getNodeSubDesc(node) {
         if (!node) return "";
         if (node.isStream) {
-            return node.properties?.["media.name"] || node.properties?.["window.title"] || node.properties?.["media.role"] || "Audio Stream";
+            return (node.properties ? (node.properties["media.name"] || node.properties["window.title"] || node.properties["media.role"]) : "") || "Audio Stream";
         }
         return node.name || "Unknown";
     }
 
     function getNodeAppName(node) {
         if (!node) return "";
-        return node.properties?.["application.name"] || node.properties?.["application.process.binary"] || node.description || "Unknown App";
+        return (node.properties ? (node.properties["application.name"] || node.properties["application.process.binary"]) : "") || node.description || "Unknown App";
     }
 }

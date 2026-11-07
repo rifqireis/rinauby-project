@@ -4,6 +4,7 @@ import QtQuick.Controls
 import Quickshell
 import Quickshell.Io
 import Quickshell.Wayland
+import Quickshell.Hyprland
 import Quickshell.Services.Mpris
 import "../"
 
@@ -18,11 +19,37 @@ PanelWindow {
     focusable: true
     color: "transparent"
 
+    screen: {
+        let monName = (typeof Hyprland !== "undefined" && Hyprland.focusedMonitor) ? Hyprland.focusedMonitor.name : "";
+        let sc = Quickshell.screens.find(s => s.name === monName);
+        return sc ? sc : Quickshell.screens[0];
+    }
+
     anchors {
         top: true
-        bottom: true
         left: true
-        right: true
+    }
+
+    margins {
+        top: root.barHeight + 6
+        left: {
+            let scW = (root.screen && root.screen.width) ? root.screen.width : 1920;
+            return Math.max(16, Math.min(root.popupX, scW - root.implicitWidth - 16));
+        }
+    }
+
+    implicitWidth: 440
+    implicitHeight: root.hasPlayer ? 180 : 130
+
+    mask: Region {
+        item: cardBgItem
+    }
+
+    HyprlandFocusGrab {
+        id: focusGrab
+        windows: [root]
+        active: root.isOpen
+        onCleared: root.close()
     }
 
     // =========================================================================
@@ -61,14 +88,25 @@ PanelWindow {
         return isClassic ? Qt.color("#d3c6aa") : Qt.color("#e2e2e6");
     }
 
-    readonly property color bgOverlay: Qt.rgba(0, 0, 0, 0.35)
-    readonly property color cardBg: isClassic ? Qt.rgba(0.11, 0.13, 0.15, 0.96) : Qt.rgba(0.07, 0.08, 0.09, 0.94)
-    readonly property color cardBorder: isClassic ? Qt.rgba(0.86, 0.61, 0.37, 0.40) : Qt.rgba(0.60, 0.80, 0.98, 0.35)
+    readonly property bool isLightMode: cBase.r > 0.5
+
+    readonly property color cardBg: isLightMode
+        ? Qt.rgba(0.98, 0.97, 0.95, 0.97)
+        : (isClassic ? Qt.rgba(0.11, 0.13, 0.15, 0.96) : Qt.rgba(0.07, 0.08, 0.09, 0.94))
+    readonly property color cardBorder: isLightMode
+        ? Qt.rgba(0, 0, 0, 0.12)
+        : (isClassic ? Qt.rgba(0.86, 0.61, 0.37, 0.40) : Qt.rgba(0.60, 0.80, 0.98, 0.35))
     readonly property color accentGold: cAccent
-    readonly property color accentGoldBright: isClassic ? Qt.color("#e5c07b") : cAccent
-    readonly property color fgMain: cFgMain
-    readonly property color fgBright: isClassic ? Qt.color("#fbf2db") : Qt.color("#ffffff")
-    readonly property color fgMuted: isClassic ? Qt.color("#859289") : Qt.color("#8b9199")
+    readonly property color accentGoldBright: isLightMode
+        ? Qt.color("#b87732")
+        : (isClassic ? Qt.color("#e5c07b") : cAccent)
+    readonly property color fgMain: isLightMode ? Qt.color("#2c2825") : cFgMain
+    readonly property color fgBright: isLightMode
+        ? Qt.color("#1f1c1a")
+        : (isClassic ? Qt.color("#fbf2db") : Qt.color("#ffffff"))
+    readonly property color fgMuted: isLightMode
+        ? Qt.color("#786d63")
+        : (isClassic ? Qt.color("#859289") : Qt.color("#8b9199"))
 
     FileView {
         id: barThemeWatcher
@@ -228,20 +266,7 @@ PanelWindow {
     }
 
     // =========================================================================
-    // DISMISSABLE BACKDROP
-    // =========================================================================
-    Rectangle {
-        anchors.fill: parent
-        color: root.bgOverlay
-
-        MouseArea {
-            anchors.fill: parent
-            onClicked: root.close()
-        }
-    }
-
-    // =========================================================================
-    // POPUP CONTENT CONTAINER
+    // POPUP CONTENT CONTAINER (Sized to card dimensions, zero screen overlay)
     // =========================================================================
     FocusScope {
         id: focusScope
@@ -272,16 +297,7 @@ PanelWindow {
 
         Item {
             id: cardWrapper
-            width: 440
-            height: root.hasPlayer ? 180 : 130
-            x: Math.max(16, Math.min(root.popupX, root.width - cardWrapper.width - 16))
-            y: root.barHeight + 6
-
-            // Intercept clicks on card to avoid backdrop dismiss
-            MouseArea {
-                anchors.fill: parent
-                onClicked: function(mouse) { mouse.accepted = true; }
-            }
+            anchors.fill: parent
 
             Rectangle {
                 id: cardBgItem

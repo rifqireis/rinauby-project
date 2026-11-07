@@ -43,15 +43,15 @@ Scope {
     IpcHandler {
         target: "lock-redactor"
 
-        function open(mon: string): void {
+        function open(mon: string) {
             root.open(mon);
         }
 
-        function toggle(): void {
+        function toggle() {
             root.toggle("");
         }
 
-        function close(): void {
+        function close() {
             root.close();
         }
     }

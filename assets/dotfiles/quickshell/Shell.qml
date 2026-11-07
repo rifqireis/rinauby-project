@@ -16,6 +16,8 @@ ShellRoot {
     RinaubyLauncher {}
     RinaubySession {}
     RinaubyMediaControls {}
+    Dock {}
+    ScreenshotOverlay {}
 
     Component.onCompleted: {
         Qt.application.organization = "rinauby";

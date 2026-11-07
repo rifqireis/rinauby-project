@@ -231,7 +231,7 @@ Item {
         }
     }
 
-    function clearNotifications(): void {
+    function clearNotifications() {
         root._isBatchUpdating = true;
         for (let key in root.liveNotifs) {
             let n = root.liveNotifs[key];

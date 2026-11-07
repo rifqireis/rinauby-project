@@ -15,21 +15,21 @@ Item {
     property var screenWallpaperPaths: ({})
     property var engines: ({})
 
-    function registerEngine(screenName: string, engine: var): void {
+    function registerEngine(screenName: string, engine) {
         if (!screenName) return;
         let map = Object.assign({}, root.engines);
         map[screenName] = engine;
         root.engines = map;
     }
 
-    function unregisterEngine(screenName: string, engine: var): void {
+    function unregisterEngine(screenName: string, engine) {
         if (!screenName || root.engines[screenName] !== engine) return;
         let map = Object.assign({}, root.engines);
         delete map[screenName];
         root.engines = map;
     }
 
-    function setWallpaper(screenName: string, path: string, transition: string): void {
+    function setWallpaper(screenName: string, path: string, transition: string) {
         if (path && path !== "") {
             Quickshell.execDetached(["bash", "-c", "if [ -x \"$HOME/.config/quickshell/scripts/apply_wallpaper.sh\" ]; then exec \"$HOME/.config/quickshell/scripts/apply_wallpaper.sh\" \"$1\"; else exec /home/rifqi/Workspace/Belajar/SO/Tubes-2604/Rancangan/assets/dotfiles/quickshell/scripts/apply_wallpaper.sh \"$1\"; fi", "_", path]);
         }
@@ -52,15 +52,15 @@ Item {
         return root.screenWallpaperPaths[screenName] || "";
     }
 
-    function setPlayback(screenName: string, state: string): void {
+    function setPlayback(screenName: string, state: string) {
         root.playbackChanged(screenName, state);
     }
 
-    function clearWallpaper(screenName: string): void {
+    function clearWallpaper(screenName: string) {
         root.wallpaperCleared(screenName);
     }
 
-    function shuffle(screenName: string, transition: string): void {
+    function shuffle(screenName: string, transition: string) {
         let scrName = screenName || "all";
         let cacheDir = (typeof Caching !== "undefined" && typeof Caching.getCacheDir === "function") ? Caching.getCacheDir("wallpaper") : "";
         let stateFile = cacheDir ? (cacheDir + "/current_" + scrName) : "";
@@ -112,7 +112,7 @@ Item {
     IpcHandler {
         target: "wallpaper"
 
-        function setWallpaper(screenName: string, path: string, transition: string): void {
+        function setWallpaper(screenName: string, path: string, transition: string) {
             root.setWallpaper(screenName, path, transition);
         }
 
@@ -124,11 +124,11 @@ Item {
             return root.getWallpaperPath(screenName);
         }
 
-        function setPlayback(screenName: string, state: string): void {
+        function setPlayback(screenName: string, state: string) {
             root.setPlayback(screenName, state);
         }
 
-        function clearWallpaper(screenName: string): void {
+        function clearWallpaper(screenName: string) {
             root.clearWallpaper(screenName);
         }
     }

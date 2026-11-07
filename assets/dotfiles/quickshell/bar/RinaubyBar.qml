@@ -685,13 +685,61 @@ Scope {
     }
 
     // =========================================================================
-    // 6. IPC HANDLER (target: "waybar")
+    // 6. IPC HANDLERS (targets: "waybar" & "rinaubybar")
     // =========================================================================
     IpcHandler {
         target: "waybar"
 
         function reload() {
             root.reloadAll();
+        }
+
+        function toggle() {
+            root.visible = !root.visible;
+        }
+
+        function open() {
+            root.visible = true;
+        }
+
+        function close() {
+            root.visible = false;
+        }
+
+        function rotateQuote() {
+            root.rotateQuote();
+        }
+
+        function setPosition(pos: string) {
+            let p = String(pos || "").toLowerCase().trim();
+            root.barPosition = (p === "bottom") ? "bottom" : "top";
+        }
+
+        function setHeight(h: string) {
+            let val = parseInt(h, 10);
+            if (!isNaN(val)) {
+                root.barHeight = Math.max(24, Math.min(48, val));
+            }
+        }
+    }
+
+    IpcHandler {
+        target: "rinaubybar"
+
+        function reload() {
+            root.reloadAll();
+        }
+
+        function toggle() {
+            root.visible = !root.visible;
+        }
+
+        function open() {
+            root.visible = true;
+        }
+
+        function close() {
+            root.visible = false;
         }
 
         function rotateQuote() {
@@ -942,7 +990,12 @@ Scope {
                                                 anchors.fill: parent
                                                 hoverEnabled: true
                                                 cursorShape: Qt.PointingHandCursor
-                                                onClicked: Hyprland.dispatch("workspace " + wsButton.wsId)
+                                                onClicked: {
+                                                    if (typeof Hyprland !== "undefined" && Hyprland.dispatch) {
+                                                        Hyprland.dispatch("workspace " + wsButton.wsId);
+                                                    }
+                                                    Quickshell.execDetached(["hyprctl", "dispatch", "workspace", wsButton.wsId.toString()]);
+                                                }
                                             }
                                         }
                                     }
@@ -1172,15 +1225,20 @@ Scope {
                                     anchors.fill: parent
                                     hoverEnabled: true
                                     cursorShape: Qt.PointingHandCursor
+                                    acceptedButtons: Qt.LeftButton | Qt.RightButton
                                     onEntered: screenScope.showTooltip(audioContainer, root.audioTooltipText, false)
                                     onExited: screenScope.hideTooltip()
-                                    onClicked: {
-                                        let targetMute = !root.effectiveMuted;
-                                        if (typeof Audio !== "undefined" && Audio.defaultSink && Audio.defaultSink.audio) {
-                                            Audio.defaultSink.audio.muted = targetMute;
+                                    onClicked: (mouse) => {
+                                        if (mouse.button === Qt.RightButton) {
+                                            Quickshell.execDetached(["rinauby-syspanel"]);
+                                        } else {
+                                            let targetMute = !root.effectiveMuted;
+                                            if (typeof Audio !== "undefined" && Audio.defaultSink && Audio.defaultSink.audio) {
+                                                Audio.defaultSink.audio.muted = targetMute;
+                                            }
+                                            Quickshell.execDetached(["pactl", "set-sink-mute", "@DEFAULT_SINK@", targetMute ? "1" : "0"]);
+                                            pactlRefreshTimer.restart();
                                         }
-                                        Quickshell.execDetached(["pactl", "set-sink-mute", "@DEFAULT_SINK@", targetMute ? "1" : "0"]);
-                                        pactlRefreshTimer.restart();
                                     }
                                     onWheel: (wheel) => {
                                         if (wheel.angleDelta.y > 0) {
@@ -1229,8 +1287,10 @@ Scope {
                                     id: batteryMouse
                                     anchors.fill: parent
                                     hoverEnabled: true
+                                    cursorShape: Qt.PointingHandCursor
                                     onEntered: screenScope.showTooltip(batteryContainer, root.batTooltipText, false)
                                     onExited: screenScope.hideTooltip()
+                                    onClicked: Quickshell.execDetached(["rinauby-syspanel"])
                                 }
 
                                 Connections {
@@ -1289,9 +1349,16 @@ Scope {
                                         anchors.fill: parent
                                         hoverEnabled: true
                                         cursorShape: Qt.PointingHandCursor
+                                        acceptedButtons: Qt.LeftButton | Qt.RightButton
                                         onEntered: screenScope.showTooltip(clockPad, root.calendarTooltipHtml, true)
                                         onExited: screenScope.hideTooltip()
-                                        onClicked: Quickshell.execDetached(["rinauby-syspanel"])
+                                        onClicked: (mouse) => {
+                                            if (mouse.button === Qt.RightButton) {
+                                                Quickshell.execDetached(["bash", "-c", "quickshell -c rs ipc call main handleCommand calendar '' '' 2>/dev/null || quickshell ipc call main handleCommand calendar '' ''"]);
+                                            } else {
+                                                Quickshell.execDetached(["rinauby-syspanel"]);
+                                            }
+                                        }
                                     }
                                 }
                             }

@@ -161,7 +161,7 @@ Variants {
 
             IpcHandler {
                 target: "topbar"
-                function setRedactMode(active: string): void {
+                function setRedactMode(active: string) {
                     barWindowRoot.isRedacting = (active === "true" || active === "1");
                 }
                 function forceReload() {

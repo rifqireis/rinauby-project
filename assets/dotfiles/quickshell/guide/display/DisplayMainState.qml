@@ -301,8 +301,8 @@ GuideTab {
                                 let item = data[i];
                                 let name = item.name || "";
                                 let cm = item.current_mode || {};
-                                let w = cm.width || item.rect?.width || 0;
-                                let h = cm.height || item.rect?.height || 0;
+                                let w = cm.width || (item.rect ? item.rect.width : 0) || 0;
+                                let h = cm.height || (item.rect ? item.rect.height : 0) || 0;
                                 let rr = cm.refresh ? Math.round(cm.refresh / 1000) : 60;
                                 let sc = item.scale !== undefined ? item.scale : 1.0;
                                 let isOff = item.active === false;

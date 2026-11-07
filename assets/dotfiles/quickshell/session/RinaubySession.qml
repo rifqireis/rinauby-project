@@ -15,7 +15,7 @@ PanelWindow {
     WlrLayershell.keyboardFocus: root.isOpen ? WlrKeyboardFocus.Exclusive : WlrKeyboardFocus.None
     exclusionMode: ExclusionMode.Ignore
     focusable: true
-    color: "transparent"
+    color: root.bgOverlay
 
     anchors {
         top: true
@@ -221,15 +221,10 @@ PanelWindow {
         }
     }
 
-    // Fullscreen backdrop with click-to-dismiss
-    Rectangle {
+    // Fullscreen backdrop click-to-dismiss (clear color on PanelWindow handles the blur tint)
+    MouseArea {
         anchors.fill: parent
-        color: root.bgOverlay
-
-        MouseArea {
-            anchors.fill: parent
-            onClicked: root.close()
-        }
+        onClicked: root.close()
     }
 
     FocusScope {
@@ -307,13 +302,13 @@ PanelWindow {
                         }
                     }
 
-                    // 4x2 Buttons Grid (Size: 120x120 per button, modeled after SessionScreen.qml)
+                    // 4x2 Buttons Grid (Size: 136x136 per button, modeled after SessionScreen.qml)
                     GridLayout {
                         id: actionsGrid
                         Layout.alignment: Qt.AlignHCenter
                         columns: 4
-                        rowSpacing: 16
-                        columnSpacing: 16
+                        rowSpacing: 18
+                        columnSpacing: 18
 
                         Repeater {
                             model: root.sessionActions
@@ -325,35 +320,26 @@ PanelWindow {
 
                                 readonly property bool isSelected: index === root.selectedIndex
 
-                                width: 120
-                                height: 120
-                                radius: isSelected ? 60 : 20
-                                Behavior on radius {
-                                    NumberAnimation { duration: 180; easing.type: Easing.OutCubic }
-                                }
+                                width: 136
+                                height: 136
+                                radius: isSelected ? 68 : 24
 
                                 color: isSelected
                                     ? root.cardSelectedBg
                                     : (cardMouse.containsMouse ? Qt.rgba(1, 1, 1, 0.09) : root.cardBg)
-                                Behavior on color {
-                                    ColorAnimation { duration: 150 }
-                                }
 
                                 border.width: 1
                                 border.color: isSelected ? root.cardSelectedBorder : root.cardBorder
-                                Behavior on border.color {
-                                    ColorAnimation { duration: 150 }
-                                }
 
                                 ColumnLayout {
                                     anchors.centerIn: parent
-                                    spacing: 10
+                                    spacing: 12
 
                                     Text {
                                         Layout.alignment: Qt.AlignHCenter
                                         text: actionCard.modelData.icon
                                         font.family: "JetBrainsMono Nerd Font"
-                                        font.pixelSize: 38
+                                        font.pixelSize: 44
                                         color: actionCard.isSelected ? root.fgBright : root.accentGold
                                         horizontalAlignment: Text.AlignHCenter
                                     }
@@ -362,7 +348,7 @@ PanelWindow {
                                         Layout.alignment: Qt.AlignHCenter
                                         text: actionCard.modelData.label
                                         font.family: "Inter"
-                                        font.pixelSize: 12
+                                        font.pixelSize: 13
                                         font.weight: Font.DemiBold
                                         color: actionCard.isSelected ? root.fgBright : root.fgMain
                                         horizontalAlignment: Text.AlignHCenter

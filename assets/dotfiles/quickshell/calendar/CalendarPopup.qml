@@ -708,7 +708,7 @@ Item {
 
                     Repeater {
                         id: hourRepeater
-                        model: window && window.weatherData && window.weatherData.forecast[window.weatherView] && window.weatherData.forecast[window.weatherView].hourly ? window.weatherData.forecast[window.weatherView].hourly.slice(0, 8) : []
+                        model: window && window.weatherData && window.weatherData.forecast && window.weatherData.forecast[window.weatherView] && window.weatherData.forecast[window.weatherView].hourly ? window.weatherData.forecast[window.weatherView].hourly.slice(0, 8) : []
 
                         delegate: Item {
                             property int mCount: hourRepeater.count
@@ -976,7 +976,7 @@ Item {
                         Text {
                             Layout.fillWidth: true
                             horizontalAlignment: Text.AlignHCenter
-                            text: window.weatherData && window.weatherData.forecast[window.weatherView] ? window.weatherData.forecast[window.weatherView].day_full.toUpperCase() : I18n.t("calendar.loading")
+                            text: window.weatherData && window.weatherData.forecast && window.weatherData.forecast[window.weatherView] ? window.weatherData.forecast[window.weatherView].day_full.toUpperCase() : I18n.t("calendar.loading")
                             font.family: ThemeBackend.fontFamily
                             font.weight: Font.Black
                             font.pixelSize: window.s(15)
@@ -1034,7 +1034,7 @@ Item {
                             Layout.maximumWidth: window.s(320)
                             Layout.topMargin: window.s(4)
                             horizontalAlignment: Text.AlignRight
-                            text: window.weatherData && window.weatherData.forecast[window.weatherView] ? window.weatherData.forecast[window.weatherView].desc : ""
+                            text: window.weatherData && window.weatherData.forecast && window.weatherData.forecast[window.weatherView] ? window.weatherData.forecast[window.weatherView].desc : ""
                             font.family: ThemeBackend.fontFamily
                             font.weight: Font.Medium
                             font.pixelSize: window.s(13)
@@ -1065,7 +1065,7 @@ Item {
                                 cornerRadius: window.s(9)
                                 horizontalPadding: window.s(8)
 
-                                property var forecast: window.weatherData && window.weatherData.forecast[window.targetWeatherView] ? window.weatherData.forecast[window.targetWeatherView] : null
+                                property var forecast: window.weatherData && window.weatherData.forecast && window.weatherData.forecast[window.targetWeatherView] ? window.weatherData.forecast[window.targetWeatherView] : null
 
                                 buttonIcon: index === 0 ? "" : index === 1 ? "" : index === 2 ? "" : ""
                                 buttonText: window.weatherData && window.weatherData.offline ? "--" : forecast ? (

@@ -17,23 +17,31 @@ fi
 
 case "$ACTION" in
     toggle)
-        quickshell -p "$QS_CFG" ipc call mediacontrols toggle "$PARAM_X" >/dev/null 2>&1 || \
-        quickshell -p "$HOME/.config/quickshell/shell.qml" ipc call mediacontrols toggle "$PARAM_X" >/dev/null 2>&1 || \
-        quickshell ipc call mediacontrols toggle "$PARAM_X" >/dev/null 2>&1
+        if ! quickshell -c rs ipc call mediacontrols toggle "$PARAM_X" >/dev/null 2>&1; then
+            quickshell -p "$QS_CFG" ipc call mediacontrols toggle "$PARAM_X" >/dev/null 2>&1 || \
+            quickshell -p "$HOME/.config/quickshell/shell.qml" ipc call mediacontrols toggle "$PARAM_X" >/dev/null 2>&1 || \
+            quickshell ipc call mediacontrols toggle "$PARAM_X" >/dev/null 2>&1
+        fi
         ;;
     open)
-        quickshell -p "$QS_CFG" ipc call mediacontrols open "$PARAM_X" >/dev/null 2>&1 || \
-        quickshell -p "$HOME/.config/quickshell/shell.qml" ipc call mediacontrols open "$PARAM_X" >/dev/null 2>&1 || \
-        quickshell ipc call mediacontrols open "$PARAM_X" >/dev/null 2>&1
+        if ! quickshell -c rs ipc call mediacontrols open "$PARAM_X" >/dev/null 2>&1; then
+            quickshell -p "$QS_CFG" ipc call mediacontrols open "$PARAM_X" >/dev/null 2>&1 || \
+            quickshell -p "$HOME/.config/quickshell/shell.qml" ipc call mediacontrols open "$PARAM_X" >/dev/null 2>&1 || \
+            quickshell ipc call mediacontrols open "$PARAM_X" >/dev/null 2>&1
+        fi
         ;;
     close)
-        quickshell -p "$QS_CFG" ipc call mediacontrols close >/dev/null 2>&1 || \
-        quickshell -p "$HOME/.config/quickshell/shell.qml" ipc call mediacontrols close >/dev/null 2>&1 || \
-        quickshell ipc call mediacontrols close >/dev/null 2>&1
+        if ! quickshell -c rs ipc call mediacontrols close >/dev/null 2>&1; then
+            quickshell -p "$QS_CFG" ipc call mediacontrols close >/dev/null 2>&1 || \
+            quickshell -p "$HOME/.config/quickshell/shell.qml" ipc call mediacontrols close >/dev/null 2>&1 || \
+            quickshell ipc call mediacontrols close >/dev/null 2>&1
+        fi
         ;;
     *)
-        quickshell -p "$QS_CFG" ipc call mediacontrols toggle "$PARAM_X" >/dev/null 2>&1 || \
-        quickshell ipc call mediacontrols toggle "$PARAM_X" >/dev/null 2>&1
+        if ! quickshell -c rs ipc call mediacontrols toggle "$PARAM_X" >/dev/null 2>&1; then
+            quickshell -p "$QS_CFG" ipc call mediacontrols toggle "$PARAM_X" >/dev/null 2>&1 || \
+            quickshell ipc call mediacontrols toggle "$PARAM_X" >/dev/null 2>&1
+        fi
         ;;
 esac
 

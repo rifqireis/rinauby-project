@@ -419,8 +419,8 @@ fi
 pkill -x waybar 2>/dev/null || true
 
 # 6. Reload Warna & TopBar Quickshell (IPC & Signal)
-quickshell -p "$HOME/.config/quickshell/shell.qml" ipc call theme reloadColors 2>/dev/null || quickshell ipc call theme reloadColors 2>/dev/null || true
-quickshell -p "$HOME/.config/quickshell/shell.qml" ipc call waybar reload 2>/dev/null || quickshell ipc call waybar reload 2>/dev/null || true
+quickshell -c rs ipc call theme reloadColors 2>/dev/null || quickshell -p "$HOME/.config/quickshell/shell.qml" ipc call theme reloadColors 2>/dev/null || quickshell ipc call theme reloadColors 2>/dev/null || true
+quickshell -c rs ipc call waybar reload 2>/dev/null || quickshell -p "$HOME/.config/quickshell/shell.qml" ipc call waybar reload 2>/dev/null || quickshell ipc call waybar reload 2>/dev/null || true
 pkill -USR1 -f window_title.py 2>/dev/null || true
 
 # 9. Notifikasi Sukses

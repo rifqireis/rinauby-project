@@ -227,11 +227,11 @@ Item {
     IpcHandler {
         target: "osd"
 
-        function show(kind: string): void {
+        function show(kind: string) {
             controller.show(kind);
         }
 
-        function display(kind: string): void {
+        function display(kind: string) {
             controller.show(kind);
         }
     }

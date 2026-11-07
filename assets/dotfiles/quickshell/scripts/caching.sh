@@ -5,7 +5,11 @@ if [ -z "${SERPANTINUM_DIR:-}" ]; then
     export SERPANTINUM_DIR="$(dirname "$SCRIPT_DIR")"
 fi
 
-export QS_DIR="$SERPANTINUM_DIR/quickshell"
+if [ -f "$SERPANTINUM_DIR/Shell.qml" ]; then
+    export QS_DIR="$SERPANTINUM_DIR"
+else
+    export QS_DIR="$SERPANTINUM_DIR/quickshell"
+fi
 export MAIN_QML="$QS_DIR/Shell.qml"
 export IPC_SOCKET="${XDG_RUNTIME_DIR:-/tmp}/serpantinum.sock"
 
@@ -67,4 +71,5 @@ if [ -z "${SERPANTINUM_INSTALLER:-}" ]; then
     fi
 fi
 
+mkdir -p "$QS_STATE_DIR/quickactions"
 [ -f "$QS_STATE_DIR/quickactions/palettes.json" ] || echo "[]" > "$QS_STATE_DIR/quickactions/palettes.json"

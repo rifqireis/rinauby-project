@@ -81,6 +81,16 @@ PanelWindow {
         }
     }
 
+    IpcHandler {
+        target: "screenshotOverlay"
+        function toggle(img: string, editMode: string, audioPrefs: string, cGeom: string, cGeomVideo: string, cMode: string, cBackend: string, targetMon: string) {
+            root.toggleOverlay(img, editMode, audioPrefs, cGeom, cGeomVideo, cMode, cBackend, targetMon);
+        }
+        function close() {
+            root.deactivate();
+        }
+    }
+
     onIsActiveChanged: {
         if (root.isActive) {
             root.grabKeyboardFocus();

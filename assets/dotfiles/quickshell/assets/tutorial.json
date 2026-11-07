@@ -1,0 +1,26 @@
+[
+  {
+    "id": "intro",
+    "title": "Selamat Datang di Rinauby",
+    "description": "Desktop environment Digital Humanism yang menggabungkan estetika Renaisans klasik dan modernitas Linux terakselerasi.",
+    "icon": "preferences-desktop",
+    "shortcuts": [
+      { "key": "Super + Space", "desc": "Buka Peluncur Aplikasi & Perintah" },
+      { "key": "Super + A", "desc": "Buka Pusat Kontrol Sistem Samping" },
+      { "key": "Super + K", "desc": "Buka Pemilih Wallpaper 3D Coverflow" },
+      { "key": "Super + BackSpace", "desc": "Buka Menu Kontrol Daya & Sesi" }
+    ]
+  },
+  {
+    "id": "status_bar",
+    "title": "Bilah Status Interaktif",
+    "description": "Bilah status atas dirancang reaktif terhadap status perangkat keras dan media.",
+    "icon": "view-paged",
+    "shortcuts": [
+      { "key": "Klik Logo", "desc": "Membuka Menu Aplikasi" },
+      { "key": "Klik Kanan Jam", "desc": "Membuka Kalender & Prakiraan Cuaca" },
+      { "key": "Klik Baterai", "desc": "Membuka Detail Baterai & Profil Daya" },
+      { "key": "Klik Kanan Audio", "desc": "Membuka Panel Mixer Suara" }
+    ]
+  }
+]

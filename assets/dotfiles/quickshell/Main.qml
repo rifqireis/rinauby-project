@@ -79,19 +79,19 @@ PanelWindow {
     IpcHandler {
         target: "main"
 
-        function forceReload(): void {
+        function forceReload() {
             Quickshell.reload(true);
         }
 
-        function clearNotifications(): void {
+        function clearNotifications() {
             NotificationManager.clearNotifications();
         }
 
-        function embeddedSettings(action: string, tab: string): void {
+        function embeddedSettings(action: string, tab: string) {
             masterWindow.handleEmbeddedSettings(action || "toggle", tab || "");
         }
 
-        function handleCommand(cmd: string, targetWidget: string, arg: string): void {
+        function handleCommand(cmd: string, targetWidget: string, arg: string) {
             cmd = cmd || "";
             targetWidget = targetWidget || "";
             arg = arg || "";
@@ -156,6 +156,20 @@ PanelWindow {
                 let bar = Config.getSetting("bar", {});
                 bar.autohide = !bar.autohide;
                 Config.setSetting("bar", bar);
+                return;
+            }
+
+            if (cmd === "dock" || targetWidget === "dock") {
+                let dockCfg = Object.assign({}, Config.getSetting("dock", {}));
+                let curState = dockCfg.enabled !== undefined ? Boolean(dockCfg.enabled) : true;
+                if (arg === "enable" || arg === "on" || targetWidget === "enable") {
+                    dockCfg.enabled = true;
+                } else if (arg === "disable" || arg === "off" || targetWidget === "disable") {
+                    dockCfg.enabled = false;
+                } else {
+                    dockCfg.enabled = !curState;
+                }
+                Config.setSetting("dock", dockCfg);
                 return;
             }
 

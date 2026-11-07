@@ -62,19 +62,19 @@ Scope {
     IpcHandler {
         target: "redactor"
 
-        function activate(): void {
+        function activate() {
             root.open("", "");
         }
 
-        function open(mon: string, widgetId: string): void {
+        function open(mon: string, widgetId: string) {
             root.open(mon, widgetId);
         }
 
-        function toggle(): void {
+        function toggle() {
             root.toggle("", "");
         }
 
-        function close(): void {
+        function close() {
             root.close();
         }
     }
@@ -82,19 +82,19 @@ Scope {
     IpcHandler {
         target: "widget-redactor"
 
-        function activate(): void {
+        function activate() {
             root.open("", "");
         }
 
-        function open(mon: string, widgetId: string): void {
+        function open(mon: string, widgetId: string) {
             root.open(mon, widgetId);
         }
 
-        function toggle(): void {
+        function toggle() {
             root.toggle("", "");
         }
 
-        function close(): void {
+        function close() {
             root.close();
         }
     }

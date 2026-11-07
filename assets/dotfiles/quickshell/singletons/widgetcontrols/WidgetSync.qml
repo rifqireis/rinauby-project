@@ -23,11 +23,11 @@ QtObject {
     signal bringToFrontRequested(string monitor, string widgetId)
     signal redactModeChanged(string monitor, bool active)
 
-    function setPosition(monitor: string, widgetId: string, x: real, y: real): void {
+    function setPosition(monitor, widgetId, x, y) {
         root.positionChanged(monitor, widgetId, x, y);
     }
 
-    function setPositions(monitor: string, positions: var): void {
+    function setPositions(monitor, positions) {
         if (!positions) return;
         if (Array.isArray(positions)) {
             for (let i = 0; i < positions.length; i++) {
@@ -46,27 +46,27 @@ QtObject {
         }
     }
 
-    function setGeometry(monitor: string, widgetId: string, x: real, y: real, w: real, h: real, opacity: real, rotation: real): void {
+    function setGeometry(monitor, widgetId, x, y, w, h, opacity, rotation) {
         root.geometryChanged(monitor, widgetId, x, y, w, h, opacity, rotation);
     }
 
-    function setOpacity(monitor: string, widgetId: string, opacity: real): void {
+    function setOpacity(monitor, widgetId, opacity) {
         root.opacityChanged(monitor, widgetId, opacity);
     }
 
-    function setRotation(monitor: string, widgetId: string, rotation: real): void {
+    function setRotation(monitor, widgetId, rotation) {
         root.rotationChanged(monitor, widgetId, rotation);
     }
 
-    function setVariant(monitor: string, widgetId: string, variant: string): void {
+    function setVariant(monitor, widgetId, variant) {
         root.variantChanged(monitor, widgetId, variant);
     }
 
-    function setImagePath(monitor: string, widgetId: string, imagePath: string): void {
+    function setImagePath(monitor, widgetId, imagePath) {
         root.imagePathChanged(monitor, widgetId, imagePath);
     }
 
-    function setProperty(monitor: string, widgetId: string, propName: string, val: var): void {
+    function setProperty(monitor, widgetId, propName, val) {
         let m = monitor;
         let id = widgetId;
         let prop = propName;
@@ -82,19 +82,19 @@ QtObject {
         root.customPropertyChanged(m, id, prop, v);
     }
 
-    function setWidgetProperty(monitor: string, widgetId: string, propName: string, val: var): void {
+    function setWidgetProperty(monitor, widgetId, propName, val) {
         root.setProperty(monitor, widgetId, propName, val);
     }
 
-    function setCustomProperty(monitor: string, widgetId: string, propName: string, val: var): void {
+    function setCustomProperty(monitor, widgetId, propName, val) {
         root.setProperty(monitor, widgetId, propName, val);
     }
 
-    function addWidget(monitor: string, widgetId: string, type: string, x: real, y: real, w: real, h: real, opacity: real, imagePath: string, rotation: real, variant: string): void {
+    function addWidget(monitor, widgetId, type, x, y, w, h, opacity, imagePath, rotation, variant) {
         root.widgetAdded(monitor, widgetId, type, x, y, w, h, opacity, imagePath, rotation, variant || "");
     }
 
-    function addFromRegistry(monitor: string, type: string, config: var): string {
+    function addFromRegistry(monitor, type, config) {
         let def = WidgetRegistry.defaultSize(type);
         let id = (config && config.id) ? String(config.id) : ("w_" + Date.now() + "_" + Math.floor(Math.random() * 1000));
         let op = (config && config.opacity !== undefined) ? config.opacity : 1.0;
@@ -148,19 +148,19 @@ QtObject {
         return id;
     }
 
-    function removeWidget(monitor: string, widgetId: string): void {
+    function removeWidget(monitor, widgetId) {
         root.widgetRemoved(monitor, widgetId);
     }
 
-    function removeWidgetsByType(monitor: string, type: string): void {
+    function removeWidgetsByType(monitor, type) {
         root.widgetsByTypeRemoved(monitor, type);
     }
 
-    function clearWidgets(monitor: string): void {
+    function clearWidgets(monitor) {
         root.widgetsCleared(monitor);
     }
 
-    function applyPreset(monitor: string, widgetsList: var, clearFirst: bool): void {
+    function applyPreset(monitor, widgetsList, clearFirst) {
         let len = (widgetsList && widgetsList.length !== undefined) ? widgetsList.length : 0;
         if (!widgetsList || len === 0) {
             return;
@@ -168,11 +168,11 @@ QtObject {
         root.presetApplied(monitor, widgetsList);
     }
 
-    function bringToFront(monitor: string, widgetId: string): void {
+    function bringToFront(monitor, widgetId) {
         root.bringToFrontRequested(monitor, widgetId);
     }
 
-    function setRedactMode(monitor: string, active: bool): void {
+    function setRedactMode(monitor, active) {
         root.redactModeChanged(monitor, active);
     }
 }

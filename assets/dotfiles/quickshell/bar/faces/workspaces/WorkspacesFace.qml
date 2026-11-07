@@ -225,7 +225,10 @@ Item {
         } else if (Compositor.name === "mango") {
             Quickshell.execDetached(["mmsg", "dispatch", "view," + wsId]);
         } else if (Compositor.name === "hyprland") {
-            Hyprland.dispatch("hl.dsp.focus({ workspace = " + wsId + " })");
+            if (typeof Hyprland !== "undefined" && Hyprland.dispatch) {
+                Hyprland.dispatch("hl.dsp.focus({ workspace = " + wsId + " })");
+            }
+            Quickshell.execDetached(["hyprctl", "dispatch", "workspace", wsId.toString()]);
         }
     }
 

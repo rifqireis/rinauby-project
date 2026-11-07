@@ -44,8 +44,8 @@ RowLayout {
             ]
 
             color: (actionMa.containsMouse && !isDisabled) ? Qt.rgba(1, 1, 1, 0.08) : Qt.rgba(1, 1, 1, 0.03)
-            border.width: 1
-            border.color: (actionMa.containsMouse && !isDisabled) ? Qt.rgba(1, 1, 1, 0.08) : Qt.rgba(1, 1, 1, 0.03)
+            border.width: 0
+            border.color: "transparent"
 
             GlassFill {
                 id: capsuleGlass

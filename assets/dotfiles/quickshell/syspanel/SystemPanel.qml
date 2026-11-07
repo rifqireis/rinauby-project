@@ -350,8 +350,8 @@ Item {
         bottomLeftRadius: radius
         topRightRadius: radius
         bottomRightRadius: radius
-        border.width: 1
-        border.color: Qt.rgba(1, 1, 1, 0.06)
+        border.width: 0
+        border.color: "transparent"
         clip: true
         opacity: root.introContent
 
@@ -515,8 +515,8 @@ Item {
                         Layout.fillHeight: true
                         radius: height / 2
                         color: ThemeBackend.surface0
-                        border.width: 1
-                        border.color: Qt.rgba(1, 1, 1, 0.04)
+                        border.width: 0
+                        border.color: "transparent"
                         clip: true
 
                         BatteryContent {
@@ -535,8 +535,8 @@ Item {
                         Layout.fillHeight: true
                         radius: height / 2
                         color: ThemeBackend.surface0
-                        border.width: 1
-                        border.color: Qt.rgba(1, 1, 1, 0.04)
+                        border.width: 0
+                        border.color: "transparent"
                         clip: true
 
                         Switch {

@@ -33,8 +33,8 @@ Rectangle {
     Layout.maximumHeight: slidersCol.implicitHeight + panel.s(20)
     radius: panel.boxRadius
     color: slidersGlass.active ? "transparent" : ThemeBackend.surface0
-    border.width: 1
-    border.color: Qt.rgba(1, 1, 1, 0.05)
+    border.width: 0
+    border.color: "transparent"
     opacity: panel.introSliders
     transform: Translate { x: (panel.isLeftAnchored ? -panel.rowSlideDistance : panel.rowSlideDistance) * (1.0 - panel.introSliders) }
 
