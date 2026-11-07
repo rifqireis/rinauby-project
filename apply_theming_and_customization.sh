@@ -127,8 +127,8 @@ deploy_sddm_sugar_candy() {
     # Install missing SDDM input drivers and Qt5 dependencies if APT is available
     if command -v apt-get >/dev/null 2>&1; then
         local sddm_deps=(
-            xserver-xorg-input-all
             xserver-xorg-input-libinput
+            xserver-xorg-input-all
             libinput-bin
             libinput10
             qml-module-qtquick-controls2
@@ -140,16 +140,32 @@ deploy_sddm_sugar_candy() {
             libqt5svg5
         )
         local to_install=()
+        local skipped_pkgs=()
         for pkg in "${sddm_deps[@]}"; do
             if ! dpkg -s "$pkg" >/dev/null 2>&1; then
-                to_install+=("$pkg")
+                if apt-cache show "$pkg" >/dev/null 2>&1; then
+                    to_install+=("$pkg")
+                else
+                    skipped_pkgs+=("$pkg")
+                fi
             fi
         done
+
+        if [ ${#skipped_pkgs[@]} -gt 0 ]; then
+            log_warn "SDDM packages not in APT repository (skipped): ${skipped_pkgs[*]}"
+        fi
+
         if [ ${#to_install[@]} -gt 0 ]; then
-            log_info "Installing missing SDDM input drivers & Qt5 QML dependencies: ${to_install[*]}..."
-            DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends "${to_install[@]}" 2>/dev/null || \
-            DEBIAN_FRONTEND=noninteractive apt-get install -y "${to_install[@]}" 2>/dev/null || true
+            log_info "Installing SDDM input drivers & Qt5 dependencies (${#to_install[@]} verified packages): ${to_install[*]}..."
+            if ! DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends "${to_install[@]}"; then
+                log_warn "Batch APT installation failed; attempting sequential installation..."
+                for pkg in "${to_install[@]}"; do
+                    DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends "$pkg" || log_warn "Failed to install: $pkg"
+                done
+            fi
             log_ok "SDDM input drivers and Qt5 QML dependencies provisioned."
+        else
+            log_ok "SDDM input drivers and Qt5 dependencies already satisfied."
         fi
     fi
 
@@ -382,6 +398,9 @@ verify_rinauby_environment() {
     echo -e "\n${C_BOLD}C. Theming, Assets & Personalization:${C_RESET}"
     check_item "Theme" "Plymouth Pack 3 'Pixels'" "[ -f /usr/share/plymouth/themes/pixels/pixels.plymouth ] || [ -f '$PLYMOUTH_DIR/pixels/pixels.plymouth' ]"
     check_item "Theme" "SDDM Sugar-Candy Theme" "[ -f /usr/share/sddm/themes/sugar-candy/Main.qml ] || [ -f '$SDDM_DIR/themes/sugar-candy/Main.qml' ]"
+    check_item "Driver" "Xorg libinput input driver" "dpkg -s xserver-xorg-input-libinput >/dev/null 2>&1 || dpkg -s xserver-xorg-input-all >/dev/null 2>&1 || [ ! -x /usr/bin/dpkg ]"
+    check_item "Library" "QtGraphicalEffects (SDDM)" "dpkg -s qml-module-qtgraphicaleffects >/dev/null 2>&1 || [ -d /usr/lib/x86_64-linux-gnu/qt5/qml/QtGraphicalEffects ] || [ ! -x /usr/bin/dpkg ]"
+    check_item "Library" "QtQuick Controls2 (SDDM)" "dpkg -s qml-module-qtquick-controls2 >/dev/null 2>&1 || [ -d /usr/lib/x86_64-linux-gnu/qt5/qml/QtQuick/Controls.2 ] || [ ! -x /usr/bin/dpkg ]"
     check_item "Artwork" "Mona Lisa (Louvre C2RMF) Wallpaper" "[ -f /usr/share/backgrounds/rinauby/mona_lisa.jpg ] || [ -f '$ASSETS_DIR/wallpapers/mona_lisa.jpg' ]"
     check_item "Prompt" "Starship osyx Capsule Config" "[ -f /etc/skel/.config/starship.toml ] || [ -f '$DOTFILES_DIR/starship/starship.toml' ]"
     check_item "Theme" "Papirus Folders Utility" "command -v papirus-folders >/dev/null 2>&1 || [ -f '$BIN_DIR/papirus-folders' ]"
