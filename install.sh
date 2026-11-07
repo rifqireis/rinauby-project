@@ -1,15 +1,15 @@
 #!/usr/bin/env bash
 # ==============================================================================
-# RINAUBY (DIGITAL HUMANISM EDITION) — UBUNTU 26.04 / 24.04 MASTER INSTALLER
+# RINAUBY (DIGITAL HUMANISM EDITION) — UBUNTU 26.10 / 26.04 / 24.04 MASTER INSTALLER
 # Operating Systems Course Project 2026 (Ubuntu Remastering via Cubic)
 # ==============================================================================
 # This script is designed to run:
 #   1. Inside a Cubic Chroot terminal (as root) during ISO remastering, OR
-#   2. Inside an Ubuntu 26.04 / 24.04 virtual machine (via: sudo ./install.sh)
+#   2. Inside an Ubuntu 26.10 / 26.04 / 24.04 virtual machine (via: sudo ./install.sh)
 #
 # Key Highlights:
 #   - Enables essential Ubuntu repositories (universe, multiverse, restricted)
-#   - Installs Hyprland, Waybar, Rofi, SwayNC, Hyprlock, Kitty, Fastfetch,
+#   - Installs Hyprland, Quickshell, Hyprlock, Kitty, Fastfetch, NWG-Displays,
 #     and all GTK4/Libadwaita (rinauby-settings) & Layer-Shell (OSD) dependencies
 #   - Deploys classical typography (Cinzel, EB Garamond, JetBrains Mono, Symbols Nerd Font)
 #   - Installs 8 high-resolution Renaissance masterpieces (1920x1200 + thumbnails)
@@ -50,7 +50,7 @@ log_fatal()   { echo -e "  ${C_RED}[FATAL]${C_RESET} $*" >&2; }
 
 echo -e "${C_BOLD}${C_GOLD}==============================================================================${C_RESET}"
 echo -e "${C_BOLD}${C_GOLD}  RINAUBY (DIGITAL HUMANISM EDITION) — UBUNTU MASTER PROVISIONER              ${C_RESET}"
-echo -e "${C_BOLD}${C_GOLD}  Ubuntu 26.04 / 24.04 LTS Automated Setup for Cubic Chroot & Live ISO        ${C_RESET}"
+echo -e "${C_BOLD}${C_GOLD}  Ubuntu 26.10 / 26.04 / 24.04 Automated Setup for Cubic Chroot & Live ISO    ${C_RESET}"
 echo -e "${C_BOLD}${C_GOLD}==============================================================================${C_RESET}"
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
@@ -114,7 +114,7 @@ fi
 export DEBIAN_FRONTEND=noninteractive
 
 # ------------------------------------------------------------------------------
-# 1. CONFIGURE UBUNTU 26.04 / 24.04 REPOSITORIES
+# 1. CONFIGURE UBUNTU 26.10 / 26.04 / 24.04 REPOSITORIES
 # ------------------------------------------------------------------------------
 log_step "PHASE 1/11: Configuring Ubuntu Repositories (Universe, Multiverse, Restricted)"
 
@@ -133,7 +133,7 @@ add-apt-repository -y restricted || true
 apt-get update -y
 
 UBUNTU_CODENAME="$(lsb_release -cs 2>/dev/null || echo "resolute")"
-UBUNTU_RELEASE="$(lsb_release -rs 2>/dev/null || echo "26.04")"
+UBUNTU_RELEASE="$(lsb_release -rs 2>/dev/null || echo "26.10")"
 log_info "Target distribution: Ubuntu $UBUNTU_RELEASE ($UBUNTU_CODENAME)"
 
 # Robust package installer helper (prevents batch failure if an optional package is missing)
@@ -166,13 +166,13 @@ install_packages() {
 }
 
 # ------------------------------------------------------------------------------
-# 2. INSTALL HYPRLAND & WAYLAND COMPOSITOR ECOSYSTEM
+# 2. INSTALL HYPRLAND, QUICKSHELL & WAYLAND COMPOSITOR ECOSYSTEM
 # ------------------------------------------------------------------------------
-log_step "PHASE 2/11: Installing Hyprland & Wayland Compositor Ecosystem"
+log_step "PHASE 2/11: Installing Hyprland, Quickshell & Wayland Compositor Ecosystem"
 
-# Check hyprland availability in official repositories (Universe is enabled)
+# Check Hyprland availability in official repositories (Universe is enabled)
 if ! apt-cache show hyprland >/dev/null 2>&1; then
-    # Only add fallback PPA if running on Ubuntu 24.04 (noble); in 26.04/26.10 hyprland is in universe
+    # Fallback PPA for older Ubuntu LTS (noble 24.04); in 26.04/26.10 hyprland is in universe
     if [ "$UBUNTU_CODENAME" = "noble" ]; then
         log_warn "Hyprland not found in default repositories. Adding fallback PPA for $UBUNTU_CODENAME..."
         add-apt-repository -y ppa:cppiber/hyprland 2>/dev/null || true
@@ -180,10 +180,19 @@ if ! apt-cache show hyprland >/dev/null 2>&1; then
     fi
 fi
 
+# Check Quickshell availability; add official PPA if not in cache
+if ! apt-cache show quickshell >/dev/null 2>&1; then
+    log_info "Quickshell not in default repository cache. Adding PPA ppa:avengemedia/danklinux..."
+    add-apt-repository -y ppa:avengemedia/danklinux 2>/dev/null || true
+    apt-get update -y || true
+fi
+
 WAYLAND_PKGS=(
     hyprland
     hyprlock
     hypridle
+    hyprpicker
+    quickshell
     xdg-desktop-portal-hyprland
     xdg-desktop-portal-gtk
     xdg-desktop-portal
@@ -202,13 +211,34 @@ WAYLAND_PKGS=(
     libegl-mesa0
     libgl1-mesa-dri
     mesa-utils
+    # Qt6 QML Runtime Modules required for native Quickshell stack
+    qml6-module-qtquick
+    qml6-module-qtquick-layouts
+    qml6-module-qtquick-controls
+    qml6-module-qtquick-window
+    qml6-module-qtquick-effects
+    qml6-module-qtquick-shapes
+    qml6-module-qtquick-templates
+    qml6-module-qtcore
+    qml6-module-qtqml
+    qml6-module-qtqml-workerscript
+    qml6-module-qtmultimedia
+    libqt6multimedia6
+    qml6-module-qt-labs-folderlistmodel
+    qml6-module-qt-labs-settings
+    libqt6core6
+    libqt6gui6
+    libqt6qml6
+    libqt6quick6
+    libqt6waylandclient6
+    libqt6waylandcompositor6
 )
 install_packages "${WAYLAND_PKGS[@]}"
 
 # ------------------------------------------------------------------------------
-# 3. INSTALL DESKTOP UTILITIES & POLKIT
+# 3. INSTALL DESKTOP UTILITIES, DISPLAY CONTROLLERS & POLKIT
 # ------------------------------------------------------------------------------
-log_step "PHASE 3/11: Installing Desktop Utilities & Polkit Authentication Agent"
+log_step "PHASE 3/11: Installing Desktop Utilities, Display Controllers & Polkit Agent"
 
 SHELL_PKGS=(
     libnotify-bin
@@ -221,6 +251,9 @@ SHELL_PKGS=(
     bluez
     blueman
     upower
+    nwg-displays
+    python3-i3ipc
+    wlr-randr
 )
 install_packages "${SHELL_PKGS[@]}"
 
@@ -262,7 +295,10 @@ UTILITY_PKGS=(
     grim
     slurp
     swappy
+    satty
     jq
+    bc
+    socat
     imagemagick
     brightnessctl
     pamixer
@@ -306,6 +342,21 @@ if ! command -v fastfetch >/dev/null 2>&1; then
         log_ok "Fastfetch successfully installed from official GitHub release."
     else
         log_warn "Failed to download fastfetch.deb; please verify active internet connectivity."
+    fi
+fi
+
+# Fallback if matugen is not yet installed in system PATH
+if ! command -v matugen >/dev/null 2>&1; then
+    log_info "Installing Matugen dynamic color palette engine from official GitHub release..."
+    MATUGEN_TAR_URL=$(curl -s https://api.github.com/repos/InioX/matugen/releases/latest 2>/dev/null | grep "browser_download_url.*matugen-.*-x86_64.tar.gz" | cut -d '"' -f 4 | head -n1)
+    [ -z "$MATUGEN_TAR_URL" ] && MATUGEN_TAR_URL="https://github.com/InioX/matugen/releases/latest/download/matugen-4.2.0-x86_64.tar.gz"
+    if curl -fsSL "$MATUGEN_TAR_URL" -o /tmp/matugen.tar.gz; then
+        tar -xzf /tmp/matugen.tar.gz -C /usr/local/bin/ matugen 2>/dev/null || tar -xzf /tmp/matugen.tar.gz -C /usr/local/bin/
+        chmod 755 /usr/local/bin/matugen 2>/dev/null || true
+        rm -f /tmp/matugen.tar.gz
+        log_ok "Matugen successfully installed to /usr/local/bin/matugen"
+    else
+        log_warn "Failed to download Matugen binary; palette extractor will rely on fallback templates."
     fi
 fi
 
@@ -424,8 +475,9 @@ cp -rf "$DOTFILES_DIR"/* "$SYS_SHARE_DIR/"
 find "$SYS_SHARE_DIR" -name "__pycache__" -type d -exec rm -rf {} + 2>/dev/null || true
 
 # Sanitize hardcoded host Arch paths inside /usr/share/rinauby
-find "$SYS_SHARE_DIR" -type f \( -name "*.conf" -o -name "*.jsonc" -o -name "*.json" -o -name "*.rasi" -o -name "*.sh" -o -name "*.py" -o -name "*.css" \) \
+find "$SYS_SHARE_DIR" -type f \( -name "*.conf" -o -name "*.jsonc" -o -name "*.json" -o -name "*.rasi" -o -name "*.sh" -o -name "*.py" -o -name "*.css" -o -name "*.lua" -o -name "*.qml" \) \
     -exec sed -i \
+    -e "s|$HOST_HARDCODED_PREFIX/bin|/usr/local/bin|g" \
     -e "s|$HOST_HARDCODED_PREFIX/wallpapers|$SYS_WALL_DIR|g" \
     -e "s|$HOST_HARDCODED_PREFIX/dotfiles|$SYS_SHARE_DIR|g" \
     -e "s|/home/rifqi/.config/hypr/hyprlock/avatar-kde.png|$SYS_SHARE_DIR/hypr/avatar.png|g" \
@@ -528,10 +580,12 @@ sanitize_and_deploy_config() {
     fi
 
     # 3. General sanitization for remaining configuration text files
-    find "$cfg_dir" -type f \( -name "*.conf" -o -name "*.jsonc" -o -name "*.json" -o -name "*.rasi" -o -name "*.sh" -o -name "*.py" -o -name "*.css" -o -name "*.lua" \) \
+    find "$cfg_dir" -type f \( -name "*.conf" -o -name "*.jsonc" -o -name "*.json" -o -name "*.rasi" -o -name "*.sh" -o -name "*.py" -o -name "*.css" -o -name "*.lua" -o -name "*.qml" \) \
         -exec sed -i \
+        -e "s|$HOST_HARDCODED_PREFIX/bin|/usr/local/bin|g" \
         -e "s|$HOST_HARDCODED_PREFIX/wallpapers|$SYS_WALL_DIR|g" \
         -e "s|$HOST_HARDCODED_PREFIX/dotfiles|$SYS_SHARE_DIR|g" \
+        -e "s|/home/rifqi|$target_home|g" \
         {} + 2>/dev/null || true
 
     # Ensure executable permissions for user scripts
@@ -703,12 +757,14 @@ apt-get clean >/dev/null 2>&1 || true
 log_step "INSTALLATION COMPLETE: RINAUBY (DIGITAL HUMANISM EDITION)"
 echo -e "${C_GREEN}All desktop components and configurations are ready:${C_RESET}"
 echo -e "  • Compositor & Session : ${C_GOLD}Rinauby (Digital Humanism) / Hyprland${C_RESET}"
-echo -e "  • Status Bar           : ${C_GOLD}Waybar (Roman Numerals + Latin Philosophy Quotes)${C_RESET}"
-echo -e "  • Application Launcher : ${C_GOLD}rinauby-launcher (Super + Space / Super + D)${C_RESET}"
-echo -e "  • System Settings      : ${C_GOLD}rinauby-settings (Super + I)${C_RESET}"
-echo -e "  • Wallpaper Selector   : ${C_GOLD}rinauby-wp-selector (Super + K / Super + Alt + W)${C_RESET}"
-echo -e "  • Power Menu           : ${C_GOLD}rinauby-powermenu (Super + Backspace / Super + Esc)${C_RESET}"
-echo -e "  • Screen Lock          : ${C_GOLD}hyprlock (Super + L)${C_RESET}"
+echo -e "  • Status Bar           : ${C_GOLD}RinaubyBar (Native Quickshell Bar with Roman Numerals, Audio & Latin Philosophy Quotes)${C_RESET}"
+echo -e "  • Application Launcher : ${C_GOLD}rinauby-launcher (Native Quickshell - Super + Space / Super + D)${C_RESET}"
+echo -e "  • System Control Center: ${C_GOLD}rinauby-syspanel (Native Quickshell Quick Actions & Media - Super + A / Super + N)${C_RESET}"
+echo -e "  • System Settings      : ${C_GOLD}rinauby-settings (GTK4 / Libadwaita - Super + I)${C_RESET}"
+echo -e "  • Wallpaper Selector   : ${C_GOLD}rinauby-wp-selector (Native Quickshell 3D Coverflow - Super + K / Super + Alt + W)${C_RESET}"
+echo -e "  • Media Player Island  : ${C_GOLD}rinauby-mediacontrols (Native Quickshell MPRIS Floating Island)${C_RESET}"
+echo -e "  • Power Menu           : ${C_GOLD}rinauby-powermenu (Native Quickshell - Super + Backspace / Super + Esc)${C_RESET}"
+echo -e "  • Screen Lock          : ${C_GOLD}hyprlock (Classical Avatar & Typography - Super + L)${C_RESET}"
 echo -e "  • Screenshot Utility   : ${C_GOLD}rinauby-screenshot (Super + Shift + S / Print)${C_RESET}"
 echo -e "  • On-Screen Display    : ${C_GOLD}rinauby-osd (Volume & Brightness Overlays)${C_RESET}"
 echo ""
