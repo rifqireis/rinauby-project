@@ -170,6 +170,20 @@ PanelWindow {
     // =========================================================================
     // IPC HANDLER & PUBLIC API
     // =========================================================================
+    function resolveFocusedScreen() {
+        try {
+            if (typeof Hyprland !== "undefined" && Hyprland.focusedMonitor && Quickshell.screens) {
+                let monName = Hyprland.focusedMonitor.name;
+                for (let i = 0; i < Quickshell.screens.length; i++) {
+                    if (Quickshell.screens[i] && Quickshell.screens[i].name === monName) {
+                        return Quickshell.screens[i];
+                    }
+                }
+            }
+        } catch(e) {}
+        return (Quickshell.screens && Quickshell.screens.length > 0) ? Quickshell.screens[0] : null;
+    }
+
     function toggle(mode) {
         let targetMode = (mode && String(mode).trim() !== "") ? String(mode).trim() : "drun";
         if (root.isOpen && root.activeMode === targetMode) {
@@ -180,6 +194,9 @@ PanelWindow {
     }
 
     function open(mode) {
+        let sc = resolveFocusedScreen();
+        if (sc) root.screen = sc;
+
         let targetMode = (mode && String(mode).trim() !== "") ? String(mode).trim() : "drun";
         barThemeFileView.reload();
         themeModeFileView.reload();

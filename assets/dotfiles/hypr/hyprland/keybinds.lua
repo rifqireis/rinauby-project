@@ -16,6 +16,17 @@ local fileManager = _G.fileManager or fileManager or "nautilus"
 local browser = _G.browser or browser or "brave"
 local codeEditor = _G.codeEditor or codeEditor or "zeditor"
 
+-- Helper pemanggil binary Rinauby dengan fallback multi-path
+local function rinauby_cmd(bin_name, args)
+	args = args or ""
+	return string.format(
+		[[sh -c 'if command -v %s >/dev/null 2>&1; then exec %s %s; elif [ -f "$HOME/.local/bin/%s" ]; then exec "$HOME/.local/bin/%s" %s; elif [ -f "/home/rifqi/Workspace/Belajar/SO/Tubes-2604/Rancangan/assets/bin/%s" ]; then exec "/home/rifqi/Workspace/Belajar/SO/Tubes-2604/Rancangan/assets/bin/%s" %s; fi']],
+		bin_name, bin_name, args,
+		bin_name, bin_name, args,
+		bin_name, bin_name, args
+	)
+end
+
 ---------------------------------------------------------------------
 -- 2. HARDWARE INPUT & MEDIA
 ---------------------------------------------------------------------
@@ -26,30 +37,30 @@ hl.config({
 	},
 })
 
--- Kecerahan Layar (Brightness)
+-- Kecerahan Layar (Brightness via Rinauby OSD)
 hl.bind(
 	"XF86MonBrightnessUp",
-	hl.dsp.exec_cmd(qsIpcCall .. " brightness increment || brightnessctl s 5%+"),
+	hl.dsp.exec_cmd(rinauby_cmd("rinauby-osd", "brightness-up")),
 	{ locked = true, repeating = true }
 )
 hl.bind(
 	"XF86MonBrightnessDown",
-	hl.dsp.exec_cmd(qsIpcCall .. " brightness decrement || brightnessctl s 5%-"),
+	hl.dsp.exec_cmd(rinauby_cmd("rinauby-osd", "brightness-down")),
 	{ locked = true, repeating = true }
 )
 
--- Volume Audio & Mic (Wireplumber)
+-- Volume Audio & Mic (Wireplumber + Rinauby OSD)
 hl.bind(
 	"XF86AudioRaiseVolume",
-	hl.dsp.exec_cmd("wpctl set-volume @DEFAULT_AUDIO_SINK@ 2%+ -l 1.5"),
+	hl.dsp.exec_cmd(rinauby_cmd("rinauby-osd", "volume-up")),
 	{ locked = true, repeating = true }
 )
 hl.bind(
 	"XF86AudioLowerVolume",
-	hl.dsp.exec_cmd("wpctl set-volume @DEFAULT_AUDIO_SINK@ 2%-"),
+	hl.dsp.exec_cmd(rinauby_cmd("rinauby-osd", "volume-down")),
 	{ locked = true, repeating = true }
 )
-hl.bind("XF86AudioMute", hl.dsp.exec_cmd("wpctl set-mute @DEFAULT_AUDIO_SINK@ toggle"), { locked = true })
+hl.bind("XF86AudioMute", hl.dsp.exec_cmd(rinauby_cmd("rinauby-osd", "volume-mute")), { locked = true })
 hl.bind("XF86AudioMicMute", hl.dsp.exec_cmd("wpctl set-mute @DEFAULT_AUDIO_SOURCE@ toggle"), { locked = true })
 
 -- Kontrol Media (Playerctl)
@@ -85,50 +96,51 @@ hl.bind("CTRL + ALT + T", hl.dsp.exec_cmd(terminal), { description = "App: Termi
 hl.bind("SUPER + E", hl.dsp.exec_cmd(fileManager), { description = "App: File manager" })
 hl.bind("SUPER + B", hl.dsp.exec_cmd(browser), { description = "App: Web browser" })
 hl.bind("SUPER + C", hl.dsp.exec_cmd(codeEditor), { description = "App: Code editor" })
+hl.bind("SUPER + I", hl.dsp.exec_cmd(rinauby_cmd("rinauby-settings", "--toggle")), { description = "Settings: Toggle Pengaturan Sistem" })
+hl.bind("SUPER + comma", hl.dsp.exec_cmd(rinauby_cmd("rinauby-settings", "--toggle")), { description = "Settings: Toggle Pengaturan Sistem (Alt)" })
 hl.bind("CTRL + SUPER + V", hl.dsp.exec_cmd("pavucontrol"), { description = "App: Volume mixer" })
 hl.bind("CTRL + SHIFT + Escape", hl.dsp.exec_cmd("gnome-system-monitor"), { description = "App: Task manager" })
 
 ---------------------------------------------------------------------
 -- 4. QUICKSHELL UI & SHELL LAUNCHER
 ---------------------------------------------------------------------
--- App Launcher & Search
+-- App Launcher & Search (SUPER + Space, SUPER + D)
 hl.bind(
 	"SUPER + Space",
-	hl.dsp.global("quickshell:searchToggleRelease"),
+	hl.dsp.exec_cmd(rinauby_cmd("rinauby-launcher", "drun")),
 	{ description = "Shell: Buka Menu Pencarian & Peluncur Aplikasi" }
 )
-
--- Overlay indikator workspace saat tombol SUPER ditekan & dilepas
-hl.bind("SUPER_L", hl.dsp.global("quickshell:workspaceNumber"), { ignore_mods = true, transparent = true })
-hl.bind("SUPER_R", hl.dsp.global("quickshell:workspaceNumber"), { ignore_mods = true, transparent = true })
-hl.bind("SUPER_L", hl.dsp.global("quickshell:workspaceNumber"), { ignore_mods = true, transparent = true, release = true })
-hl.bind("SUPER_R", hl.dsp.global("quickshell:workspaceNumber"), { ignore_mods = true, transparent = true, release = true })
+hl.bind(
+	"SUPER + D",
+	hl.dsp.exec_cmd(rinauby_cmd("rinauby-launcher", "drun")),
+	{ description = "Shell: Buka Menu Peluncur Aplikasi (Drun)" }
+)
 
 -- Quicksettings / Control Center & Notifikasi (Sidebar Kanan)
-hl.bind("SUPER + A", hl.dsp.global("quickshell:sidebarRightToggle"), { description = "Shell: Toggle Quicksettings & Notifikasi" })
-
--- Utilities (Sidebar Kiri)
-hl.bind("SUPER + ALT + A", hl.dsp.global("quickshell:sidebarLeftToggle"), { description = "Shell: Toggle Left Sidebar" })
+hl.bind("SUPER + A", hl.dsp.exec_cmd(rinauby_cmd("rinauby-syspanel")), { description = "Shell: Toggle Quicksettings & Notifikasi" })
+hl.bind("SUPER + N", hl.dsp.exec_cmd(rinauby_cmd("rinauby-syspanel")), { description = "Shell: Toggle Notifikasi & Quicksettings" })
 
 -- Session / Power Menu (Lock, Shutdown, Reboot, Suspend)
-hl.bind("SUPER + X", hl.dsp.global("quickshell:sessionToggle"), { description = "Shell: Toggle Session & Power Menu" })
+hl.bind("SUPER + X", hl.dsp.exec_cmd(rinauby_cmd("rinauby-powermenu")), { description = "Shell: Toggle Session & Power Menu" })
+hl.bind("SUPER + BackSpace", hl.dsp.exec_cmd(rinauby_cmd("rinauby-powermenu")), { description = "Shell: Toggle Session & Power Menu (BS)" })
+hl.bind("SUPER + Escape", hl.dsp.exec_cmd(rinauby_cmd("rinauby-powermenu")), { description = "Shell: Toggle Session & Power Menu (Esc)" })
+
+-- Kunci Layar (Lock Screen via Hyprlock)
+hl.bind(
+	"SUPER + L",
+	hl.dsp.exec_cmd([[sh -c 'if [ -f "$HOME/.config/hypr/hyprlock.conf" ]; then exec hyprlock -c "$HOME/.config/hypr/hyprlock.conf"; else exec hyprlock -c /home/rifqi/Workspace/Belajar/SO/Tubes-2604/Rancangan/assets/dotfiles/hypr/hyprlock.conf; fi']]),
+	{ description = "System: Kunci Layar (Hyprlock)" }
+)
 
 -- Clipboard Manager & Emoji
-hl.bind("SUPER + V", hl.dsp.global("quickshell:overviewClipboardToggle"), { description = "Shell: Toggle Clipboard History" })
-hl.bind("SUPER + Period", hl.dsp.global("quickshell:overviewEmojiToggle"), { description = "Shell: Toggle Emoji Picker" })
-
--- Bantuan Cheatsheet & AI Launcher
-hl.bind("SUPER + Slash", hl.dsp.global("quickshell:cheatsheetToggle"), { description = "Shell: Toggle Cheatsheet" })
-hl.bind("SUPER + grave", hl.dsp.global("quickshell:aiLauncherToggle"), { description = "Shell: Toggle AI Launcher" })
+hl.bind("SUPER + V", hl.dsp.exec_cmd(rinauby_cmd("rinauby-launcher", "clipboard")), { description = "Shell: Toggle Riwayat Clipboard" })
 
 -- Wallpaper & Tema
-hl.bind("CTRL + SUPER + T", hl.dsp.global("quickshell:wallpaperSelectorToggle"), { description = "Shell: Change Wallpaper" })
-hl.bind("CTRL + SUPER + ALT + T", hl.dsp.global("quickshell:wallpaperSelectorRandom"), { description = "Shell: Random Wallpaper" })
-hl.bind("CTRL + SUPER + SHIFT + D", hl.dsp.global("quickshell:toggleLightDark"), { description = "Shell: Toggle Light/Dark Mode" })
-hl.bind("CTRL + SUPER + P", hl.dsp.global("quickshell:panelFamilyCycle"), { description = "Shell: Cycle Panel Family" })
+hl.bind("CTRL + SUPER + T", hl.dsp.exec_cmd(rinauby_cmd("rinauby-wp-selector")), { description = "Shell: Buka Pemilih Wallpaper" })
+hl.bind("SUPER + ALT + W", hl.dsp.exec_cmd(rinauby_cmd("rinauby-wp-selector")), { description = "Shell: Buka Pemilih Wallpaper (Alt)" })
 hl.bind(
 	"CTRL + SUPER + R",
-	hl.dsp.exec_cmd("killall -w -q qs quickshell 2>/dev/null; qs -c $qsConfig -d &"),
+	hl.dsp.exec_cmd("killall -w -q qs quickshell 2>/dev/null; quickshell -c rs -d &"),
 	{ description = "Shell: Restart Quickshell Widgets" }
 )
 
@@ -136,30 +148,21 @@ hl.bind(
 -- 5. UTILITAS & SCREENSHOT
 ---------------------------------------------------------------------
 -- Screen Snip / Screenshot Area
-hl.bind("SUPER + SHIFT + Space", hl.dsp.global("quickshell:regionScreenshot"), { description = "Utilities: Screen snip" })
+hl.bind("SUPER + SHIFT + Space", hl.dsp.exec_cmd(rinauby_cmd("rinauby-screenshot", "snip")), { description = "Utilities: Screenshot Snip" })
+hl.bind("SUPER + SHIFT + S", hl.dsp.exec_cmd(rinauby_cmd("rinauby-screenshot", "snip")), { description = "Utilities: Screenshot Snip (Alt)" })
 
 -- Screenshot Layar Penuh
-local grimhyprctl = 'grim -o "$(hyprctl activeworkspace -j | jq -r \'.monitor\')"'
-hl.bind("Print", hl.dsp.exec_cmd(grimhyprctl .. " - | wl-copy"), { locked = true, description = "Utilities: Screenshot >> Clipboard" })
+hl.bind("Print", hl.dsp.exec_cmd(rinauby_cmd("rinauby-screenshot", "full")), { locked = true, description = "Utilities: Screenshot Full Layar" })
 hl.bind(
 	"CTRL + Print",
-	hl.dsp.exec_cmd(
-		"mkdir -p $(xdg-user-dir PICTURES)/Screenshots && "
-			.. grimhyprctl
-			.. ' $(xdg-user-dir PICTURES)/Screenshots/Screenshot_"$(date \'+%Y-%m-%d_%H.%M.%S\')".png && '
-			.. grimhyprctl .. " - | wl-copy"
-	),
-	{ locked = true, description = "Utilities: Screenshot >> File & Clipboard" }
+	hl.dsp.exec_cmd(rinauby_cmd("rinauby-screenshot", "full")),
+	{ locked = true, description = "Utilities: Screenshot Full Layar (Alt)" }
 )
-
--- Google Lens & AI Utilities
-hl.bind("SUPER + SHIFT + Semicolon", hl.dsp.global("quickshell:regionSearch"), { description = "Utilities: Google Lens (Region Search)" })
-hl.bind("SUPER + SHIFT + X", hl.dsp.global("quickshell:regionOcr"), { description = "Utilities: OCR >> Clipboard" })
-hl.bind("SUPER + SHIFT + T", hl.dsp.global("quickshell:screenTranslate"), { description = "Utilities: Screen Translate" })
+hl.bind("SUPER + Print", hl.dsp.exec_cmd(rinauby_cmd("rinauby-screenshot", "menu")), { description = "Utilities: Screenshot Menu" })
+hl.bind("SUPER + SHIFT + E", hl.dsp.exec_cmd(rinauby_cmd("rinauby-screenshot", "edit")), { description = "Utilities: Screenshot Edit (Satty)" })
 hl.bind("SUPER + SHIFT + C", hl.dsp.exec_cmd("hyprpicker -a"), { description = "Utilities: Color Picker >> Clipboard" })
 
 -- Screen Recording
-hl.bind("SUPER + SHIFT + R", hl.dsp.global("quickshell:regionRecord"), { locked = true, description = "Utilities: Record Region" })
 hl.bind("CTRL + ALT + R", hl.dsp.exec_cmd(qsScripts .. "/videos/record.sh --fullscreen"), { locked = true, description = "Utilities: Record Fullscreen" })
 hl.bind("SUPER + SHIFT + ALT + R", hl.dsp.exec_cmd(qsScripts .. "/videos/record.sh --fullscreen --sound"), { locked = true, description = "Utilities: Record Fullscreen with Sound" })
 
@@ -419,37 +422,22 @@ hl.bind("SUPER + SHIFT + F", function()
 end, { description = "Window: True Fullscreen (No panel)" })
 
 -- Tiling Controls & Split Ratio
-hl.bind("SUPER + D", hl.dsp.exec_cmd("hyprctl dispatch togglesplit"), { description = "Layout: Toggle Split Orientation" })
+hl.bind("SUPER + J", hl.dsp.layout("togglesplit"), { description = "Layout: Toggle Split Orientation" })
 hl.bind("SUPER + Semicolon", hl.dsp.layout("splitratio -0.1"), { repeating = true, description = "Layout: Split Ratio -0.1" })
 hl.bind("SUPER + Apostrophe", hl.dsp.layout("splitratio +0.1"), { repeating = true, description = "Layout: Split Ratio +0.1" })
 
 ---------------------------------------------------------------------
--- 7. NAVIGASI VIM & GROUP TABS
+-- 7. NAVIGASI JENDELA & GROUP TABS
 ---------------------------------------------------------------------
--- Fokus Jendela: Vim Style (H / J / K / L)
-hl.bind("SUPER + H", function()
-	if is_file_exists("/dev/shm/qs_appgrid_active") then
-		hl.dispatch(hl.dsp.global("quickshell:appGridPagePrev"))
-	else
-		hl.dispatch(hl.dsp.focus({ direction = "left" }))
-	end
-end, { description = "Window: Focus Left / App Grid Prev" })
-
-hl.bind("SUPER + L", function()
-	if is_file_exists("/dev/shm/qs_appgrid_active") then
-		hl.dispatch(hl.dsp.global("quickshell:appGridPageNext"))
-	else
-		hl.dispatch(hl.dsp.focus({ direction = "right" }))
-	end
-end, { description = "Window: Focus Right / App Grid Next" })
-
-hl.bind("SUPER + K", hl.dsp.focus({ direction = "up" }), { description = "Window: Focus Up" })
-hl.bind("SUPER + J", hl.dsp.focus({ direction = "down" }), { description = "Window: Focus Down" })
-
--- Fokus Jendela: Tombol Panah (Alternatif)
+-- Fokus Jendela: Tombol Panah
 hl.bind("SUPER + Left", hl.dsp.focus({ direction = "left" }), { description = "Window: Focus Left" })
 hl.bind("SUPER + Right", hl.dsp.focus({ direction = "right" }), { description = "Window: Focus Right" })
 hl.bind("SUPER + Up", hl.dsp.focus({ direction = "up" }), { description = "Window: Focus Up" })
+hl.bind("SUPER + Down", hl.dsp.focus({ direction = "down" }), { description = "Window: Focus Down" })
+
+-- Fokus Jendela: Vim Style (H / K)
+hl.bind("SUPER + H", hl.dsp.focus({ direction = "left" }), { description = "Window: Focus Left (Vim)" })
+hl.bind("SUPER + K", hl.dsp.focus({ direction = "up" }), { description = "Window: Focus Up (Vim)" })
 hl.bind("SUPER + Down", hl.dsp.focus({ direction = "down" }), { description = "Window: Focus Down" })
 
 -- Memindahkan Posisi Jendela: Vim Style
