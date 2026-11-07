@@ -109,3 +109,4 @@ done
 if command -v hyprctl >/dev/null 2>&1; then
     hyprctl setcursor Bibata-Modern-Classic 24 >/dev/null 2>&1 || true
 fi
+
