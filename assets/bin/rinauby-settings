@@ -1,15 +1,32 @@
 #!/usr/bin/env bash
+# ==============================================================================
+# RINAUBY SETTINGS WRAPPER & DIAGNOSTIC RUNNER
+# ==============================================================================
+
+LOG_FILE="/tmp/rinauby-settings.log"
+
+run_py() {
+    local target="$1"
+    shift
+    python3 "$target" "$@" 2>&1 | tee -a "$LOG_FILE"
+}
+
 if [ -f "/usr/share/rinauby/settings-gtk/main.py" ]; then
-    exec python3 "/usr/share/rinauby/settings-gtk/main.py" "$@"
+    run_py "/usr/share/rinauby/settings-gtk/main.py" "$@"
+    exit ${PIPESTATUS[0]}
 elif [ -f "$HOME/.config/rinauby/settings-gtk/main.py" ]; then
-    exec python3 "$HOME/.config/rinauby/settings-gtk/main.py" "$@"
+    run_py "$HOME/.config/rinauby/settings-gtk/main.py" "$@"
+    exit ${PIPESTATUS[0]}
 else
     REPO_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." 2>/dev/null && pwd)"
     if [ -f "$REPO_DIR/dotfiles/settings-gtk/main.py" ]; then
-        exec python3 "$REPO_DIR/dotfiles/settings-gtk/main.py" "$@"
+        run_py "$REPO_DIR/dotfiles/settings-gtk/main.py" "$@"
+        exit ${PIPESTATUS[0]}
     elif [ -f "/home/rifqi/Workspace/Belajar/SO/Tubes-2604/Rancangan/assets/dotfiles/settings-gtk/main.py" ]; then
-        exec python3 "/home/rifqi/Workspace/Belajar/SO/Tubes-2604/Rancangan/assets/dotfiles/settings-gtk/main.py" "$@"
+        run_py "/home/rifqi/Workspace/Belajar/SO/Tubes-2604/Rancangan/assets/dotfiles/settings-gtk/main.py" "$@"
+        exit ${PIPESTATUS[0]}
     fi
 fi
-echo "Error: Rinauby settings app not found." >&2
+
+echo "Error: Rinauby settings app (main.py) not found in system or user paths." >&2 | tee -a "$LOG_FILE"
 exit 1

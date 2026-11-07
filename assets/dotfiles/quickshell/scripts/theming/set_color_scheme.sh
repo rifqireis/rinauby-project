@@ -221,7 +221,7 @@ EOF
     quickshell -c rs ipc call waybar reload 2>/dev/null || quickshell -p "$HOME/.config/quickshell/shell.qml" ipc call waybar reload 2>/dev/null || quickshell ipc call waybar reload 2>/dev/null || true
 fi
 
-# 6. Kirim notifikasi sistem
+# 6. System notification (Standard English)
 LABEL="$([ "$NEW_MODE" = "dark" ] && echo "Dark Mode" || echo "Light Mode")"
-notify-send -a "System" "Skema Warna Diubah" "$LABEL aktif untuk GTK, Qt, dan Desktop" -i "preferences-desktop-theme" 2>/dev/null || true
+notify-send -a "System" "Color Scheme Updated" "$LABEL active across applications." -i "preferences-desktop-theme" 2>/dev/null || true
 

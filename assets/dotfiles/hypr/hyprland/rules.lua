@@ -224,6 +224,12 @@ hl.layer_rule({ match = { namespace = "quickshell:session" }, no_anim = true })
 hl.layer_rule({ match = { namespace = "quickshell:session" }, ignore_alpha = 0 })
 
 -- Rinauby Shell Rules (Digital Humanism / Renaissance Edition)
+hl.layer_rule({ match = { namespace = "waybar" }, blur = true })
+hl.layer_rule({ match = { namespace = "waybar" }, ignore_alpha = 0.2 })
+
+hl.layer_rule({ match = { namespace = "rinauby-bar" }, blur = true })
+hl.layer_rule({ match = { namespace = "rinauby-bar" }, ignore_alpha = 0.2 })
+
 hl.layer_rule({ match = { namespace = "rinauby-session" }, blur = true })
 hl.layer_rule({ match = { namespace = "rinauby-session" }, no_anim = true })
 hl.layer_rule({ match = { namespace = "rinauby-session" }, ignore_alpha = 0 })

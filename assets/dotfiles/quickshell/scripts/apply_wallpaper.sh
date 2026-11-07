@@ -342,9 +342,5 @@ fi
 quickshell -c rs ipc call theme reloadColors 2>/dev/null || quickshell -p "$HOME/.config/quickshell/shell.qml" ipc call theme reloadColors 2>/dev/null || quickshell ipc call theme reloadColors 2>/dev/null || true
 quickshell -c rs ipc call rinaubybar reload 2>/dev/null || quickshell -c rs ipc call waybar reload 2>/dev/null || quickshell -p "$HOME/.config/quickshell/shell.qml" ipc call waybar reload 2>/dev/null || quickshell ipc call waybar reload 2>/dev/null || true
 
-# 6. Notifikasi Sukses
-if [ "$THEME_MODE" = "modern" ]; then
-    notify-send -a "System" "Tema Modern Diaktifkan" "$CHOSEN · Monochromatic Matugen Dynamic" -i "$SELECTED_PATH" 2>/dev/null || true
-else
-    notify-send -a "System" "Tema Klasik Diaktifkan" "$CHOSEN · Ochre Gold & Warm Parchment" -i "$SELECTED_PATH" 2>/dev/null || true
-fi
+# 6. Success Notification (Neutral, Standard English)
+notify-send -a "System" "Wallpaper Updated" "$CHOSEN" -i "$SELECTED_PATH" 2>/dev/null || true

@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 # ==============================================================================
-# RINAUBY (DIGITAL HUMANISM EDITION) — UBUNTU 26.10 / 26.04 / 24.04 MASTER INSTALLER
+# Hyprland — UBUNTU 26.10 / 26.04 / 24.04 MASTER INSTALLER
 # Operating Systems Course Project 2026 (Ubuntu Remastering via Cubic)
 # ==============================================================================
 # This script is designed to run:
@@ -49,7 +49,7 @@ log_err()     { echo -e "  ${C_RED}[ERROR]${C_RESET} $*" >&2; }
 log_fatal()   { echo -e "  ${C_RED}[FATAL]${C_RESET} $*" >&2; }
 
 echo -e "${C_BOLD}${C_GOLD}==============================================================================${C_RESET}"
-echo -e "${C_BOLD}${C_GOLD}  RINAUBY (DIGITAL HUMANISM EDITION) — UBUNTU MASTER PROVISIONER              ${C_RESET}"
+echo -e "${C_BOLD}${C_GOLD}  Hyprland — UBUNTU MASTER PROVISIONER              ${C_RESET}"
 echo -e "${C_BOLD}${C_GOLD}  Ubuntu 26.10 / 26.04 / 24.04 Automated Setup for Cubic Chroot & Live ISO    ${C_RESET}"
 echo -e "${C_BOLD}${C_GOLD}==============================================================================${C_RESET}"
 
@@ -205,6 +205,8 @@ WAYLAND_PKGS=(
     gtklock
     qtwayland5
     qt6-wayland
+    liblz4-1
+    libdav1d7
     libwayland-client0
     libwayland-cursor0
     libwayland-egl1
@@ -499,19 +501,34 @@ if [ -f "$SCRIPT_DIR/apply_theming_and_customization.sh" ]; then
 fi
 
 # ------------------------------------------------------------------------------
-# 8. INSTALL BINARY WRAPPERS (rinauby-*) & DESKTOP APPLICATIONS
+# 8. INSTALL BINARY WRAPPERS (rinauby-*), AWWW/SWWW & DESKTOP APPLICATIONS
 # ------------------------------------------------------------------------------
-log_step "PHASE 8/11: Installing Binary Wrappers (/usr/local/bin/rinauby-*) & Desktop Entry"
+log_step "PHASE 8/11: Installing Binary Wrappers, AWWW/SWWW & Desktop Applications"
 
 mkdir -p /usr/local/bin
 if [ -d "$BIN_DIR" ]; then
-    cp -f "$BIN_DIR"/rinauby-* /usr/local/bin/
-    chmod 755 /usr/local/bin/rinauby-*
+    cp -rf "$BIN_DIR"/* /usr/local/bin/
+    chmod 755 /usr/local/bin/rinauby-* /usr/local/bin/awww* 2>/dev/null || true
+    
+    # Symlink swww -> awww untuk animasi transisi melingkar (circular grow reveal)
+    if [ -f "/usr/local/bin/awww" ]; then
+        ln -sfn /usr/local/bin/awww /usr/local/bin/swww
+    fi
+    if [ -f "/usr/local/bin/awww-daemon" ]; then
+        ln -sfn /usr/local/bin/awww-daemon /usr/local/bin/swww-daemon
+    fi
+
+    # Symlink wrapper settings-renauby & renauby-settings
+    if [ -f "/usr/local/bin/rinauby-settings" ]; then
+        ln -sfn /usr/local/bin/rinauby-settings /usr/local/bin/settings-renauby
+        ln -sfn /usr/local/bin/rinauby-settings /usr/local/bin/renauby-settings
+    fi
+
     sed -i \
         -e "s|$HOST_HARDCODED_PREFIX/wallpapers|$SYS_WALL_DIR|g" \
         -e "s|$HOST_HARDCODED_PREFIX/dotfiles|$SYS_SHARE_DIR|g" \
         /usr/local/bin/rinauby-* 2>/dev/null || true
-    log_ok "All rinauby-* wrapper binaries installed to /usr/local/bin/ (paths sanitized)"
+    log_ok "All rinauby-*, awww, and desktop wrappers installed to /usr/local/bin/ (paths sanitized)"
 fi
 
 # Ensure all scripts in /usr/share/rinauby are executable
@@ -691,7 +708,6 @@ if [ "$VIRT_ENV" = "oracle" ] || [[ "$DMI_PROD" == *"VirtualBox"* ]] || [ "$VIRT
         if glxinfo 2>/dev/null | grep -qi "llvmpipe"; then
             export LIBGL_ALWAYS_SOFTWARE=1
             export GALLIUM_DRIVER=llvmpipe
-            export WLR_RENDERER=pixman
         fi
     fi
 fi
@@ -712,25 +728,32 @@ chmod 755 /usr/local/bin/start-rinauby-hyprland
 
 # 10C. Register Wayland Session in /usr/share/wayland-sessions/
 mkdir -p /usr/share/wayland-sessions
-cat << 'EOF' > /usr/share/wayland-sessions/rinauby.desktop
+cat << 'EOF' > /usr/share/wayland-sessions/hyprland.desktop
 [Desktop Entry]
-Name=Rinauby (Digital Humanism)
-Comment=Rinauby Hyprland Wayland Compositor
+Name=Hyprland
+Comment=Hyprland Wayland Compositor
 Exec=/usr/local/bin/start-rinauby-hyprland
 Type=Application
 DesktopNames=Hyprland
-Keywords=wayland;compositor;tiling;rinauby;hyprland;
+Keywords=wayland;compositor;tiling;hyprland;
 EOF
 
-# Also link or copy to hyprland.desktop so choosing "Hyprland" in GDM3 uses the safe launcher
-cp -f /usr/share/wayland-sessions/rinauby.desktop /usr/share/wayland-sessions/hyprland.desktop
-log_ok "Wayland session 'Rinauby (Digital Humanism)' registered in /usr/share/wayland-sessions/"
+# Symlink rinauby.desktop -> hyprland.desktop for backward compatibility
+cp -f /usr/share/wayland-sessions/hyprland.desktop /usr/share/wayland-sessions/rinauby.desktop
+log_ok "Wayland session 'Hyprland' registered in /usr/share/wayland-sessions/"
 
-# 10D. Display Manager Session Configuration (GDM3 / Wayland)
-# NOTE: The default session is not hijacked so Live CD retains standard GNOME and official Ubuntu Installer.
-# Users or evaluators can select "Rinauby (Digital Humanism)" via the gear icon on the GDM login screen.
-log_ok "Standard GNOME session & Ubuntu Live Installer preserved for default initial boot."
-log_ok "Session 'Rinauby (Digital Humanism)' available as an selectable option in Display Manager (GDM3)."
+# 10D. Display Manager Session Configuration (SDDM Sugar-Candy & Wayland)
+mkdir -p /etc/X11
+echo "/usr/bin/sddm" > /etc/X11/default-display-manager
+if command -v debconf-set-selections >/dev/null 2>&1; then
+    echo "sddm shared/default-x-display-manager select sddm" | debconf-set-selections 2>/dev/null || true
+fi
+if command -v systemctl >/dev/null 2>&1; then
+    systemctl disable gdm3.service gdm.service 2>/dev/null || true
+    systemctl enable sddm.service 2>/dev/null || true
+fi
+log_ok "SDDM Sugar-Candy enabled as default Display Manager (/etc/X11/default-display-manager)."
+log_ok "Session 'Hyprland' registered as default Wayland session."
 
 # Ensure Wayland is not disabled in GDM3 configuration
 if [ -f /etc/gdm3/custom.conf ]; then
@@ -756,9 +779,9 @@ log_step "PHASE 11/11: Updating Distro Identity (/etc/os-release) & Cache Cleanu
 
 if [ -f /etc/os-release ]; then
     cp -n /etc/os-release /etc/os-release.ubuntu.bak 2>/dev/null || true
-    sed -i 's/^PRETTY_NAME=.*/PRETTY_NAME="Rinauby (Digital Humanism Edition)"/' /etc/os-release || true
-    sed -i 's/^NAME=.*/NAME="Rinauby"/' /etc/os-release || true
-    log_ok "Distribution identity in /etc/os-release updated to: Rinauby (Digital Humanism Edition)"
+    sed -i 's/^PRETTY_NAME=.*/PRETTY_NAME="Hyprland"/' /etc/os-release || true
+    sed -i 's/^NAME=.*/NAME="Hyprland"/' /etc/os-release || true
+    log_ok "Distribution identity in /etc/os-release updated to: Hyprland"
 fi
 
 # Enable essential system services (safe for both Chroot and VM environments)
@@ -774,9 +797,9 @@ if [ -f "$SCRIPT_DIR/apply_theming_and_customization.sh" ]; then
     bash "$SCRIPT_DIR/apply_theming_and_customization.sh" --check
 fi
 
-log_step "INSTALLATION COMPLETE: RINAUBY (DIGITAL HUMANISM EDITION)"
+log_step "INSTALLATION COMPLETE: Hyprland"
 echo -e "${C_GREEN}All desktop components and configurations are ready:${C_RESET}"
-echo -e "  • Compositor & Session : ${C_GOLD}Rinauby (Digital Humanism) / Hyprland${C_RESET}"
+echo -e "  • Compositor & Session : ${C_GOLD}Hyprland${C_RESET}"
 echo -e "  • Status Bar           : ${C_GOLD}RinaubyBar (Native Quickshell Bar with Roman Numerals, Audio & Latin Philosophy Quotes)${C_RESET}"
 echo -e "  • Application Launcher : ${C_GOLD}rinauby-launcher (Native Quickshell - Super + Space / Super + D)${C_RESET}"
 echo -e "  • System Control Center: ${C_GOLD}rinauby-syspanel (Native Quickshell Quick Actions & Media - Super + A / Super + N)${C_RESET}"
@@ -792,5 +815,5 @@ if [ "$IS_CHROOT" -eq 1 ]; then
     echo -e "${C_BLUE}You are running inside a Cubic Chroot container.${C_RESET}"
     echo -e "${C_BLUE}Click 'Next' in Cubic to generate the bootable remastered ISO image.${C_RESET}"
 else
-    echo -e "${C_BLUE}Please log out or reboot, then select 'Rinauby (Digital Humanism)' on the login screen.${C_RESET}"
+    echo -e "${C_BLUE}Please log out or reboot, then select 'Hyprland' on the login screen.${C_RESET}"
 fi

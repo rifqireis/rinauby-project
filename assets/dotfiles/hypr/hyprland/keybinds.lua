@@ -215,7 +215,7 @@ end, { description = "Window: Close" })
 -- Force Kill Jendela Hang / Beku
 hl.bind("SUPER + SHIFT + ALT + Q", hl.dsp.exec_cmd("hyprctl kill"), { description = "Window: Force Zap Window" })
 hl.bind("ALT + F4", function()
-	hl.exec_cmd('notify-send "Pintasan Tutup Jendela" "Gunakan Super+Q untuk menutup jendela di Hyprland" -a Hyprland')
+	hl.exec_cmd('notify-send "Close Window" "Use Super+Q to close active window in Hyprland" -a "Hyprland"')
 end, { non_consuming = true })
 
 -- Helper & Fungsi Smart Float (55% x 65% dengan Auto Staggering / Cascade)
@@ -544,7 +544,7 @@ hl.define_submap("virtual-machine", function()
 			hl.dispatch(hl.dsp.exec_cmd("notify-send 'Exited Virtual Machine submap' 'Keybinds re-enabled' -a 'Hyprland'"))
 			hl.dispatch(hl.dsp.submap("reset"))
 		elseif currentsubmap == "" then
-			hl.dispatch(hl.dsp.exec_cmd("notify-send 'Entered Virtual Machine submap' 'Keybinds disabled. Tekan SUPER+ALT+F1 untuk keluar' -a 'Hyprland'"))
+			hl.dispatch(hl.dsp.exec_cmd("notify-send 'Entered Virtual Machine submap' 'Keybinds disabled. Press SUPER+ALT+F1 to exit' -a 'Hyprland'"))
 			hl.dispatch(hl.dsp.submap("virtual-machine"))
 		end
 	end, { submap_universal = true })

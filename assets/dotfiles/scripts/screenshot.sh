@@ -35,14 +35,14 @@ case "$1" in
         [ -z "$GEOM" ] && exit 0
         grim -g "$GEOM" "$FILEPATH"
         wl-copy --type image/png < "$FILEPATH"
-        notify_success "$FILEPATH" "Tangkapan Layar Area" "Tersimpan: $FILENAME\nDisalin ke papan klip."
+        notify_success "$FILEPATH" "Area Screenshot Captured" "Saved: $FILENAME\nCopied to clipboard."
         ;;
 
     "full"|"fullscreen"|"screen")
         sleep 0.15
         grim "$FILEPATH"
         wl-copy --type image/png < "$FILEPATH"
-        notify_success "$FILEPATH" "Tangkapan Layar Penuh" "Tersimpan: $FILENAME\nDisalin ke papan klip."
+        notify_success "$FILEPATH" "Fullscreen Captured" "Saved: $FILENAME\nCopied to clipboard."
         ;;
 
     "window")
@@ -51,13 +51,13 @@ case "$1" in
             GEOM=$(echo "$ACTIVE_WINDOW" | jq -r '"\(.at[0]),\(.at[1]) \(.size[0])x\(.size[1])"')
             grim -g "$GEOM" "$FILEPATH"
             wl-copy --type image/png < "$FILEPATH"
-            notify_success "$FILEPATH" "Tangkapan Jendela Aktif" "Tersimpan: $FILENAME\nDisalin ke papan klip."
+            notify_success "$FILEPATH" "Active Window Captured" "Saved: $FILENAME\nCopied to clipboard."
         else
             GEOM=$(slurp "${SLURP_ARGS[@]}")
             [ -z "$GEOM" ] && exit 0
             grim -g "$GEOM" "$FILEPATH"
             wl-copy --type image/png < "$FILEPATH"
-            notify_success "$FILEPATH" "Tangkapan Layar Area" "Tersimpan: $FILENAME\nDisalin ke papan klip."
+            notify_success "$FILEPATH" "Area Screenshot Captured" "Saved: $FILENAME\nCopied to clipboard."
         fi
         ;;
 
@@ -69,7 +69,7 @@ case "$1" in
         else
             grim -g "$GEOM" "$FILEPATH"
             wl-copy --type image/png < "$FILEPATH"
-            notify_success "$FILEPATH" "Tangkapan Layar Area" "Tersimpan: $FILENAME\nDisalin ke papan klip."
+            notify_success "$FILEPATH" "Area Screenshot Captured" "Saved: $FILENAME\nCopied to clipboard."
         fi
         ;;
 
@@ -82,12 +82,12 @@ case "$1" in
             SEC="${2:-5}"
         fi
         if command -v notify-send >/dev/null 2>&1; then
-            notify-send -a "System" "Tangkapan Layar Tunda" "Mengambil tangkapan layar dalam $SEC detik..." 2>/dev/null || true
+            notify-send -a "System" "Delayed Screenshot" "Capturing screen in $SEC seconds..." 2>/dev/null || true
         fi
         sleep "$SEC"
         grim "$FILEPATH"
         wl-copy --type image/png < "$FILEPATH"
-        notify_success "$FILEPATH" "Tangkapan Layar Tunda" "Tersimpan: $FILENAME\nDisalin ke papan klip."
+        notify_success "$FILEPATH" "Delayed Screenshot" "Saved: $FILENAME\nCopied to clipboard."
         ;;
 
     "menu"|*)

@@ -29,7 +29,7 @@ get_current_mode() {
 }
 
 apply_classic() {
-    echo "🏛️ Mengaktifkan Mode: Renaissance Klasik (Parchment & Ochre Gold)..."
+    echo "Synchronizing desktop appearance..."
     
     # 1. Wallpaper
     local wp="$SYS_WALL_DIR/apotheosis.jpg"
@@ -79,12 +79,12 @@ apply_classic() {
     fi
 
     echo "classic" > "$STATE_FILE"
-    notify-send -a "Rinauby Theme" "Renaissance Klasik" "Palet Ochre Gold & Everforest aktif." 2>/dev/null || true
-    echo "✓ Sukses: Mode Renaissance Klasik Aktif."
+    notify-send -a "System" "Theme Applied" "Desktop appearance synchronized." -i "preferences-desktop-theme" 2>/dev/null || true
+    echo "✓ Desktop appearance synchronized."
 }
 
 apply_modern() {
-    echo "⚡ Mengaktifkan Mode: Renaissance Modern (Ultramarine Blue & Cyber Mocha)..."
+    echo "Synchronizing desktop appearance..."
     
     # 1. Wallpaper
     local wp="$SYS_WALL_DIR/school_of_athens.jpg"
@@ -133,8 +133,8 @@ apply_modern() {
     fi
 
     echo "modern" > "$STATE_FILE"
-    notify-send -a "Rinauby Theme" "Renaissance Modern" "Palet Cobalt Blue & Catppuccin Mocha aktif." 2>/dev/null || true
-    echo "✓ Sukses: Mode Renaissance Modern Aktif."
+    notify-send -a "System" "Theme Applied" "Desktop appearance synchronized." -i "preferences-desktop-theme" 2>/dev/null || true
+    echo "✓ Desktop appearance synchronized."
 }
 
 MODE="${1:-toggle}"

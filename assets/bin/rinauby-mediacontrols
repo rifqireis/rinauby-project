@@ -11,7 +11,11 @@ QS_CFG="$(cd "$(dirname "${BASH_SOURCE[0]}")/../dotfiles/quickshell" 2>/dev/null
 [ -f "$QS_CFG" ] || QS_CFG="$HOME/.config/quickshell/shell.qml"
 
 if ! pgrep -x quickshell >/dev/null && ! pgrep -x qs >/dev/null; then
-    quickshell -p "$QS_CFG" >/dev/null 2>&1 &
+    if [ -d "$HOME/.config/quickshell/rs" ] || [ -f "$HOME/.config/quickshell/shell.qml" ]; then
+        quickshell -c rs -d >/dev/null 2>&1 &
+    else
+        quickshell -p "$QS_CFG" >/dev/null 2>&1 &
+    fi
     sleep 0.4
 fi
 

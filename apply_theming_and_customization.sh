@@ -53,6 +53,7 @@ deploy_plymouth_pixels() {
     
     local target_dir="/usr/share/plymouth/themes/pixels"
     mkdir -p "$target_dir"
+    mkdir -p /etc/plymouth
     
     if [ -d "$PLYMOUTH_DIR/pixels" ]; then
         cp -rf "$PLYMOUTH_DIR/pixels"/* "$target_dir/" 2>/dev/null || true
@@ -63,10 +64,37 @@ deploy_plymouth_pixels() {
         log_warn "Plymouth source directory '$PLYMOUTH_DIR/pixels' not found."
     fi
 
-    # Set as default theme and update initramfs if running as root
+    # Daftarkan alternatif Debian & set default theme
+    if command -v update-alternatives >/dev/null 2>&1 && [ -f "$target_dir/pixels.plymouth" ]; then
+        update-alternatives --install /usr/share/plymouth/themes/default.plymouth default.plymouth "$target_dir/pixels.plymouth" 200 2>/dev/null || true
+        update-alternatives --set default.plymouth "$target_dir/pixels.plymouth" 2>/dev/null || true
+    fi
+
+    cat << 'EOF' > /etc/plymouth/plymouthd.conf
+[Daemon]
+Theme=pixels
+ShowDelay=0
+EOF
+
     if command -v plymouth-set-default-theme >/dev/null 2>&1; then
-        plymouth-set-default-theme -R pixels 2>/dev/null || plymouth-set-default-theme pixels 2>/dev/null || true
+        plymouth-set-default-theme pixels 2>/dev/null || true
         log_ok "Default Plymouth theme set to 'pixels'"
+    fi
+
+    # Pastikan kernel command line memuat quiet splash
+    if [ -f /etc/default/grub ]; then
+        if ! grep -q "quiet splash" /etc/default/grub; then
+            sed -i 's/GRUB_CMDLINE_LINUX_DEFAULT="\(.*\)"/GRUB_CMDLINE_LINUX_DEFAULT="\1 quiet splash"/' /etc/default/grub
+            sed -i 's/""/"quiet splash"/g' /etc/default/grub
+        fi
+        command -v update-grub >/dev/null 2>&1 && update-grub >/dev/null 2>&1 || true
+    fi
+
+    # Update initramfs untuk memuat tema pixels ke dalam ramdisk kernel
+    if command -v update-initramfs >/dev/null 2>&1; then
+        log_info "Updating kernel initramfs for Plymouth 'pixels' boot splash..."
+        update-initramfs -u -k all >/dev/null 2>&1 || update-initramfs -u >/dev/null 2>&1 || true
+        log_ok "Kernel initramfs updated with Plymouth 'pixels'"
     fi
 }
 
@@ -74,7 +102,7 @@ deploy_plymouth_pixels() {
 # 2. DEPLOY SDDM SUGAR-CANDY (MONA LISA & PARTIAL BLUR)
 # ------------------------------------------------------------------------------
 deploy_sddm_sugar_candy() {
-    log_step "2. Deploying SDDM Sugar-Candy (Mona Lisa & PartialBlur)"
+    log_step "2. Deploying SDDM Sugar-Candy (Mona Lisa & Default DM Activation)"
     
     local theme_target="/usr/share/sddm/themes/sugar-candy"
     mkdir -p "$theme_target"
@@ -96,16 +124,33 @@ deploy_sddm_sugar_candy() {
         log_ok "Mona Lisa Louvre C2RMF widescreen background installed."
     fi
 
-    # Configure SDDM to use Sugar-Candy
+    # Configure SDDM to use Sugar-Candy and default to hyprland.desktop session
     cat << 'EOF' > /etc/sddm.conf.d/rinauby.conf
 [Theme]
 Current=sugar-candy
+
+[Users]
+DefaultSession=hyprland.desktop
 
 [General]
 InputMethod=
 Numlock=none
 EOF
     log_ok "SDDM configuration registered in /etc/sddm.conf.d/rinauby.conf"
+
+    # Set SDDM as the primary Display Manager on Debian/Ubuntu
+    mkdir -p /etc/X11
+    echo "/usr/bin/sddm" > /etc/X11/default-display-manager
+    if command -v debconf-set-selections >/dev/null 2>&1; then
+        echo "sddm shared/default-x-display-manager select sddm" | debconf-set-selections 2>/dev/null || true
+    fi
+
+    # Enable SDDM service and disable GDM3 if systemctl is available
+    if command -v systemctl >/dev/null 2>&1; then
+        systemctl disable gdm3.service gdm.service 2>/dev/null || true
+        systemctl enable sddm.service 2>/dev/null || true
+        log_ok "SDDM display manager enabled as default system greeter (GDM3 disabled)."
+    fi
 }
 
 # ------------------------------------------------------------------------------
@@ -270,6 +315,8 @@ verify_rinauby_environment() {
     check_item "Binary" "Hyprland Compositor" "command -v hyprctl >/dev/null 2>&1"
     check_item "Binary" "Hyprlock Screen Lock" "command -v hyprlock >/dev/null 2>&1"
     check_item "Binary" "Quickshell Native Shell" "command -v quickshell >/dev/null 2>&1"
+    check_item "Binary" "Awww / SWWW Wallpaper Engine" "command -v awww >/dev/null 2>&1 || command -v swww >/dev/null 2>&1 || [ -f '$BIN_DIR/awww' ]"
+    check_item "Binary" "Rinauby Session Autostart" "command -v rinauby-autostart >/dev/null 2>&1 || [ -f '$BIN_DIR/rinauby-autostart' ]"
     check_item "Binary" "Matugen Dynamic Color Engine" "command -v matugen >/dev/null 2>&1"
     check_item "Binary" "NWG-Displays Monitor Manager" "command -v nwg-displays >/dev/null 2>&1"
     check_item "Binary" "Kitty Terminal Emulator" "command -v kitty >/dev/null 2>&1"

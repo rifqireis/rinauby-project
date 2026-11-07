@@ -8,7 +8,10 @@ end
 
 -- put former exec-once commands inside the func and former exec commands outside
 hl.on("hyprland.start", function()
-	-- Splash Screen (Dijalankan paling awal)
+	-- Rinauby Unified Autostart (Wayland, Awww, Wallpaper, Quickshell)
+	run_base("rinauby-autostart", "command -v rinauby-autostart >/dev/null 2>&1 && rinauby-autostart")
+
+	-- Splash Screen (Dijalankan paling awal jika tersedia)
 	run_base("QuickSplash", "qs -p $HOME/.config/hypr/splash")
 
 	-- Bar, wallpaper (Quickshell dijalankan dalam mode daemon)

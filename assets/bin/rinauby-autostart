@@ -1,0 +1,111 @@
+#!/usr/bin/env bash
+# ==============================================================================
+# RINAUBY AUTOSTART DAEMON & SESSION ORCHESTRATOR
+# Menjamin pemuatan deterministik Wayland Compositor, Wallpaper, Quickshell & OSD
+# ==============================================================================
+
+# 1. Tunggu soket Wayland dan display compositor stabil
+MAX_TRIES=50
+COUNT=0
+while [ -z "$WAYLAND_DISPLAY" ] && [ $COUNT -lt $MAX_TRIES ]; do
+    sleep 0.1
+    COUNT=$((COUNT + 1))
+done
+
+# Pastikan environment D-Bus dan systemd selaras
+if command -v dbus-update-activation-environment >/dev/null 2>&1; then
+    dbus-update-activation-environment --systemd WAYLAND_DISPLAY XDG_CURRENT_DESKTOP=Hyprland 2>/dev/null || true
+fi
+
+# 2. Luncurkan Wallpaper Daemon (awww-daemon / swww-daemon)
+WP_DAEMON=""
+if command -v awww-daemon >/dev/null 2>&1; then
+    WP_DAEMON="awww-daemon"
+elif command -v swww-daemon >/dev/null 2>&1; then
+    WP_DAEMON="swww-daemon"
+fi
+
+if [ -n "$WP_DAEMON" ] && ! pgrep -x "$WP_DAEMON" >/dev/null 2>&1; then
+    "$WP_DAEMON" >/dev/null 2>&1 &
+    sleep 0.4
+fi
+
+# 3. Terapkan Wallpaper Default (Apotheosis / School of Athens)
+DEFAULT_WP=""
+for candidate in \
+    "/usr/share/backgrounds/rinauby/apotheosis.jpg" \
+    "/usr/share/backgrounds/rinauby/school_of_athens.jpg" \
+    "$HOME/.local/share/backgrounds/rinauby/apotheosis.jpg" \
+    "$HOME/.local/share/backgrounds/rinauby/school_of_athens.jpg" \
+    "/usr/share/backgrounds/rinauby/mona_lisa.jpg"; do
+    if [ -f "$candidate" ]; then
+        DEFAULT_WP="$candidate"
+        break
+    fi
+done
+
+APPLY_WP_SCRIPT=""
+for candidate_script in \
+    "$HOME/.config/quickshell/scripts/apply_wallpaper.sh" \
+    "/usr/share/rinauby/quickshell/scripts/apply_wallpaper.sh" \
+    "$HOME/.config/scripts/apply_wallpaper.sh" \
+    "/usr/local/bin/rinauby-wallpaper"; do
+    if [ -f "$candidate_script" ]; then
+        APPLY_WP_SCRIPT="$candidate_script"
+        break
+    fi
+done
+
+if [ -n "$DEFAULT_WP" ]; then
+    if [ -n "$APPLY_WP_SCRIPT" ]; then
+        bash "$APPLY_WP_SCRIPT" "$DEFAULT_WP" >/dev/null 2>&1 &
+    elif command -v awww >/dev/null 2>&1; then
+        awww img "$DEFAULT_WP" --transition-type grow --transition-pos center --transition-duration 1.5 2>/dev/null || true
+    elif command -v swww >/dev/null 2>&1; then
+        swww img "$DEFAULT_WP" --transition-type grow --transition-pos center --transition-duration 1.5 2>/dev/null || true
+    elif command -v swaybg >/dev/null 2>&1; then
+        pkill -x swaybg 2>/dev/null || true
+        swaybg -i "$DEFAULT_WP" -m fill >/dev/null 2>&1 &
+    fi
+fi
+
+# 4. Luncurkan Native Quickshell Desktop (Bar, Launcher, Session, OSD) dalam mode daemon
+if ! pgrep -x quickshell >/dev/null 2>&1 && ! pgrep -x qs >/dev/null 2>&1; then
+    if [ -d "$HOME/.config/quickshell/rs" ] || [ -f "$HOME/.config/quickshell/shell.qml" ]; then
+        quickshell -c rs -d >/dev/null 2>&1 &
+    elif command -v qs >/dev/null 2>&1; then
+        qs -d >/dev/null 2>&1 &
+    fi
+fi
+
+# 5. Layanan Clipboard History (cliphist)
+if command -v wl-paste >/dev/null 2>&1 && command -v cliphist >/dev/null 2>&1; then
+    pgrep -f "cliphist store" >/dev/null 2>&1 || (
+        wl-paste --type text --watch cliphist store >/dev/null 2>&1 &
+        wl-paste --type image --watch cliphist store >/dev/null 2>&1 &
+    )
+fi
+
+# 6. Layanan On-Screen Display (OSD)
+if command -v rinauby-osd >/dev/null 2>&1; then
+    pgrep -f "rinauby-osd daemon" >/dev/null 2>&1 || rinauby-osd daemon >/dev/null 2>&1 &
+elif [ -f "$HOME/.config/scripts/osd.py" ]; then
+    pgrep -f "osd.py daemon" >/dev/null 2>&1 || python3 "$HOME/.config/scripts/osd.py" daemon >/dev/null 2>&1 &
+fi
+
+# 7. Polkit GNOME Authentication Agent
+for pk in \
+    /usr/lib/policykit-1-gnome/polkit-gnome-authentication-agent-1 \
+    /usr/libexec/polkit-gnome-authentication-agent-1 \
+    /usr/lib/polkit-gnome/polkit-gnome-authentication-agent-1 \
+    /usr/lib/polkit-kde-authentication-agent-1; do
+    if [ -x "$pk" ]; then
+        pgrep -f "$(basename "$pk")" >/dev/null 2>&1 || "$pk" >/dev/null 2>&1 &
+        break
+    fi
+done
+
+# 8. Set Cursor Theme & Size
+if command -v hyprctl >/dev/null 2>&1; then
+    hyprctl setcursor Bibata-Modern-Classic 24 >/dev/null 2>&1 || true
+fi

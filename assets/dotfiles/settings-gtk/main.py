@@ -26,6 +26,9 @@ gi.require_version("Gtk", "4.0")
 gi.require_version("Adw", "1")
 from gi.repository import Gtk, Adw, Gio, GLib, Gdk
 
+# Inisialisasi Libadwaita subsystem sebelum widget atau style provider dibuat
+Adw.init()
+
 from sidebar import SettingsSidebar
 import importlib
 
@@ -182,13 +185,16 @@ class SettingsMainWindow(Adw.ApplicationWindow):
     def _load_css(self):
         css_file = os.path.join(CURRENT_DIR, "style.css")
         if os.path.exists(css_file):
-            provider = Gtk.CssProvider()
-            provider.load_from_path(css_file)
-            display = Gdk.Display.get_default()
-            if display:
-                Gtk.StyleContext.add_provider_for_display(
-                    display, provider, Gtk.STYLE_PROVIDER_PRIORITY_APPLICATION
-                )
+            try:
+                provider = Gtk.CssProvider()
+                provider.load_from_path(css_file)
+                display = Gdk.Display.get_default()
+                if display:
+                    Gtk.StyleContext.add_provider_for_display(
+                        display, provider, Gtk.STYLE_PROVIDER_PRIORITY_APPLICATION
+                    )
+            except Exception as e:
+                print(f"Warning: Failed to load style.css: {e}", file=sys.stderr)
 
     def _load_page(self, page_id):
         if page_id in self.page_instances:
@@ -269,7 +275,7 @@ class SettingsApp(Adw.Application):
     def __init__(self, initial_page="wifi"):
         super().__init__(
             application_id="org.rinauby.settings",
-            flags=Gio.ApplicationFlags.HANDLES_COMMAND_LINE
+            flags=Gio.ApplicationFlags.HANDLES_COMMAND_LINE | Gio.ApplicationFlags.NON_UNIQUE
         )
         self.initial_page = initial_page
         self.win = None
@@ -313,8 +319,9 @@ class SettingsApp(Adw.Application):
         self.win.present()
 
 def main():
-    GLib.set_prgname("org.system.settings")
+    GLib.set_prgname("org.rinauby.settings")
     GLib.set_application_name("Settings")
+    Adw.init()
     app = SettingsApp()
     return app.run(sys.argv)
 
