@@ -1,0 +1,91 @@
+# ==============================================================================
+# RINAUBY : DIGITAL HUMANISM STARSHIP PROMPT
+# Inspired by rccyx/osyx — 4-Segment Pill Capsules with Classical & Cyber Palettes
+# ==============================================================================
+
+format = """
+[ $os$directory ](bg:#2d353b fg:#db9c5e bold)\
+[](fg:#2d353b bg:#333c43)\
+$git_branch\
+$git_status\
+[](fg:#333c43 bg:#3a454a)\
+$package\
+$c\
+$rust\
+$golang\
+$nodejs\
+$python\
+[](fg:#3a454a bg:#232a2e)\
+$time\
+[ ](fg:#232a2e)
+$character"""
+
+right_format = """"""
+
+add_newline = false
+
+[character]
+success_symbol = "[❯](bold #db9c5e)"
+error_symbol = "[❯](bold #e67e80)"
+
+[os]
+disabled = false
+style = "bg:#2d353b fg:#e5c07b"
+format = "[$symbol]($style)"
+
+[os.symbols]
+Ubuntu = " "
+Debian = " "
+Arch = "󰣇 "
+Linux = "󰌽 "
+
+[directory]
+style = "bg:#2d353b fg:#d3c6aa bold"
+format = "[$path]($style) "
+truncation_length = 3
+truncation_symbol = "…/"
+home_symbol = " ~"
+
+[git_branch]
+style = "bg:#333c43 fg:#a7c080 bold"
+format = "[  $branch ]($style)"
+
+[git_status]
+style = "bg:#333c43 fg:#e5c07b"
+format = "[$all_status$ahead_behind ]($style)"
+
+[package]
+symbol = "󰏗 "
+style = "bg:#3a454a fg:#d3c6aa"
+format = "[ $symbol$version ]($style)"
+
+[c]
+symbol = " "
+style = "bg:#3a454a fg:#7fbbb3"
+format = "[ $symbol($version) ]($style)"
+
+[rust]
+symbol = " "
+style = "bg:#3a454a fg:#e67e80"
+format = "[ $symbol($version) ]($style)"
+
+[golang]
+symbol = " "
+style = "bg:#3a454a fg:#7fbbb3"
+format = "[ $symbol($version) ]($style)"
+
+[nodejs]
+symbol = " "
+style = "bg:#3a454a fg:#a7c080"
+format = "[ $symbol($version) ]($style)"
+
+[python]
+symbol = " "
+style = "bg:#3a454a fg:#db9c5e"
+format = "[ $symbol($version) ]($style)"
+
+[time]
+disabled = false
+time_format = "%R"
+style = "bg:#232a2e fg:#859289"
+format = "[  $time ]($style)"

@@ -1,0 +1,164 @@
+#!/usr/bin/env bash
+# ==============================================================================
+# RINAUBY : DUAL-THEME SWITCHER CLI
+# Digital Humanism Edition | Tubes Praktikum Sistem Operasi 2026
+#
+# Beralih secara instan dan mulus antara:
+# 1. Renaissance Klasik (Warm Slate, Ochre Gold #db9c5e, Everforest, Papirus Gold)
+# 2. Renaissance Modern (Deep Midnight, Cobalt Blue #3b82f6, Catppuccin Mocha)
+# ==============================================================================
+
+set -eo pipefail
+
+STATE_DIR="$HOME/.local/state/rinauby"
+STATE_FILE="$STATE_DIR/theme_mode"
+mkdir -p "$STATE_DIR"
+
+SYS_WALL_DIR="/usr/share/backgrounds/rinauby"
+[ -d "$SYS_WALL_DIR" ] || SYS_WALL_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/../wallpapers" 2>/dev/null && pwd)"
+[ -d "$SYS_WALL_DIR" ] || SYS_WALL_DIR="$HOME/.local/share/backgrounds/rinauby"
+
+KITTY_CFG_DIR="$HOME/.config/kitty"
+
+get_current_mode() {
+    if [ -f "$STATE_FILE" ]; then
+        cat "$STATE_FILE"
+    else
+        echo "classic"
+    fi
+}
+
+apply_classic() {
+    echo "🏛️ Mengaktifkan Mode: Renaissance Klasik (Parchment & Ochre Gold)..."
+    
+    # 1. Wallpaper
+    local wp="$SYS_WALL_DIR/apotheosis.jpg"
+    [ -f "$wp" ] || wp="$SYS_WALL_DIR/mona_lisa.jpg"
+    [ -f "$wp" ] || wp="$SYS_WALL_DIR/school_of_athens.jpg"
+    
+    if [ -f "$wp" ]; then
+        if command -v swww >/dev/null 2>&1 && pgrep -x swww-daemon >/dev/null 2>&1; then
+            swww img "$wp" --transition-type fade --transition-duration 1.2 2>/dev/null || true
+        elif command -v swaybg >/dev/null 2>&1; then
+            pkill -x swaybg 2>/dev/null || true
+            swaybg -i "$wp" -m fill >/dev/null 2>&1 &
+        fi
+        echo "The Apotheosis" > /tmp/current_wallpaper_title 2>/dev/null || true
+    fi
+
+    # 2. Matugen Dynamic Palette Extraction
+    if command -v matugen >/dev/null 2>&1 && [ -f "$wp" ]; then
+        matugen image "$wp" -m dark -t scheme-fidelity 2>/dev/null || true
+    fi
+
+    # 3. Terminal Kitty
+    if [ -d "$KITTY_CFG_DIR" ]; then
+        if [ -f "$KITTY_CFG_DIR/themes/everforest-dark.conf" ]; then
+            cp -f "$KITTY_CFG_DIR/themes/everforest-dark.conf" "$KITTY_CFG_DIR/current-theme.conf"
+        elif [ -f "/usr/share/rinauby/kitty/themes/everforest-dark.conf" ]; then
+            cp -f "/usr/share/rinauby/kitty/themes/everforest-dark.conf" "$KITTY_CFG_DIR/current-theme.conf"
+        fi
+        killall -SIGUSR1 kitty 2>/dev/null || true
+    fi
+
+    # 4. Papirus Folders / Icon Theme
+    if command -v papirus-folders >/dev/null 2>&1; then
+        papirus-folders -C gold --theme Papirus-Dark 2>/dev/null || true
+    fi
+
+    # 5. GTK Preferences
+    if command -v gsettings >/dev/null 2>&1; then
+        gsettings set org.gnome.desktop.interface gtk-theme "Adwaita-dark" 2>/dev/null || true
+        gsettings set org.gnome.desktop.interface icon-theme "Papirus-Dark" 2>/dev/null || true
+        gsettings set org.gnome.desktop.interface color-scheme "prefer-dark" 2>/dev/null || true
+    fi
+
+    # 6. Quickshell IPC reload
+    if command -v quickshell >/dev/null 2>&1; then
+        quickshell -c rs ipc call main handleCommand "wallpaper" "reload" "" >/dev/null 2>&1 || true
+    fi
+
+    echo "classic" > "$STATE_FILE"
+    notify-send -a "Rinauby Theme" "Renaissance Klasik" "Palet Ochre Gold & Everforest aktif." 2>/dev/null || true
+    echo "✓ Sukses: Mode Renaissance Klasik Aktif."
+}
+
+apply_modern() {
+    echo "⚡ Mengaktifkan Mode: Renaissance Modern (Ultramarine Blue & Cyber Mocha)..."
+    
+    # 1. Wallpaper
+    local wp="$SYS_WALL_DIR/school_of_athens.jpg"
+    [ -f "$wp" ] || wp="$SYS_WALL_DIR/apotheosis.jpg"
+    
+    if [ -f "$wp" ]; then
+        if command -v swww >/dev/null 2>&1 && pgrep -x swww-daemon >/dev/null 2>&1; then
+            swww img "$wp" --transition-type fade --transition-duration 1.2 2>/dev/null || true
+        elif command -v swaybg >/dev/null 2>&1; then
+            pkill -x swaybg 2>/dev/null || true
+            swaybg -i "$wp" -m fill >/dev/null 2>&1 &
+        fi
+        echo "The School of Athens" > /tmp/current_wallpaper_title 2>/dev/null || true
+    fi
+
+    # 2. Matugen Dynamic Palette Extraction
+    if command -v matugen >/dev/null 2>&1 && [ -f "$wp" ]; then
+        matugen image "$wp" -m dark -t scheme-vibrant 2>/dev/null || true
+    fi
+
+    # 3. Terminal Kitty
+    if [ -d "$KITTY_CFG_DIR" ]; then
+        if [ -f "$KITTY_CFG_DIR/themes/catppuccin-mocha.conf" ]; then
+            cp -f "$KITTY_CFG_DIR/themes/catppuccin-mocha.conf" "$KITTY_CFG_DIR/current-theme.conf"
+        elif [ -f "/usr/share/rinauby/kitty/themes/catppuccin-mocha.conf" ]; then
+            cp -f "/usr/share/rinauby/kitty/themes/catppuccin-mocha.conf" "$KITTY_CFG_DIR/current-theme.conf"
+        fi
+        killall -SIGUSR1 kitty 2>/dev/null || true
+    fi
+
+    # 4. Papirus Folders / Icon Theme
+    if command -v papirus-folders >/dev/null 2>&1; then
+        papirus-folders -C cat-mocha --theme Papirus-Dark 2>/dev/null || papirus-folders -C blue --theme Papirus-Dark 2>/dev/null || true
+    fi
+
+    # 5. GTK Preferences
+    if command -v gsettings >/dev/null 2>&1; then
+        gsettings set org.gnome.desktop.interface gtk-theme "Adwaita-dark" 2>/dev/null || true
+        gsettings set org.gnome.desktop.interface icon-theme "Papirus-Dark" 2>/dev/null || true
+        gsettings set org.gnome.desktop.interface color-scheme "prefer-dark" 2>/dev/null || true
+    fi
+
+    # 6. Quickshell IPC reload
+    if command -v quickshell >/dev/null 2>&1; then
+        quickshell -c rs ipc call main handleCommand "wallpaper" "reload" "" >/dev/null 2>&1 || true
+    fi
+
+    echo "modern" > "$STATE_FILE"
+    notify-send -a "Rinauby Theme" "Renaissance Modern" "Palet Cobalt Blue & Catppuccin Mocha aktif." 2>/dev/null || true
+    echo "✓ Sukses: Mode Renaissance Modern Aktif."
+}
+
+MODE="${1:-toggle}"
+
+case "$MODE" in
+    classic|vintage|gold)
+        apply_classic
+        ;;
+    modern|cyber|blue)
+        apply_modern
+        ;;
+    toggle)
+        CURRENT="$(get_current_mode)"
+        if [ "$CURRENT" = "classic" ]; then
+            apply_modern
+        else
+            apply_classic
+        fi
+        ;;
+    status)
+        echo "Active Theme Mode: $(get_current_mode)"
+        ;;
+    *)
+        echo "Penggunaan: rinauby-theme-switch [classic|modern|toggle|status]"
+        exit 1
+        ;;
+esac

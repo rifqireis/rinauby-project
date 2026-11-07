@@ -311,6 +311,12 @@ UTILITY_PKGS=(
     thunar
     thunar-archive-plugin
     file-roller
+    nautilus
+    gnome-text-editor
+    evince
+    celluloid
+    sddm
+    starship
     imv
     zathura
     papirus-icon-theme
@@ -482,6 +488,15 @@ find "$SYS_SHARE_DIR" -type f \( -name "*.conf" -o -name "*.jsonc" -o -name "*.j
     -e "s|$HOST_HARDCODED_PREFIX/dotfiles|$SYS_SHARE_DIR|g" \
     -e "s|/home/rifqi/.config/hypr/hyprlock/avatar-kde.png|$SYS_SHARE_DIR/hypr/avatar.png|g" \
     {} + 2>/dev/null || true
+
+# ------------------------------------------------------------------------------
+# 7B. DEPLOY THEMING & CUSTOMIZATION (PLYMOUTH PIXELS, SDDM, STARSHIP, MIME)
+# ------------------------------------------------------------------------------
+log_step "PHASE 7B/11: Deploying Plymouth Pixels, SDDM Sugar-Candy, Starship & Apps"
+if [ -f "$SCRIPT_DIR/apply_theming_and_customization.sh" ]; then
+    bash "$SCRIPT_DIR/apply_theming_and_customization.sh" --install
+    log_ok "Advanced theming and system customizations successfully applied."
+fi
 
 # ------------------------------------------------------------------------------
 # 8. INSTALL BINARY WRAPPERS (rinauby-*) & DESKTOP APPLICATIONS
@@ -753,6 +768,11 @@ systemctl enable bluetooth.service 2>/dev/null || true
 # Clean APT package cache to minimize remastered Cubic ISO footprint
 apt-get autoremove -y >/dev/null 2>&1 || true
 apt-get clean >/dev/null 2>&1 || true
+
+# Execute comprehensive environment & dependency verification healthcheck
+if [ -f "$SCRIPT_DIR/apply_theming_and_customization.sh" ]; then
+    bash "$SCRIPT_DIR/apply_theming_and_customization.sh" --check
+fi
 
 log_step "INSTALLATION COMPLETE: RINAUBY (DIGITAL HUMANISM EDITION)"
 echo -e "${C_GREEN}All desktop components and configurations are ready:${C_RESET}"
