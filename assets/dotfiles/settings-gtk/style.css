@@ -1,46 +1,39 @@
 /* ==============================================================================
-   RINAUBY DESKTOP SETTINGS — GTK4 & LIBADWAITA STYLESHEET
-   Standar Desain Rinauby: Kedalaman Tonal, Shadow Organik, Bebas Outline Berlebih
-   Tanpa Emoji | Aksen Emas Renaisans #db9c5e | Latar Slate Gelap #171a1d
+   RINAUBY DESKTOP SETTINGS — GTK4 & LIBADWAITA DYNAMIC THEME
+   Mendukung Tema Dinamis (GTK Settings, Libadwaita, dan Matugen)
+   Harmonis dalam Mode Terang (Light) maupun Mode Gelap (Dark)
    ============================================================================== */
 
-@define-color gold_primary #db9c5e;
-@define-color gold_bright #e5c07b;
-@define-color bg_charcoal #171a1d;
-@define-color bg_sidebar #131518;
-@define-color bg_card #202429;
-@define-color bg_card_hover #262a30;
-@define-color fg_cream #fbf2db;
-@define-color fg_muted #959c9e;
-
-/* === Jendela Utama: Kedalaman Shadow Lembut, Tanpa Outline Tebal === */
+/* === Jendela Utama: Menggunakan Latar dan Teks dari GTK / Matugen === */
 window.rinauby-settings {
-    background-color: @bg_charcoal;
-    border: 1px solid rgba(255, 255, 255, 0.06);
-    border-radius: 14px;
-    box-shadow: 0 16px 40px rgba(0, 0, 0, 0.55), 0 2px 6px rgba(0, 0, 0, 0.35);
+    background-color: @window_bg_color;
+    color: @window_fg_color;
+    border-radius: 12px;
 }
 
 /* === Headerbar === */
 window.rinauby-settings headerbar {
-    background-color: transparent;
-    border-bottom: 1px solid rgba(255, 255, 255, 0.04);
-    min-height: 44px;
+    background-color: @headerbar_bg_color;
+    color: @headerbar_fg_color;
+    border-bottom: 1px solid alpha(@window_fg_color, 0.08);
+    min-height: 46px;
     padding: 0 10px;
 }
 
-window.rinauby-settings headerbar label.header-title {
-    font-family: "Cinzel Bold", "Inter Bold", serif;
+window.rinauby-settings headerbar label.header-title,
+window.rinauby-settings headerbar label.sidebar-header-title {
+    font-family: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
     font-size: 11pt;
-    font-weight: 600;
-    color: @gold_bright;
-    letter-spacing: 0.5px;
+    font-weight: 700;
+    color: @headerbar_fg_color;
+    letter-spacing: 0.3px;
 }
 
 /* === Navigasi Sidebar === */
 .settings-sidebar {
-    background-color: @bg_sidebar;
-    border-right: 1px solid rgba(255, 255, 255, 0.03);
+    background-color: @sidebar_bg_color;
+    color: @sidebar_fg_color;
+    border-right: 1px solid alpha(@window_fg_color, 0.08);
     padding: 6px 0;
 }
 
@@ -50,11 +43,11 @@ window.rinauby-settings headerbar label.header-title {
 }
 
 .navigation-sidebar row {
-    border-radius: 7px;
+    border-radius: 8px;
     margin: 2px 8px;
     padding: 6px 10px;
     min-height: 36px;
-    color: #b5b2a8;
+    color: @sidebar_fg_color;
     font-family: "Inter", sans-serif;
     font-size: 9.5pt;
     transition: all 120ms ease;
@@ -62,20 +55,19 @@ window.rinauby-settings headerbar label.header-title {
 }
 
 .navigation-sidebar row:hover {
-    background-color: rgba(255, 255, 255, 0.04);
-    color: @fg_cream;
+    background-color: alpha(@window_fg_color, 0.06);
 }
 
-/* Seleksi Baris: Indikator Aksial Bersih, Tanpa Garis Kuning Penuh */
+/* Seleksi Baris: Indikator Aksial Bersih menggunakan Warna Aksen */
 .navigation-sidebar row:selected {
-    background-color: rgba(219, 156, 94, 0.14);
-    color: @gold_bright;
+    background-color: alpha(@accent_color, 0.16);
+    color: @accent_color;
     font-weight: 600;
     border: none;
-    box-shadow: inset 2px 0 0 @gold_primary;
+    box-shadow: inset 3px 0 0 @accent_color;
 }
 
-/* Pemisah Garis Halus (Hairline 1px) */
+/* Pemisah Garis Halus */
 .navigation-sidebar row.separator-row {
     min-height: 1px;
     padding: 0;
@@ -87,31 +79,40 @@ window.rinauby-settings headerbar label.header-title {
 
 .navigation-sidebar row.separator-row .sidebar-separator {
     min-height: 1px;
-    background-color: rgba(255, 255, 255, 0.05);
+    background-color: alpha(@window_fg_color, 0.08);
     margin: 0;
     padding: 0;
 }
 
 /* Kotak Pencarian Sidebar */
 searchbar, entry.search {
-    border-radius: 7px;
-    border: 1px solid rgba(255, 255, 255, 0.06);
-    background-color: rgba(255, 255, 255, 0.03);
-    min-height: 30px;
+    border-radius: 8px;
+    border: 1px solid alpha(@window_fg_color, 0.12);
+    background-color: alpha(@window_fg_color, 0.05);
+    min-height: 32px;
     font-size: 9pt;
-    color: @fg_cream;
-    box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.2);
+    color: @window_fg_color;
 }
 
 searchbar entry:focus-within, entry.search:focus {
-    border-color: rgba(219, 156, 94, 0.5);
-    box-shadow: 0 0 0 1px rgba(219, 156, 94, 0.25);
+    border-color: @accent_color;
+    box-shadow: 0 0 0 1px alpha(@accent_color, 0.3);
 }
 
 /* === Area Konten & Kartu Pengaturan === */
 .content-area {
-    background-color: @bg_charcoal;
+    background-color: @window_bg_color;
+    color: @window_fg_color;
     padding: 12px 18px;
+}
+
+label.page-header-title {
+    font-family: "Inter", sans-serif;
+    font-size: 13pt;
+    font-weight: 700;
+    color: @window_fg_color;
+    margin-bottom: 8px;
+    letter-spacing: 0.2px;
 }
 
 /* Grup Pengaturan (AdwPreferencesGroup) */
@@ -125,26 +126,28 @@ preferencesgroup header label {
     font-family: "Inter Bold", sans-serif;
     font-size: 9.5pt;
     font-weight: 600;
-    color: @gold_bright;
+    color: @accent_color;
     margin-bottom: 6px;
     margin-left: 4px;
     letter-spacing: 0.2px;
 }
 
-/* Kartu Kontainer: Kedalaman Bayangan & Latar, Bukan Outline Tebal */
+/* Kartu Kontainer: Menggunakan @card_bg_color dari GTK / Matugen */
 preferencesgroup list {
-    background-color: @bg_card;
-    border: 1px solid rgba(255, 255, 255, 0.04);
-    border-radius: 10px;
+    background-color: @card_bg_color;
+    color: @card_fg_color;
+    border: 1px solid alpha(@window_fg_color, 0.08);
+    border-radius: 12px;
     padding: 0;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.25), 0 1px 2px rgba(0, 0, 0, 0.15);
+    box-shadow: 0 2px 6px alpha(@window_fg_color, 0.04);
 }
 
 /* Baris Pengaturan (AdwActionRow / AdwSwitchRow) */
 preferencesgroup list row {
     padding: 6px 14px;
     min-height: 44px;
-    border-bottom: 1px solid rgba(255, 255, 255, 0.035);
+    color: @card_fg_color;
+    border-bottom: 1px solid alpha(@window_fg_color, 0.06);
     transition: background-color 100ms ease;
 }
 
@@ -153,7 +156,7 @@ preferencesgroup list row:last-child {
 }
 
 preferencesgroup list row:hover {
-    background-color: @bg_card_hover;
+    background-color: alpha(@window_fg_color, 0.04);
 }
 
 /* Label Judul & Subjudul Baris */
@@ -161,61 +164,42 @@ row label.title {
     font-family: "Inter", sans-serif;
     font-size: 10pt;
     font-weight: 500;
-    color: @fg_cream;
+    color: @card_fg_color;
 }
 
 row label.subtitle {
     font-family: "Inter", sans-serif;
     font-size: 8.5pt;
-    color: @fg_muted;
+    color: alpha(@card_fg_color, 0.65);
     margin-top: 1px;
 }
 
-/* === Saklar (Switch) Organik: Tanpa Outline Kasar === */
+/* === Saklar (Switch) Organik: Mengikuti Aksen GTK/Matugen === */
 switch {
-    border-radius: 11px;
-    border: none;
-    background-color: rgba(255, 255, 255, 0.08);
-    min-width: 38px;
-    min-height: 20px;
     margin: 2px 0;
-    box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.35);
     transition: all 140ms ease;
 }
 
 switch:checked {
-    background-color: @gold_primary;
-    box-shadow: 0 2px 6px rgba(219, 156, 94, 0.25);
+    background-color: @accent_color;
 }
 
-switch slider {
-    border-radius: 9px;
-    background-color: #ffffff;
-    min-width: 14px;
-    min-height: 14px;
-    margin: 3px;
-    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.4);
-}
-
-/* === Tombol Aksi dalam Baris (Hubungkan / Putuskan) === */
+/* === Tombol Aksi dalam Baris === */
 row button.flat {
     padding: 4px 11px;
     min-height: 26px;
     font-family: "Inter", sans-serif;
     font-size: 8.5pt;
     font-weight: 500;
-    color: @gold_bright;
-    background-color: rgba(219, 156, 94, 0.12);
+    color: @accent_color;
+    background-color: alpha(@accent_color, 0.12);
     border: none;
     border-radius: 6px;
-    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.15);
     transition: all 120ms ease;
 }
 
 row button.flat:hover {
-    background-color: rgba(219, 156, 94, 0.24);
-    color: @fg_cream;
-    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.25);
+    background-color: alpha(@accent_color, 0.22);
 }
 
 row button.suggested-action {
@@ -223,18 +207,12 @@ row button.suggested-action {
     min-height: 28px;
     font-size: 9pt;
     font-weight: 600;
-    background-color: @gold_primary;
-    color: #1a1d21;
+    background-color: @accent_color;
+    color: @accent_fg_color;
     border-radius: 6px;
     border: none;
-    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.25);
 }
 
-row button.suggested-action:hover {
-    background-color: @gold_bright;
-}
-
-/* Tombol Ikon Bundar */
 button.circular.flat {
     padding: 4px;
     min-width: 26px;
@@ -242,73 +220,71 @@ button.circular.flat {
     border-radius: 999px;
     border: none;
     background: transparent;
-    color: @gold_bright;
+    color: @headerbar_fg_color;
 }
 
 button.circular.flat:hover {
-    background-color: rgba(255, 255, 255, 0.06);
+    background-color: alpha(@window_fg_color, 0.08);
 }
 
-/* === SpinRow & Entry === */
+/* Dropdown Pill Button */
+.pill-dropdown-button {
+    background-color: alpha(@accent_color, 0.12);
+    border: 1px solid alpha(@accent_color, 0.25);
+    color: @accent_color;
+    border-radius: 6px;
+    padding: 3px 10px;
+    font-family: "Inter", sans-serif;
+    font-size: 8.5pt;
+    font-weight: 500;
+}
+
+/* SpinRow & Entry */
 spinbutton {
     font-size: 9pt;
     min-height: 28px;
 }
 
 entry.numeric-pill-entry {
-    background-color: rgba(255, 255, 255, 0.04);
-    border: 1px solid rgba(255, 255, 255, 0.08);
+    background-color: alpha(@window_fg_color, 0.05);
+    border: 1px solid alpha(@window_fg_color, 0.12);
     border-radius: 6px;
     padding: 2px 6px;
     min-height: 26px;
     min-width: 48px;
     font-size: 8.5pt;
     font-weight: 600;
-    color: @gold_bright;
+    color: @window_fg_color;
 }
 
 entry.numeric-pill-entry:focus {
-    border-color: rgba(219, 156, 94, 0.6);
-    box-shadow: 0 0 0 1px rgba(219, 156, 94, 0.25);
+    border-color: @accent_color;
+    box-shadow: 0 0 0 1px alpha(@accent_color, 0.3);
 }
 
 /* === Kartu Galeri Wallpaper === */
 .wallpaper-card {
-    background-color: @bg_card;
-    border: 1px solid rgba(255, 255, 255, 0.04);
+    background-color: @card_bg_color;
+    border: 1px solid alpha(@window_fg_color, 0.08);
     border-radius: 10px;
     padding: 6px;
-    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.22);
+    box-shadow: 0 2px 6px alpha(@window_fg_color, 0.04);
     transition: all 120ms ease;
 }
 
 .wallpaper-card:hover {
-    background-color: @bg_card_hover;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.35);
+    background-color: alpha(@window_fg_color, 0.05);
 }
 
 .wallpaper-card.active {
-    border: 1.5px solid @gold_primary;
-    box-shadow: 0 4px 14px rgba(219, 156, 94, 0.25);
+    border: 2px solid @accent_color;
+    box-shadow: 0 4px 12px alpha(@accent_color, 0.25);
 }
 
 .wallpaper-card-title {
     font-family: "Inter", sans-serif;
     font-size: 8.5pt;
     font-weight: 600;
-    color: @fg_cream;
+    color: @card_fg_color;
     margin-top: 4px;
-}
-
-/* Dropdown Pill Button */
-.pill-dropdown-button {
-    background-color: rgba(219, 156, 94, 0.12);
-    border: 1px solid rgba(255, 255, 255, 0.05);
-    color: @gold_bright;
-    border-radius: 6px;
-    padding: 3px 10px;
-    font-family: "Inter", sans-serif;
-    font-size: 8.5pt;
-    font-weight: 500;
-    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.15);
 }

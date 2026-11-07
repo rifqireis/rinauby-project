@@ -25,7 +25,7 @@ class AppearancePage(Gtk.Box):
         # 1. Color Scheme Row
         color_row = Adw.ActionRow(
             title="Color Scheme",
-            subtitle="Everforest Dark Slate with warm gold accents"
+            subtitle="Dynamic Matugen &amp; GTK desktop color palette"
         )
         # Dropdown / Pill Button
         self.scheme_btn = Gtk.MenuButton()

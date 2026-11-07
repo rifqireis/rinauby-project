@@ -80,8 +80,8 @@ class SettingsMainWindow(Adw.ApplicationWindow):
         sidebar_hb.set_show_end_title_buttons(False)
         sidebar_hb.set_show_start_title_buttons(False)
 
-        brand_lbl = Gtk.Label()
-        brand_lbl.set_markup("<span font='9.5' weight='bold' letter_spacing='2000' color='#db9c5e'>RINAUBY</span>")
+        brand_lbl = Gtk.Label(label="Settings")
+        brand_lbl.add_css_class("sidebar-header-title")
         sidebar_hb.set_title_widget(brand_lbl)
         sidebar_tb.add_top_bar(sidebar_hb)
 
