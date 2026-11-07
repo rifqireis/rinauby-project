@@ -20,3 +20,4 @@ inode/directory=org.gnome.Nautilus.desktop;thunar.desktop;
 text/plain=org.gnome.TextEditor.desktop;
 application/pdf=org.gnome.Evince.desktop;
 video/mp4=io.github.celluloid_player.Celluloid.desktop;
+

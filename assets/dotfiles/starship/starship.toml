@@ -89,3 +89,4 @@ disabled = false
 time_format = "%R"
 style = "bg:#232a2e fg:#859289"
 format = "[  $time ]($style)"
+
