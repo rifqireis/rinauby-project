@@ -52,19 +52,34 @@ window.rinauby-settings headerbar label.sidebar-header-title {
     font-size: 9.5pt;
     transition: all 120ms ease;
     border: none;
+    box-shadow: none;
+    outline: none;
 }
 
 .navigation-sidebar row:hover {
     background-color: alpha(@window_fg_color, 0.06);
+    box-shadow: none;
 }
 
-/* Seleksi Baris: Indikator Aksial Bersih menggunakan Warna Aksen */
+/* Seleksi Baris: Tampilan Flat Elegan Bersih, Bebas Efek Depth / Inset Shadow */
 .navigation-sidebar row:selected {
     background-color: alpha(@accent_color, 0.16);
     color: @accent_color;
     font-weight: 600;
     border: none;
-    box-shadow: inset 3px 0 0 @accent_color;
+    box-shadow: none;
+    outline: none;
+}
+
+.navigation-sidebar row:selected:hover {
+    background-color: alpha(@accent_color, 0.22);
+    box-shadow: none;
+}
+
+.navigation-sidebar row:focus,
+.navigation-sidebar row:focus-visible {
+    outline: none;
+    box-shadow: none;
 }
 
 /* Pemisah Garis Halus */
