@@ -794,7 +794,7 @@ ThemeDir=/usr/share/sddm/themes
 [Users]
 DefaultSession=hyprland.desktop
 RememberLastSession=false
-MinimumUid=500
+MinimumUid=1000
 
 [General]
 DisplayServer=x11

@@ -180,7 +180,7 @@ ThemeDir=/usr/share/sddm/themes
 [Users]
 DefaultSession=hyprland.desktop
 RememberLastSession=false
-MinimumUid=500
+MinimumUid=1000
 
 [General]
 DisplayServer=x11
@@ -270,6 +270,53 @@ EOF
         systemctl enable sddm.service 2>/dev/null || true
     fi
     log_ok "SDDM display manager enabled as default system greeter (GDM3 disabled and symlinks pinned)."
+}
+
+deploy_gdm3_autologin() {
+    log_step "Deploying GDM3 with Native Casper Autologin directly into Hyprland"
+    
+    mkdir -p /etc/gdm3
+    cat << 'EOF' > /etc/gdm3/custom.conf
+[daemon]
+AutomaticLoginEnable=true
+AutomaticLogin=ubuntu
+DefaultSession=hyprland.desktop
+WaylandEnable=true
+
+[security]
+
+[xdmcp]
+
+[chooser]
+
+[debug]
+EOF
+
+    mkdir -p /var/lib/AccountsService/users
+    cat << 'EOF' > /var/lib/AccountsService/users/ubuntu
+[User]
+Session=hyprland
+XSession=hyprland
+Icon=/usr/share/pixmaps/faces/user-generic.png
+SystemAccount=false
+EOF
+    chmod 644 /var/lib/AccountsService/users/ubuntu 2>/dev/null || true
+
+    mkdir -p /etc/X11
+    echo "/usr/sbin/gdm3" > /etc/X11/default-display-manager
+
+    # Systemd display manager symlinks for GDM3
+    rm -f /etc/systemd/system/display-manager.service 2>/dev/null || true
+    for gdm_unit in /usr/lib/systemd/system/gdm3.service /lib/systemd/system/gdm3.service /usr/lib/systemd/system/gdm.service; do
+        if [ -f "$gdm_unit" ]; then
+            ln -sfn "$gdm_unit" /etc/systemd/system/display-manager.service
+            mkdir -p /etc/systemd/system/graphical.target.wants
+            ln -sfn "$gdm_unit" /etc/systemd/system/graphical.target.wants/gdm3.service
+            break
+        fi
+    done
+    rm -f /etc/systemd/system/graphical.target.wants/sddm.service 2>/dev/null || true
+    log_ok "GDM3 set as primary display manager with direct Autologin to Hyprland."
 }
 
 # ------------------------------------------------------------------------------
@@ -493,6 +540,15 @@ case "$ACTION" in
         verify_rinauby_environment
         ;;
     --check|check)
+        verify_rinauby_environment
+        ;;
+    --gdm|--use-gdm)
+        deploy_plymouth_pixels
+        deploy_gdm3_autologin
+        deploy_starship_prompt
+        deploy_papirus_folders
+        deploy_default_apps_and_mime
+        deploy_dual_theme_engine
         verify_rinauby_environment
         ;;
     --theme|theme)
