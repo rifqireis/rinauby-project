@@ -136,7 +136,6 @@ deploy_sddm_sugar_candy() {
             qml-module-qtgraphicaleffects
             qml-module-qtquick-layouts
             qml-module-qtquick-window2
-            qml-module-qtsvg
             libqt5svg5
         )
         local to_install=()

@@ -329,7 +329,6 @@ UTILITY_PKGS=(
     qml-module-qtgraphicaleffects
     qml-module-qtquick-layouts
     qml-module-qtquick-window2
-    qml-module-qtsvg
     libqt5svg5
     starship
     imv
