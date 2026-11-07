@@ -41,7 +41,7 @@ PanelWindow {
         }
         return "/home/rifqi/Workspace/Belajar/SO/Tubes-2604/Rancangan/assets/dotfiles";
     }
-    readonly property string rofiIconsDir: "file://" + dotfilesDir + "/rofi/icons/"
+    readonly property string sessionIconsDir: Qt.resolvedUrl("../assets/icons/session/")
     readonly property string screenshotScriptPath: dotfilesDir + "/scripts/screenshot.sh"
 
     // =========================================================================
@@ -1057,7 +1057,7 @@ PanelWindow {
                                         anchors.horizontalCenter: parent.horizontalCenter
                                         width: 40
                                         height: 40
-                                        source: root.rofiIconsDir + powerCard.modelData.icon
+                                        source: root.sessionIconsDir + powerCard.modelData.icon
                                         sourceSize: Qt.size(40, 40)
                                         fillMode: Image.PreserveAspectFit
                                         smooth: true

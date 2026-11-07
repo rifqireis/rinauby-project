@@ -1,14 +1,10 @@
 #!/usr/bin/env bash
-CANDIDATES=(
-    "$HOME/.config/waybar/window_title.py"
-    "/usr/share/rinauby/waybar/window_title.py"
-)
-REPO_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." 2>/dev/null && pwd)"
-CANDIDATES+=("$REPO_DIR/dotfiles/waybar/window_title.py")
-CANDIDATES+=("/home/rifqi/Workspace/Belajar/SO/Tubes-2604/Rancangan/assets/dotfiles/waybar/window_title.py")
-
-for s in "${CANDIDATES[@]}"; do
-    if [ -f "$s" ]; then
-        exec python3 "$s" "$@"
-    fi
-done
+# ==============================================================================
+# RINAUBY : WINDOW TITLE FETCHER (LEGACY COMPATIBILITY)
+# Handled natively in Quickshell RinaubyBar.
+# ==============================================================================
+if command -v hyprctl >/dev/null 2>&1; then
+    hyprctl activewindow -j 2>/dev/null | jq -r '.title // empty' 2>/dev/null || cat /tmp/current_wallpaper_title 2>/dev/null || echo "Desktop"
+else
+    cat /tmp/current_wallpaper_title 2>/dev/null || echo "Desktop"
+fi

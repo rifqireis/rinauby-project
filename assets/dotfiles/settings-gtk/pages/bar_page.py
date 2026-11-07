@@ -111,6 +111,5 @@ class BarPage(Gtk.Box):
         group.add(reload_row)
 
     def _on_reload_waybar(self, *_args):
+        subprocess.run(["quickshell", "-c", "rs", "ipc", "call", "rinaubybar", "reload"], stderr=subprocess.DEVNULL)
         subprocess.run(["quickshell", "ipc", "call", "waybar", "reload"], stderr=subprocess.DEVNULL)
-        subprocess.run(["pkill", "-RTMIN+8", "waybar"], stderr=subprocess.DEVNULL)
-        subprocess.run(["pkill", "-USR2", "waybar"], stderr=subprocess.DEVNULL)

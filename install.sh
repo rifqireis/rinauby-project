@@ -206,13 +206,11 @@ WAYLAND_PKGS=(
 install_packages "${WAYLAND_PKGS[@]}"
 
 # ------------------------------------------------------------------------------
-# 3. INSTALL PANEL (WAYBAR), LAUNCHER (ROFI), NOTIFICATIONS (SWAYNC) & POLKIT
+# 3. INSTALL DESKTOP UTILITIES & POLKIT
 # ------------------------------------------------------------------------------
-log_step "PHASE 3/11: Installing Waybar, Rofi, SwayNC, & Polkit Authentication Agent"
+log_step "PHASE 3/11: Installing Desktop Utilities & Polkit Authentication Agent"
 
 SHELL_PKGS=(
-    waybar
-    sway-notification-center
     libnotify-bin
     polkit-gnome
     policykit-1-gnome
@@ -225,13 +223,6 @@ SHELL_PKGS=(
     upower
 )
 install_packages "${SHELL_PKGS[@]}"
-
-# Rofi in Ubuntu 26.04 natively supports Wayland (or via rofi-wayland package)
-if apt-cache show rofi-wayland >/dev/null 2>&1; then
-    install_packages rofi-wayland
-else
-    install_packages rofi
-fi
 
 # ------------------------------------------------------------------------------
 # 4. INSTALL PYTHON GTK4 / LIBADWAITA (SETTINGS) & GTK3 LAYER-SHELL (OSD)
@@ -457,14 +448,12 @@ if [ -d "$BIN_DIR" ]; then
 fi
 
 # Ensure all scripts in /usr/share/rinauby are executable
-chmod +x "$SYS_SHARE_DIR/waybar/quote_rotator.sh" 2>/dev/null || true
-chmod +x "$SYS_SHARE_DIR/waybar/window_title.py" 2>/dev/null || true
-chmod +x "$SYS_SHARE_DIR/rofi/wp_selector.sh" 2>/dev/null || true
 chmod +x "$SYS_SHARE_DIR/scripts/"*.sh 2>/dev/null || true
 chmod +x "$SYS_SHARE_DIR/scripts/"*.py 2>/dev/null || true
+chmod +x "$SYS_SHARE_DIR/quickshell/scripts/"*.sh 2>/dev/null || true
 chmod +x "$SYS_SHARE_DIR/settings-gtk/main.py" 2>/dev/null || true
 
-# Create Desktop Entry for Rinauby Settings so it shows up in Rofi launcher and desktop menus
+# Create Desktop Entry for Rinauby Settings so it shows up in launcher and desktop menus
 mkdir -p /usr/share/applications
 cat << 'EOF' > /usr/share/applications/rinauby-settings.desktop
 [Desktop Entry]
@@ -475,7 +464,7 @@ Icon=preferences-system
 Terminal=false
 Type=Application
 Categories=Settings;DesktopSettings;System;GTK;
-Keywords=rinauby;hyprland;settings;wallpaper;appearance;waybar;
+Keywords=rinauby;hyprland;settings;wallpaper;appearance;quickshell;
 StartupNotify=true
 EOF
 
@@ -494,12 +483,18 @@ sanitize_and_deploy_config() {
     mkdir -p "$target_home/Pictures/Screenshots"
 
     # Copy primary configuration modules
-    for mod in hypr waybar rofi swaync kitty fastfetch scripts; do
+    for mod in hypr quickshell kitty fastfetch scripts; do
         if [ -d "$SYS_SHARE_DIR/$mod" ]; then
             rm -rf "${cfg_dir:?}/$mod"
             cp -rf "$SYS_SHARE_DIR/$mod" "$cfg_dir/$mod"
         fi
     done
+
+    # Ensure Quickshell profile 'rs' is accessible
+    if [ -d "$cfg_dir/quickshell" ]; then
+        mkdir -p "$cfg_dir/quickshell"
+        [ -e "$cfg_dir/quickshell/rs" ] || ln -sfn "$cfg_dir/quickshell" "$cfg_dir/quickshell/rs"
+    fi
 
     # Copy GTK4 Settings application to ~/.config/rinauby/settings-gtk
     mkdir -p "$cfg_dir/rinauby"
@@ -540,11 +535,9 @@ sanitize_and_deploy_config() {
         {} + 2>/dev/null || true
 
     # Ensure executable permissions for user scripts
-    chmod +x "$cfg_dir/waybar/quote_rotator.sh" 2>/dev/null || true
-    chmod +x "$cfg_dir/waybar/window_title.py" 2>/dev/null || true
-    chmod +x "$cfg_dir/rofi/wp_selector.sh" 2>/dev/null || true
     chmod +x "$cfg_dir/scripts/"*.sh 2>/dev/null || true
     chmod +x "$cfg_dir/scripts/"*.py 2>/dev/null || true
+    chmod +x "$cfg_dir/quickshell/scripts/"*.sh 2>/dev/null || true
     chmod +x "$cfg_dir/rinauby/settings-gtk/main.py" 2>/dev/null || true
 
     # Default Dark Theme configuration for GTK-3.0 & GTK-4.0

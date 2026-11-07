@@ -2,10 +2,8 @@
 """
 Rinauby Monochromatic Matugen Palette Generator
 Extracts dominant colors from wallpapers using Matugen and synchronizes:
-- Quickshell: ~/.local/state/serpantinum/qs_colors.json & qs_matugen_colors.json
-- Waybar: ~/.config/waybar/theme.css
+- Quickshell: ~/.local/state/serpantinum/qs_colors.json, qs_matugen_colors.json & qs_bar_theme.json
 - Hyprland: Active & Inactive window borders
-- Rofi: ~/.config/rofi/theme_colors.rasi
 - Kitty: ~/.config/kitty/current-theme.conf
 
 Design Standard:
@@ -213,49 +211,7 @@ def apply_theme(palette, home_dir):
     with open(os.path.join(state_dir, "qs_bar_theme.json"), "w") as f:
         f.write(json.dumps(qs_bar_theme, indent=2) + "\n")
 
-    # 2. Waybar: ~/.config/waybar/theme.css (Legacy compatibility)
-    waybar_dir = os.path.join(home_dir, ".config", "waybar")
-    os.makedirs(waybar_dir, exist_ok=True)
-    waybar_theme_css = f"""/* Waybar Dynamic Monochromatic Palette (Permanent Dark Shell Bar Standard) */
-@define-color bar_bg {hex_to_rgba_css(waybar_surface, 0.85)};
-@define-color bar_fg {waybar_fg};
-@define-color bar_fg_bright #ffffff;
-@define-color bar_border_side transparent;
-@define-color bar_border_bottom transparent;
-@define-color accent {waybar_accent};
-@define-color accent_gold {waybar_accent};
-@define-color ws_active {waybar_ws_active};
-@define-color ws_inactive {waybar_outline};
-@define-color ws_hover_bg {hex_to_rgba_css(waybar_accent, 0.14)};
-@define-color ws_active_bg {waybar_accent};
-@define-color sep_color rgba(255, 255, 255, 0.12);
-@define-color tooltip_bg {hex_to_rgba_css(waybar_surface, 0.95)};
-@define-color tooltip_border {hex_to_rgba_css(waybar_accent, 0.30)};
-"""
-    with open(os.path.join(waybar_dir, "theme.css"), "w") as f:
-        f.write(waybar_theme_css)
-
-    # 3. Rofi: ~/.config/rofi/theme_colors.rasi
-    rofi_dir = os.path.join(home_dir, ".config", "rofi")
-    os.makedirs(rofi_dir, exist_ok=True)
-    rofi_rasi = f"""/* Rofi Dynamic Monochromatic Matugen Palette */
-* {{
-    bg-base: {hex_to_rgba_css(surface, 0.96)};
-    bg-input: {hex_to_rgba_css(surface_low, 0.85)};
-    bg-selected: {hex_to_rgba_css(primary, 0.18)};
-    border-subtle: {hex_to_rgba_css(primary, 0.18)};
-    border-hairline: {hex_to_rgba_css(primary, 0.08)};
-    accent-gold: {primary};
-    accent-gold-bright: {primary};
-    fg-main: {on_surface};
-    fg-bright: #ffffff;
-    fg-muted: {outline};
-}}
-"""
-    with open(os.path.join(rofi_dir, "theme_colors.rasi"), "w") as f:
-        f.write(rofi_rasi)
-
-    # 4. Kitty: ~/.config/kitty/current-theme.conf
+    # 2. Kitty: ~/.config/kitty/current-theme.conf
     kitty_dir = os.path.join(home_dir, ".config", "kitty")
     os.makedirs(kitty_dir, exist_ok=True)
     kitty_conf = f"""# Kitty Dynamic Monochromatic Matugen Palette

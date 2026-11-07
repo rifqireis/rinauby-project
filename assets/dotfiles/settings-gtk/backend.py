@@ -1797,7 +1797,7 @@ auto_save=false
 
     def set_roman_workspaces(self, enabled: bool):
         self.set("rinauby.roman_workspaces", enabled)
-        subprocess.run(["pkill", "-RTMIN+8", "waybar"], stderr=subprocess.DEVNULL)
+        subprocess.run(["quickshell", "-c", "rs", "ipc", "call", "rinaubybar", "reload"], stderr=subprocess.DEVNULL)
 
     def set_wallpaper(self, wp_filename: str, title: str):
         self.set("active_wallpaper", wp_filename)
@@ -1836,18 +1836,17 @@ auto_save=false
                                  stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
             with open("/tmp/current_wallpaper_title", "w") as f:
                 f.write(title)
-            # Rotasi semboyan dan update Waybar
+            # Rotasi semboyan dan update Quickshell
             quote_candidates = [
-                os.path.expanduser("~/.config/waybar/quote_rotator.sh"),
                 "/usr/local/bin/rinauby-quote",
-                os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "waybar", "quote_rotator.sh")),
-                "/home/rifqi/Workspace/Belajar/SO/Tubes-2604/Rancangan/assets/dotfiles/waybar/quote_rotator.sh"
+                os.path.expanduser("~/.config/scripts/quote_rotator.sh"),
+                os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "scripts", "quote_rotator.sh")),
+                "/home/rifqi/Workspace/Belajar/SO/Tubes-2604/Rancangan/assets/dotfiles/scripts/quote_rotator.sh"
             ]
             quote_rotator = next((q for q in quote_candidates if os.path.exists(q)), None)
             if quote_rotator:
                 subprocess.run([quote_rotator, "--next"], stderr=subprocess.DEVNULL)
-            subprocess.run(["pkill", "-RTMIN+8", "waybar"], stderr=subprocess.DEVNULL)
-            subprocess.run(["pkill", "-USR1", "-f", "window_title.py"], stderr=subprocess.DEVNULL)
+            subprocess.run(["quickshell", "-c", "rs", "ipc", "call", "rinaubybar", "reload"], stderr=subprocess.DEVNULL)
 
 
     # --------------------------------------------------------------------------
